@@ -80,10 +80,10 @@ coro::Promise<bool> SelectGradeOption::research__select_grade_option(
         MaaRect box;
     };
 
-    const auto &face_data = unwrap_custom_recognizer_analyze_result(cur_rec_detail).as_array();
+    const auto face_data = unwrap_custom_recognizer_analyze_result(cur_rec_detail);
 
     std::array<FaceInfo, 6> faces;
-    for (const auto &obj : face_data) {
+    for (const auto &obj : face_data.as_array()) {
         const auto &face_in  = obj.as_object();
         const int   index    = face_in.at("index").as_integer();
         auto       &face_out = faces[index];
