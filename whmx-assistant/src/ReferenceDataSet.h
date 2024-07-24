@@ -69,6 +69,7 @@ public:
     }
 
 public:
+    std::string                         content;
     int                                 recommended;
     std::vector<ResearchAnecdoteOption> options;
 };
@@ -89,10 +90,6 @@ public:
         return name_;
     }
 
-    std::string content() const {
-        return content_;
-    }
-
     size_t total_stages() const {
         return option_stages_.size();
     }
@@ -103,7 +100,6 @@ public:
 
 private:
     std::string                              name_;
-    std::string                              content_;
     std::vector<ResearchAnecdoteOptionGroup> option_stages_;
 };
 

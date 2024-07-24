@@ -48,6 +48,12 @@ std::optional<ResearchAnecdoteOptionGroup> ResearchAnecdoteOptionGroup::parse(co
     ResearchAnecdoteOptionGroup resp;
     resp.recommended = value.get("recommended", -1);
 
+    if (value.contains("content")) {
+        resp.content = value.at("content").as_string();
+    } else {
+        return std::nullopt;
+    }
+
     if (value.contains("options")) {
         for (const auto &option : value.at("options").as_array()) {
             if (auto opt = ResearchAnecdoteOption::parse(option)) {
@@ -62,19 +68,16 @@ std::optional<ResearchAnecdoteOptionGroup> ResearchAnecdoteOptionGroup::parse(co
 }
 
 std::optional<ResearchAnecdoteRecord> ResearchAnecdoteRecord::parse(const std::string &name, const json::value &value) {
-    if (!value.is_object()) { return std::nullopt; }
+    if (!value.is_array()) { return std::nullopt; }
 
     ResearchAnecdoteRecord resp;
-    resp.name_    = name;
-    resp.content_ = value.get("content", "");
+    resp.name_ = name;
 
-    if (value.contains("data")) {
-        for (const auto &option_group : value.at("data").as_array()) {
-            if (auto opt = ResearchAnecdoteOptionGroup::parse(option_group)) {
-                resp.option_stages_.emplace_back(std::move(opt.value()));
-            } else {
-                return std::nullopt;
-            }
+    for (const auto &option_group : value.as_array()) {
+        if (auto opt = ResearchAnecdoteOptionGroup::parse(option_group)) {
+            resp.option_stages_.emplace_back(std::move(opt.value()));
+        } else {
+            return std::nullopt;
         }
     }
 

@@ -42,9 +42,9 @@ coro::Promise<int> async_main() {
 
     init(app_dir.string());
 
-    {
-        const bool ok = Ref::ResearchAnecdoteSet::instance()->load(anecdotes_dir.string());
-        Q_ASSERT(ok);
+    if (auto anecdote_set = Ref::ResearchAnecdoteSet::instance(); !anecdote_set->load(anecdotes_dir.string())) {
+        qDebug("failed to load anecdotes set");
+        co_return -1;
     }
 
     const auto device_resp = co_await find_adb_device(adb_hint);
