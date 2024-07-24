@@ -43,7 +43,7 @@ public:
     static std::optional<ResearchAnecdoteOption> parse(const json::value &value);
 
 public:
-    std::string name;
+    std::string text;
     TypeKind    type;
     bool        positive;
     int         next_entry_hint;

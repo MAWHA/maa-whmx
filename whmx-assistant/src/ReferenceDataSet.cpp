@@ -27,8 +27,12 @@ std::optional<ResearchAnecdoteOption> ResearchAnecdoteOption::parse(const json::
     if (!value.is_object()) { return std::nullopt; }
 
     ResearchAnecdoteOption resp;
-    resp.name     = value.get("name", "");
-    resp.positive = value.get("positive", false);
+
+    if (value.contains("text")) {
+        resp.text = value.at("text").as_string();
+    } else {
+        return std::nullopt;
+    }
 
     const auto &type = value.get("type", "normal");
     if (type == "normal") {
@@ -39,7 +43,10 @@ std::optional<ResearchAnecdoteOption> ResearchAnecdoteOption::parse(const json::
         resp.type = ResearchAnecdoteOption::Normal;
     }
 
+    resp.positive = value.get("positive", false);
+
     resp.next_entry_hint = resp.type == ResearchAnecdoteOption::Random ? -1 : value.get("next", -1);
+    if (resp.next_entry_hint < -1) { return std::nullopt; }
 
     return std::make_optional(std::move(resp));
 }
@@ -48,7 +55,6 @@ std::optional<ResearchAnecdoteOptionGroup> ResearchAnecdoteOptionGroup::parse(co
     if (!value.is_object()) { return std::nullopt; }
 
     ResearchAnecdoteOptionGroup resp;
-    resp.recommended = value.get("recommended", -1);
 
     if (value.contains("content")) {
         resp.content = value.at("content").as_string();
@@ -64,7 +70,13 @@ std::optional<ResearchAnecdoteOptionGroup> ResearchAnecdoteOptionGroup::parse(co
                 return std::nullopt;
             }
         }
+    } else {
+        return std::nullopt;
     }
+    if (const int len = resp.options.size(); !(len >= 1 && len <= 3)) { return std::nullopt; }
+
+    resp.recommended = value.get("recommended", -1);
+    if (const int i = resp.recommended; !(i == -1 || i >= 0 && i < resp.options.size())) { return std::nullopt; }
 
     return std::make_optional(std::move(resp));
 }
@@ -83,6 +95,8 @@ std::optional<ResearchAnecdoteRecord> ResearchAnecdoteRecord::parse(const std::s
         }
     }
 
+    if (resp.option_stages_.empty()) { return std::nullopt; }
+
     return std::make_optional(std::move(resp));
 }
 
@@ -94,6 +108,7 @@ std::optional<ResearchAnecdoteEntry> ResearchAnecdoteEntry::parse(const std::str
 
     for (const auto &[name, entry] : value.as_object()) {
         if (auto opt = ResearchAnecdoteRecord::parse(name, entry)) {
+            //! FIXME: resolve duplicate entries
             resp.entries_.insert_or_assign(name, std::move(opt.value()));
         } else {
             return std::nullopt;
@@ -110,6 +125,7 @@ std::optional<ResearchAnecdoteSet> ResearchAnecdoteSet::parse(const json::value 
 
     for (const auto &[category, entry] : value.as_object()) {
         if (auto opt = ResearchAnecdoteEntry::parse(category, entry)) {
+            //! FIXME: resolve duplicate entries
             resp.entries_.insert_or_assign(category, std::move(opt.value()));
         } else {
             return std::nullopt;
