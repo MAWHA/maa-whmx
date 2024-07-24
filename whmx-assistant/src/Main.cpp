@@ -34,7 +34,7 @@ fs::path get_application_dir() {
 
 coro::Promise<int> async_main() {
     const fs::path    app_dir       = get_application_dir();
-    const fs::path    agent_dir     = app_dir / "agent";
+    const fs::path    agent_dir     = app_dir / "agents";
     const fs::path    res_dir       = app_dir / "assets" / "general";
     const fs::path    res_data_dir  = app_dir / "assets" / "data";
     const fs::path    anecdotes_dir = res_data_dir / "anecdotes.json";
