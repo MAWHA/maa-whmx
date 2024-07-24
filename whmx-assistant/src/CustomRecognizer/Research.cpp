@@ -16,8 +16,10 @@
 #include "Research.h"
 #include "../Decode.h"
 #include "../ReferenceDataSet.h"
+#include "../Algorithm.h"
 
 #include <map>
+#include <limits>
 #include <array>
 #include <opencv2/imgproc.hpp>
 #include <QtCore/QDebug>
@@ -281,9 +283,26 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
     const auto &entry = opt_entry.value().get();
 
     //! TODO: check option stage
-    //! TODO: recognize option stage, i.e. recog content or text of options
 
-    if (opt.start_stage == -1) { Q_UNIMPLEMENTED(); }
+    if (opt.start_stage == -1) {
+        int    stage          = -1;
+        int    stage_distance = std::numeric_limits<int>::max();
+        double max_score      = std::numeric_limits<double>::lowest();
+        qDebug() << "max-score:" << max_score;
+        for (int i = 0; i < entry.total_stages(); ++i) {
+            const auto   lhs      = QString::fromUtf8(content.text);
+            const auto   rhs      = QString::fromUtf8(entry.stage(i).content);
+            const int    distance = min_edit_distance(lhs, rhs);
+            const double score    = -distance / std::max<double>(1, rhs.length());
+            if (score > max_score) {
+                max_score      = score;
+                stage_distance = distance;
+                stage          = i;
+            }
+        }
+        if (stage == -1) { co_return resp; }
+        opt.start_stage = stage;
+    }
 
     json::object resp_data{
         {"category", opt.category   },

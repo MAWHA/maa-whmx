@@ -11,6 +11,8 @@ PRIVATE
     Decode.h
     ReferenceDataSet.cpp
     ReferenceDataSet.h
+    Algorithm.cpp
+    Algorithm.h
     CustomAction/Research.cpp
     CustomAction/Research.h
     CustomRecognizer/Research.cpp

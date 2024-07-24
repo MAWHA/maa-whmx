@@ -98,6 +98,27 @@ public:
         return option_stages_.at(index);
     }
 
+    auto as_stage_range() const {
+        class Range {
+        public:
+            Range(const ResearchAnecdoteRecord &owner)
+                : owner_(owner) {}
+
+            auto begin() const {
+                return owner_.option_stages_.begin();
+            }
+
+            auto end() const {
+                return owner_.option_stages_.end();
+            }
+
+        private:
+            const ResearchAnecdoteRecord &owner_;
+        };
+
+        return Range(*this);
+    }
+
 private:
     std::string                              name_;
     std::vector<ResearchAnecdoteOptionGroup> option_stages_;
