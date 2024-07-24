@@ -14,7 +14,7 @@ int min_edit_distance(const QString &src, const QString &dst) {
             const int k = i * n + j;
             if (i == 0 || j == 0) {
                 dp[k] = 0;
-            } else if (src.at(i - 1) == dst.at(j - 1)) {
+            } else if (dst.at(i - 1) == src.at(j - 1)) {
                 dp[k] = dp[k - n - 1];
             } else {
                 dp[k] = std::min(std::min(dp[k - 1], dp[k - n]), dp[k - n - 1]) + 1;
