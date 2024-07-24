@@ -9,6 +9,7 @@
                 "^(?!.*?\\$schema).*$": {
                     "type": "array",
                     "description": "奇遇名称",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "description": "奇遇选择阶段\n阶段的编号为在列表中出现的次序，从 0 开始计数",
@@ -19,7 +20,7 @@
                             },
                             "recommended": {
                                 "type": "integer",
-                                "description": "推荐的选项编号\n默认为 -1，表示无推荐",
+                                "description": "推荐的选项编号\n默认为 -1，表示无推荐\n只有一个选项时，可以忽略被该设置",
                                 "enum": [
                                     -1,
                                     0,
