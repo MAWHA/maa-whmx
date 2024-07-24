@@ -1,4 +1,3 @@
-# config MaaFramework
 set(CV_SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/OpenCV)
 
 find_package(OpenCV GLOBAL QUIET

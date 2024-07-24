@@ -3,7 +3,7 @@ function(nice_install_files install_dir)
     set(relative_loc "")
     set(files "")
 
-    foreach (entry ${ARGN})
+    foreach(entry ${ARGN})
         if(${entry} STREQUAL "ABSOLUTE")
             set(relative_loc "")
             continue()
