@@ -14,6 +14,7 @@
 */
 
 #include "Research.h"
+#include "../Decode.h"
 
 #include <array>
 #include <vector>
@@ -79,9 +80,7 @@ coro::Promise<bool> SelectGradeOption::research__select_grade_option(
         MaaRect box;
     };
 
-    //! FIXME: resp is wrapped into the general schema provided by maafw unexpectedly
-    const auto  raw_json  = json::parse(cur_rec_detail);
-    const auto &face_data = raw_json->at("all").at(0).at("detail").as_array();
+    const auto &face_data = unwrap_custom_recognizer_analyze_result(cur_rec_detail).as_array();
 
     std::array<FaceInfo, 6> faces;
     for (const auto &obj : face_data) {

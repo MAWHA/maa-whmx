@@ -70,3 +70,11 @@ std::optional<OcrRecord> parse_and_get_full_text_ocr_result(const json::value &r
 
     return std::make_optional(OcrRecord{full_text, weighted_score / std::max(total_chars, 1)});
 }
+
+json::value unwrap_custom_recognizer_analyze_result(std::string_view rec_detail) {
+    if (auto opt_value = json::parse(rec_detail)) {
+        return opt_value->at("all").at(0).at("detail");
+    } else {
+        return json::value();
+    }
+}

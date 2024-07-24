@@ -26,3 +26,4 @@ struct OcrRecord {
 
 std::optional<OcrRecord> parse_and_get_best_ocr_record(const json::value &result);
 std::optional<OcrRecord> parse_and_get_full_text_ocr_result(const json::value &result);
+json::value              unwrap_custom_recognizer_analyze_result(std::string_view rec_detail);
