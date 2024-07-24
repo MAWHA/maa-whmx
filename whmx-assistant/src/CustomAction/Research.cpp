@@ -115,7 +115,7 @@ coro::Promise<bool> SelectGradeOption::research__select_grade_option(
 
     std::vector<FaceInfo> sorted_faces(faces.begin(), faces.end());
     std::sort(sorted_faces.begin(), sorted_faces.end(), [](const auto &lhs, const auto &rhs) {
-        return lhs.grade <= rhs.grade;
+        return lhs.grade < rhs.grade;
     });
 
     std::mt19937 rng(std::random_device{}());

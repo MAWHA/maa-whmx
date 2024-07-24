@@ -55,7 +55,7 @@ std::optional<OcrRecord> parse_and_get_full_text_ocr_result(const json::value &r
     }
 
     std::sort(records.begin(), records.end(), [](const auto &lhs, const auto &rhs) {
-        return lhs.y_pos <= rhs.y_pos;
+        return lhs.y_pos < rhs.y_pos;
     });
 
     double weighted_score = 0.0;
