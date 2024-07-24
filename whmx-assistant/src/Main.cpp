@@ -19,18 +19,16 @@
 #include "DeviceHelper.h"
 
 #include <MaaPP/MaaPP.hpp>
-#include <iostream>
 #include <filesystem>
-#include <windows.h>
+#include <QApplication>
+#include <QThread>
 
 namespace fs = std::filesystem;
 
 using namespace maa;
 
 fs::path get_application_dir() {
-    char path[MAX_PATH]{};
-    GetModuleFileName(NULL, path, sizeof(path));
-    return fs::path(path).parent_path();
+    return fs::path(QApplication::applicationDirPath().toStdString());
 }
 
 coro::Promise<int> async_main() {
@@ -43,7 +41,7 @@ coro::Promise<int> async_main() {
 
     const auto device_resp = co_await find_adb_device(adb_hint);
     if (!device_resp.has_value()) {
-        std::clog << "failed to create abd controller" << std::endl;
+        qDebug("failed to create abd controller");
         co_return -1;
     }
 
@@ -62,7 +60,7 @@ coro::Promise<int> async_main() {
 
     auto instance = Instance::make()->bind(resource)->bind(controller);
     if (!instance->inited()) {
-        std::clog << "failed to init MAA" << std::endl;
+        qDebug("failed to init MAA");
         co_return -1;
     }
 
@@ -80,8 +78,37 @@ coro::Promise<int> async_main() {
     co_return 0;
 }
 
+class MaaWorker : public QThread {
+public:
+    void run() override {
+        coro::EventLoop ev;
+        ev.stop_after(async_main());
+        exit(ev.exec());
+    }
+
+    int ret_code() const {
+        return ret_code_;
+    }
+
+protected:
+    void exit(int ret_code) {
+        ret_code_ = ret_code;
+        QThread::exit();
+    }
+
+private:
+    int ret_code_;
+};
+
 int main(int argc, char *argv[]) {
-    coro::EventLoop ev;
-    ev.stop_after(async_main());
-    return ev.exec();
+    QApplication app(argc, argv);
+
+    MaaWorker worker;
+    QObject::connect(&worker, &QThread::finished, &app, [&worker]() {
+        QApplication::exit(worker.ret_code());
+    });
+
+    worker.start();
+
+    return app.exec();
 }

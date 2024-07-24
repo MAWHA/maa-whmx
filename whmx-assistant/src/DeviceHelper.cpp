@@ -15,16 +15,16 @@
 
 #include "DeviceHelper.h"
 
+#include <QtCore/QDebug>
 #include <regex>
 #include <algorithm>
-#include <iostream>
 
 using namespace maa;
 
 coro::Promise<std::optional<AdbDevice>> find_adb_device(const std::string &adb_hint) {
     const auto devices = co_await AdbDeviceFinder::find();
     if (!devices || devices->empty()) {
-        std::clog << "no device found" << std::endl;
+        qDebug("no device found");
         co_return std::nullopt;
     }
 
@@ -33,7 +33,7 @@ coro::Promise<std::optional<AdbDevice>> find_adb_device(const std::string &adb_h
             return std::regex_match(device.name, pattern);
         });
     if (device_resp == devices->end()) {
-        std::clog << "no device matched regex hint \"" << adb_hint << "\"" << std::endl;
+        qDebug(R"(no device matched regex hint "%s")", adb_hint.c_str());
         co_return std::nullopt;
     }
 

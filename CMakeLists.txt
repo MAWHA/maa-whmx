@@ -24,4 +24,5 @@ include(cmake/install_agents.cmake)
 include(cmake/config_maafw.cmake)
 include(cmake/config_opencv.cmake)
 
+add_subdirectory(deps/Qt6)
 add_subdirectory(whmx-assistant)

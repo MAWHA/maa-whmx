@@ -17,6 +17,16 @@ target_link_libraries(whmx-assistant
 PRIVATE
     MaaFramework::MaaPP
     OpenCV::OpenCV
+    desktop-app::Qt6
+)
+
+add_custom_command(TARGET whmx-assistant POST_BUILD
+COMMAND
+    windeployqt ${CMAKE_INSTALL_PREFIX}/$<TARGET_FILE_NAME:whmx-assistant>
+    --verbose 0
+    --no-quick-import
+    --no-translations
+    --no-libraries
 )
 
 install(TARGETS whmx-assistant
