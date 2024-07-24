@@ -1,0 +1,80 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "type": "object",
+    "patternProperties": {
+        "^(?!.*?\\$schema).*$": {
+            "type": "object",
+            "description": "研学类别",
+            "patternProperties": {
+                "^(?!.*?\\$schema).*$": {
+                    "type": "array",
+                    "description": "奇遇名称",
+                    "items": {
+                        "type": "object",
+                        "description": "奇遇选择阶段\n阶段的编号为在列表中出现的次序，从 0 开始计数",
+                        "properties": {
+                            "content": {
+                                "type": "string",
+                                "description": "奇遇选择阶段的文本内容"
+                            },
+                            "recommended": {
+                                "type": "integer",
+                                "description": "推荐的选项编号\n默认为 -1，表示无推荐",
+                                "enum": [
+                                    -1,
+                                    0,
+                                    1,
+                                    2
+                                ],
+                                "default": -1
+                            },
+                            "options": {
+                                "type": "array",
+                                "description": "选项列表\n选项的编号为在列表中出现的次序，从 0 开始计数",
+                                "minItems": 1,
+                                "maxItems": 3,
+                                "items": {
+                                    "type": "object",
+                                    "description": "选项属性",
+                                    "properties": {
+                                        "text": {
+                                            "type": "string",
+                                            "description": "选项内容"
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "description": "选项类型\nnormal 表示固定选项，random 表示随机选项",
+                                            "enum": [
+                                                "normal",
+                                                "random"
+                                            ],
+                                            "default": "normal"
+                                        },
+                                        "positive": {
+                                            "type": "boolean",
+                                            "description": "是否为积极选项\n积极选项一定是利好选项，但非积极选项不一定是有害的",
+                                            "default": false
+                                        },
+                                        "next": {
+                                            "type": "integer",
+                                            "description": "后继遇选择阶段的编号\n默认为 -1，表示无后继或存在不定后继，其中不定后继在 type=\"random\" 时有效",
+                                            "minimum": -1,
+                                            "default": -1
+                                        }
+                                    },
+                                    "required": [
+                                        "text"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "content",
+                            "options"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
