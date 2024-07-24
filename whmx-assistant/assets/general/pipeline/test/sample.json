@@ -1,0 +1,31 @@
+{
+    "Test.Research.DefensiveUpgrade": {
+        "next": [
+            "Test.Research.DefensiveUpgrade.Select"
+        ]
+    },
+    "Test.Research.DefensiveUpgrade.Select": {
+        "recognition": "Custom",
+        "custom_recognition": "Research.ParseGradeOptionsOnModify",
+        "action": "Custom",
+        "custom_action": "Research.SelectGradeOption",
+        "custom_action_param": {
+            "mode": "upgrade",
+            "policy": "defensive"
+        },
+        "next": [
+            "Test.Research.DefensiveUpgrade.Commit"
+        ]
+    },
+    "Test.Research.DefensiveUpgrade.Commit": {
+        "recognition": "TemplateMatch",
+        "template": "Research/GradeOption/Commit.png",
+        "roi": [
+            880,
+            540,
+            170,
+            60
+        ],
+        "action": "Click"
+    }
+}
