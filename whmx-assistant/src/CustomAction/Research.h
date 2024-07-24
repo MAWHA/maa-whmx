@@ -56,4 +56,27 @@ private:
         MaaStringView                     cur_rec_detail);
 };
 
+struct ResolveAnecdoteParam {};
+
+class ResolveAnecdote {
+public:
+    static std::string name() {
+        return "Research.ResolveAnecdote";
+    }
+
+    static std::shared_ptr<maa::CustomAction> make() {
+        return maa::CustomAction::make(&ResolveAnecdote::research__resolve_anecdote);
+    }
+
+    static bool parse_params(ResolveAnecdoteParam &param_out, MaaStringView raw_param);
+
+private:
+    static maa::coro::Promise<bool> research__resolve_anecdote(
+        std::shared_ptr<maa::SyncContext> context,
+        MaaStringView                     task_name,
+        MaaStringView                     param,
+        const MaaRect                    &cur_box,
+        MaaStringView                     cur_rec_detail);
+};
+
 } // namespace Action::Research

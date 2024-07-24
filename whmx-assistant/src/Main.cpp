@@ -80,9 +80,9 @@ coro::Promise<int> async_main() {
     instance->bind<Rec::Research::ParseGradeOptionsOnModify>();
     instance->bind<Rec::Research::ParseAnecdote>();
     instance->bind<Action::Research::SelectGradeOption>();
+    instance->bind<Action::Research::ResolveAnecdote>();
 
-    // const auto entry_task = "Test.ReservedTaskToAvoidErrorAlert";
-    const auto entry_task = "Test.Research.GetAnecdoteData";
+    const auto entry_task = "Test.SampleEntry";
     co_await instance->post_task(entry_task)->wait();
 
     co_return 0;

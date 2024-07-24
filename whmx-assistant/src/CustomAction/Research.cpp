@@ -175,4 +175,20 @@ coro::Promise<bool> SelectGradeOption::research__select_grade_option(
     co_return true;
 }
 
+bool ResolveAnecdote::parse_params(ResolveAnecdoteParam &param_out, MaaStringView raw_param) {
+    Q_UNIMPLEMENTED();
+    return true;
+}
+
+coro::Promise<bool> ResolveAnecdote::research__resolve_anecdote(
+    std::shared_ptr<SyncContext> context,
+    MaaStringView                task_name,
+    MaaStringView                param,
+    const MaaRect               &cur_box,
+    MaaStringView                cur_rec_detail) {
+    qDebug().noquote() << QString::fromUtf8(unwrap_custom_recognizer_analyze_result(cur_rec_detail).to_string());
+    Q_UNIMPLEMENTED();
+    co_return true;
+}
+
 } // namespace Action::Research

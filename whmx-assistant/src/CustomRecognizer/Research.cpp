@@ -288,7 +288,6 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
         int    stage          = -1;
         int    stage_distance = std::numeric_limits<int>::max();
         double max_score      = std::numeric_limits<double>::lowest();
-        qDebug() << "max-score:" << max_score;
         for (int i = 0; i < entry.total_stages(); ++i) {
             const auto   lhs      = QString::fromUtf8(content.text);
             const auto   rhs      = QString::fromUtf8(entry.stage(i).content);

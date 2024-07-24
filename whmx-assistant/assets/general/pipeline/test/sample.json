@@ -1,4 +1,9 @@
 {
+    "Test.SampleEntry": {
+        "next": [
+            "Test.Research.ResolveAnecdoteUnderTargetCategory"
+        ]
+    },
     "Test.Research.DefensiveUpgrade": {
         "next": [
             "Test.Research.DefensiveUpgrade.Select"
@@ -27,5 +32,14 @@
             60
         ],
         "action": "Click"
+    },
+    "Test.Research.ResolveAnecdoteUnderTargetCategory": {
+        "recognition": "Custom",
+        "custom_recognition": "Research.ParseAnecdote",
+        "custom_recognition_param": {
+            "category": "千里江山图"
+        },
+        "action": "Custom",
+        "custom_action": "Research.ResolveAnecdote"
     }
 }
