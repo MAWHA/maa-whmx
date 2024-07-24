@@ -4,6 +4,10 @@ get_filename_component(SOURCE_DIR src REALPATH)
 nice_target_sources(whmx-assistant ${SOURCE_DIR}
 PRIVATE
     main.cpp
+    CustomAction/Research.cpp
+    CustomAction/Research.h
+    CustomRecognizer/Research.cpp
+    CustomRecognizer/Research.h
 )
 
 target_link_libraries(whmx-assistant
