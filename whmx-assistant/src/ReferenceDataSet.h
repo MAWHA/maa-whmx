@@ -120,11 +120,17 @@ public:
     static std::optional<ResearchAnecdoteEntry> parse(const std::string &category, const json::value &value);
 
     std::optional<std::reference_wrapper<const ResearchAnecdoteRecord>> entry(const std::string &name) const {
-        return entries_.contains(name) ? std::make_optional(entries_.at(name)) : std::nullopt;
+        return entries_.contains(name) ? std::make_optional(std::ref(entries_.at(name))) : std::nullopt;
     }
 
     std::string category() const {
         return category_;
+    }
+
+    std::vector<std::string> entry_names() const {
+        std::vector<std::string> list;
+        for (const auto &[name, _] : entries_) { list.push_back(name); }
+        return list;
     }
 
 private:
@@ -149,7 +155,7 @@ public:
     bool load(const std::string &path);
 
     std::optional<std::reference_wrapper<const ResearchAnecdoteEntry>> entry(const std::string &name) const {
-        return entries_.contains(name) ? std::make_optional(entries_.at(name)) : std::nullopt;
+        return entries_.contains(name) ? std::make_optional(std::ref(entries_.at(name))) : std::nullopt;
     }
 
     std::vector<std::string> categories() const {

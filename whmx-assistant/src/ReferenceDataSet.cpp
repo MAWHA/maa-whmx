@@ -115,7 +115,7 @@ std::optional<ResearchAnecdoteSet> ResearchAnecdoteSet::parse(const json::value 
 }
 
 std::shared_ptr<ResearchAnecdoteSet> ResearchAnecdoteSet::instance() {
-    std::shared_ptr<ResearchAnecdoteSet> instance;
+    static std::shared_ptr<ResearchAnecdoteSet> instance;
     if (!instance) { instance = std::make_shared<ResearchAnecdoteSet>(); }
     return instance;
 }

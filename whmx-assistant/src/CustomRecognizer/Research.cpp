@@ -269,14 +269,12 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
     if (!opt_title.has_value()) { co_return resp; }
 
     const auto title = opt_title.value();
-    qDebug() << title.score << QString::fromUtf8(title.text);
 
     const auto content_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi_content));
     const auto opt_content  = parse_and_get_full_text_ocr_result(json::parse(content_resp.rec_detail).value());
     if (!opt_content.has_value()) { co_return resp; }
 
     const auto content = opt_content.value();
-    qDebug() << content.score << QString::fromUtf8(content.text);
 
     const auto opt_entry = category.entry(title.text);
     if (!opt_entry.has_value()) { co_return resp; }
@@ -295,12 +293,6 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
 
     resp.result     = true;
     resp.rec_detail = resp_data.to_string();
-
-    qDebug() << "category:" << QString::fromUtf8(opt.category);
-    qDebug() << "name:" << QString::fromUtf8(entry.name());
-    qDebug() << "stage:" << opt.start_stage;
-    qDebug() << "recommend-option:" << entry.stage(opt.start_stage).recommended;
-
     co_return resp;
 }
 
