@@ -1,35 +1,31 @@
+/* Copyright 2024 周上行Ryer
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 #include "CustomRecognizer/Research.h"
 #include "CustomAction/Research.h"
+#include "Consts.h"
+#include "DeviceHelper.h"
 
 #include <MaaPP/MaaPP.hpp>
 #include <iostream>
-#include <regex>
 #include <filesystem>
-#include <optional>
 #include <windows.h>
 
 namespace fs = std::filesystem;
 
 using namespace maa;
-
-coro::Promise<std::optional<AdbDevice>> find_adb_device(const std::string &adb_hint) {
-    const auto devices = co_await AdbDeviceFinder::find();
-    if (!devices || devices->empty()) {
-        std::clog << "no device found" << std::endl;
-        co_return std::nullopt;
-    }
-
-    const auto device_resp =
-        std::find_if(devices->begin(), devices->end(), [pattern = std::regex(adb_hint)](const auto &device) {
-            return std::regex_match(device.name, pattern);
-        });
-    if (device_resp == devices->end()) {
-        std::clog << "no device matched regex hint \"" << adb_hint << "\"" << std::endl;
-        co_return std::nullopt;
-    }
-
-    co_return std::make_optional(*device_resp);
-}
 
 fs::path get_application_dir() {
     char path[MAX_PATH]{};
@@ -42,8 +38,6 @@ coro::Promise<int> async_main() {
     const fs::path    agent_dir = app_dir / "agent";
     const fs::path    res_dir   = app_dir / "assets" / "general";
     const std::string adb_hint  = R"(MuMuPlayer\d+)";
-    const std::string package   = "com.cipaishe.wuhua.bilibili";
-    const std::string activity  = "com.cipaishe.wuhua.bilibili/com.cipaishe.wuhua.bilibili.activity.ONESDKSplashActivity";
 
     init(app_dir.string());
 
@@ -56,8 +50,8 @@ coro::Promise<int> async_main() {
     auto controller = Controller::make(device_resp.value(), agent_dir.string())
                           ->set_long_side(1280)
                           ->set_short_side(720)
-                          ->set_start_entry(activity)
-                          ->set_stop_entry(package);
+                          ->set_start_entry(Consts::ACTIVITY)
+                          ->set_stop_entry(Consts::PACKAGE);
     auto ctrl_req_conn = controller->post_connect();
 
     auto resource     = Resource::make();

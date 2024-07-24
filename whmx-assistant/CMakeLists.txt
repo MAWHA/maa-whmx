@@ -3,7 +3,10 @@ add_executable(whmx-assistant)
 get_filename_component(SOURCE_DIR src REALPATH)
 nice_target_sources(whmx-assistant ${SOURCE_DIR}
 PRIVATE
-    main.cpp
+    Main.cpp
+    Consts.h
+    DeviceHelper.cpp
+    DeviceHelper.h
     CustomAction/Research.cpp
     CustomAction/Research.h
     CustomRecognizer/Research.cpp
