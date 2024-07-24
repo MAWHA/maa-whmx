@@ -31,8 +31,8 @@ struct SelectGradeOptionParam {
         Downgrade
     };
 
-    Policy policy;
-    Mode   mode;
+    Policy policy; //<! default: Auto
+    Mode   mode;   //<! required
 };
 
 class SelectGradeOption {

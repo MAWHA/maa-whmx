@@ -34,4 +34,27 @@ private:
         maa::SyncContextHandle context, maa::ImageHandle image, std::string_view task_name, std::string_view param);
 };
 
+struct ParseAnecdoteParam {
+    std::string category;            //<! required
+    bool        enable_fuzzy_search; //<! default: false
+    int         start_stage;         //<! default: -1, means auto detect
+};
+
+class ParseAnecdote {
+public:
+    static std::string name() {
+        return "Research.ParseAnecdote";
+    }
+
+    static std::shared_ptr<maa::CustomRecognizer> make() {
+        return maa::CustomRecognizer::make(&ParseAnecdote::research__parse_anecdote);
+    }
+
+    static bool parse_params(ParseAnecdoteParam &param_out, MaaStringView raw_param);
+
+private:
+    static maa::coro::Promise<maa::AnalyzeResult> research__parse_anecdote(
+        maa::SyncContextHandle context, maa::ImageHandle image, std::string_view task_name, std::string_view param);
+};
+
 } // namespace Rec::Research

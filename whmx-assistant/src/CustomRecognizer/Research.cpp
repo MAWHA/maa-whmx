@@ -14,10 +14,13 @@
 */
 
 #include "Research.h"
+#include "../Decode.h"
+#include "../ReferenceDataSet.h"
 
 #include <map>
 #include <array>
 #include <opencv2/imgproc.hpp>
+#include <QtCore/QDebug>
 
 namespace Rec::Research {
 
@@ -40,6 +43,17 @@ struct GradeOptionFaceInfo {
     MaaRect origin_geo;
     cv::Mat image;
 };
+
+static json::object make_ocr_params(const MaaRect &roi = MaaRect{0, 0, 0, 0}, const std::string &model = "ppocr_v4/zh_CN") {
+    const json::object params{
+        {"recognition", "OCR"                                           },
+        {"model",       model                                           },
+        {"roi",         json::array{roi.x, roi.y, roi.width, roi.height}},
+    };
+    return json::object{
+        {"OCR", params}
+    };
+}
 
 static void grade_face_tilt_correct(const cv::Mat &src, cv::Mat &dst, GradeFaceCorner corner) {
     switch (corner) {
@@ -153,20 +167,14 @@ coro::Promise<AnalyzeResult> ParseGradeOptionsOnModify::research__parse_grade_op
         coro::Promise<AnalyzeResult>    promise;
     };
 
-    const json::object params{
-        {"recognition", "OCR"           },
-        {"model",       "ppocr_v4/zh_CN"},
-    };
-    const json::object task_param{
-        {"OCR", params}
-    };
+    const auto ocr_params = make_ocr_params();
 
     std::array<RecTask, 6> tasks;
     for (const auto &[index, geo, image] : faces) {
         auto &[image_object, promise] = tasks[index];
         image_object                  = details::Image::make();
         MaaSetImageRawData(image_object->handle(), image.data, image.cols, image.rows, image.type());
-        promise = context->run_recognition(image_object, "OCR", task_param);
+        promise = context->run_recognition(image_object, "OCR", ocr_params);
     }
 
     constexpr int UNKNOWN_GRADE = -1;
@@ -204,6 +212,94 @@ coro::Promise<AnalyzeResult> ParseGradeOptionsOnModify::research__parse_grade_op
     resp.rec_box    = MaaRect{0, 0, 0, 0};
     resp.rec_detail = recog_results.to_string();
     resp.result     = true;
+
+    co_return resp;
+}
+
+bool ParseAnecdote::parse_params(ParseAnecdoteParam &param_out, MaaStringView raw_param) {
+    auto opt_params = json::parse(raw_param);
+    if (!opt_params.has_value()) { return false; }
+    if (!opt_params->is_object()) { return false; }
+
+    const auto &params = opt_params.value().as_object();
+
+    if (params.contains("category")) {
+        param_out.category = params.at("category").as_string();
+    } else {
+        return false;
+    }
+
+    param_out.enable_fuzzy_search = params.get("enable_fuzzy_search", false);
+    param_out.start_stage         = params.get("start_stage", -1);
+
+    return true;
+}
+
+coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
+    SyncContextHandle context, ImageHandle image, std::string_view task_name, std::string_view param) {
+    //! FIXME: the method only works under 1280x720 resolution
+
+    AnalyzeResult resp;
+    resp.result = false;
+
+    ParseAnecdoteParam opt;
+    if (!parse_params(opt, param.data())) {
+        qDebug("%s: invalid arguments", task_name.data());
+        co_return resp;
+    }
+
+    //! TODO: support fuzzy search
+    const auto opt_category = Ref::ResearchAnecdoteSet::instance()->entry(opt.category);
+    if (!opt_category.has_value()) { co_return resp; }
+    const auto &category = opt_category.value().get();
+
+    const MaaRect roi_title{600, 120, 460, 32};
+    const MaaRect roi_content{600, 170, 490, 196};
+
+    const int opt_size_w  = 350;
+    const int opt_size_h  = 28;
+    const int opt_x       = 620;
+    const int first_opt_y = 400;
+    const int opt_dy      = 68;
+
+    const auto ocr_params = make_ocr_params();
+
+    const auto title_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi_title));
+    const auto opt_title  = parse_and_get_best_ocr_record(json::parse(title_resp.rec_detail).value());
+    if (!opt_title.has_value()) { co_return resp; }
+
+    const auto title = opt_title.value();
+    qDebug() << title.score << QString::fromUtf8(title.text);
+
+    const auto content_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi_content));
+    const auto opt_content  = parse_and_get_full_text_ocr_result(json::parse(content_resp.rec_detail).value());
+    if (!opt_content.has_value()) { co_return resp; }
+
+    const auto content = opt_content.value();
+    qDebug() << content.score << QString::fromUtf8(content.text);
+
+    const auto opt_entry = category.entry(title.text);
+    if (!opt_entry.has_value()) { co_return resp; }
+    const auto &entry = opt_entry.value().get();
+
+    //! TODO: check option stage
+    //! TODO: recognize option stage, i.e. recog content or text of options
+
+    if (opt.start_stage == -1) { Q_UNIMPLEMENTED(); }
+
+    json::object resp_data{
+        {"category", opt.category   },
+        {"name",     entry.name()   },
+        {"stage",    opt.start_stage},
+    };
+
+    resp.result     = true;
+    resp.rec_detail = resp_data.to_string();
+
+    qDebug() << "category:" << QString::fromUtf8(opt.category);
+    qDebug() << "name:" << QString::fromUtf8(entry.name());
+    qDebug() << "stage:" << opt.start_stage;
+    qDebug() << "recommend-option:" << entry.stage(opt.start_stage).recommended;
 
     co_return resp;
 }

@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <random>
 #include <utility>
+#include <QtCore/QDebug>
 
 namespace Action::Research {
 
@@ -29,32 +30,30 @@ bool SelectGradeOption::parse_params(SelectGradeOptionParam &param_out, MaaStrin
     using Policy = SelectGradeOptionParam::Policy;
     using Mode   = SelectGradeOptionParam::Mode;
 
-    auto param = json::parse(raw_param);
+    auto opt_param = json::parse(raw_param);
+    if (!opt_param.has_value()) { return false; }
 
-    if (param->contains("policy")) {
-        const auto policy = param->at("policy").as_string();
-        if (false) {
-        } else if (policy == "greedy") {
-            param_out.policy = Policy::Greedy;
-        } else if (policy == "defensive") {
-            param_out.policy = Policy::Defensive;
-        } else {
-            param_out.policy = Policy::Auto;
-        }
+    const auto &param = opt_param.value().as_object();
+
+    const auto policy = param.get("policy", "auto");
+    if (false) {
+    } else if (policy == "auto") {
+        param_out.policy = Policy::Auto;
+    } else if (policy == "greedy") {
+        param_out.policy = Policy::Greedy;
+    } else if (policy == "defensive") {
+        param_out.policy = Policy::Defensive;
     } else {
         param_out.policy = Policy::Auto;
     }
 
-    if (param->contains("mode")) {
-        const auto mode = param->at("mode").as_string();
-        if (false) {
-        } else if (mode == "upgrade") {
-            param_out.mode = Mode::Upgrade;
-        } else if (mode == "downgrade") {
-            param_out.mode = Mode::Downgrade;
-        } else {
-            return false;
-        }
+    if (!param.contains("mode")) { return false; }
+    const auto mode = param.at("mode").as_string();
+    if (false) {
+    } else if (mode == "upgrade") {
+        param_out.mode = Mode::Upgrade;
+    } else if (mode == "downgrade") {
+        param_out.mode = Mode::Downgrade;
     } else {
         return false;
     }
@@ -69,9 +68,10 @@ coro::Promise<bool> SelectGradeOption::research__select_grade_option(
     const MaaRect               &cur_box,
     MaaStringView                cur_rec_detail) {
     SelectGradeOptionParam opt;
-    const bool             success = parse_params(opt, param);
-
-    if (!success) { co_return false; }
+    if (!parse_params(opt, param)) {
+        qDebug("%s: invalid arguments", task_name);
+        co_return false;
+    }
 
     struct FaceInfo {
         int     index;
@@ -79,6 +79,7 @@ coro::Promise<bool> SelectGradeOption::research__select_grade_option(
         MaaRect box;
     };
 
+    //! FIXME: resp is wrapped into the general schema provided by maafw unexpectedly
     const auto  raw_json  = json::parse(cur_rec_detail);
     const auto &face_data = raw_json->at("all").at(0).at("detail").as_array();
 
@@ -109,13 +110,6 @@ coro::Promise<bool> SelectGradeOption::research__select_grade_option(
             ++total_unknown_grade;
         }
     }
-
-    std::clog << std::format(
-        "total_max_grade: {} total_min_grade: {} total_unknown_grade: {}",
-        total_max_grade,
-        total_min_grade,
-        total_unknown_grade)
-              << std::endl;
 
     //! TODO: impl solution to unknown grade due failure of recognition
     if (total_unknown_grade > 0) { co_return false; }

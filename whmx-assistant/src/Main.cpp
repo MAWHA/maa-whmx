@@ -15,6 +15,7 @@
 
 #include "CustomRecognizer/Research.h"
 #include "CustomAction/Research.h"
+#include "ReferenceDataSet.h"
 #include "Consts.h"
 #include "DeviceHelper.h"
 
@@ -32,16 +33,23 @@ fs::path get_application_dir() {
 }
 
 coro::Promise<int> async_main() {
-    const fs::path    app_dir   = get_application_dir();
-    const fs::path    agent_dir = app_dir / "agent";
-    const fs::path    res_dir   = app_dir / "assets" / "general";
-    const std::string adb_hint  = R"(MuMuPlayer\d+)";
+    const fs::path    app_dir       = get_application_dir();
+    const fs::path    agent_dir     = app_dir / "agent";
+    const fs::path    res_dir       = app_dir / "assets" / "general";
+    const fs::path    res_data_dir  = app_dir / "assets" / "data";
+    const fs::path    anecdotes_dir = res_data_dir / "anecdotes.json";
+    const std::string adb_hint      = R"(MuMuPlayer\d+)";
 
     init(app_dir.string());
 
+    {
+        const bool ok = Ref::ResearchAnecdoteSet::instance()->load(anecdotes_dir.string());
+        Q_ASSERT(ok);
+    }
+
     const auto device_resp = co_await find_adb_device(adb_hint);
     if (!device_resp.has_value()) {
-        qDebug("failed to create abd controller");
+        qDebug("failed to create adb controller");
         co_return -1;
     }
 
@@ -70,9 +78,11 @@ coro::Promise<int> async_main() {
     // co_await controller->post_start_app(activity)->wait();
 
     instance->bind<Rec::Research::ParseGradeOptionsOnModify>();
+    instance->bind<Rec::Research::ParseAnecdote>();
     instance->bind<Action::Research::SelectGradeOption>();
 
-    const auto entry_task = "Test.ReservedTaskToAvoidErrorAlert";
+    // const auto entry_task = "Test.ReservedTaskToAvoidErrorAlert";
+    const auto entry_task = "Test.Research.GetAnecdoteData";
     co_await instance->post_task(entry_task)->wait();
 
     co_return 0;
@@ -107,7 +117,6 @@ int main(int argc, char *argv[]) {
     QObject::connect(&worker, &QThread::finished, &app, [&worker]() {
         QApplication::exit(worker.ret_code());
     });
-
     worker.start();
 
     return app.exec();

@@ -7,6 +7,10 @@ PRIVATE
     Consts.h
     DeviceHelper.cpp
     DeviceHelper.h
+    Decode.cpp
+    Decode.h
+    ReferenceDataSet.cpp
+    ReferenceDataSet.h
     CustomAction/Research.cpp
     CustomAction/Research.h
     CustomRecognizer/Research.cpp
@@ -18,15 +22,6 @@ PRIVATE
     MaaFramework::MaaPP
     OpenCV::OpenCV
     desktop-app::Qt6
-)
-
-add_custom_command(TARGET whmx-assistant POST_BUILD
-COMMAND
-    windeployqt ${CMAKE_INSTALL_PREFIX}/$<TARGET_FILE_NAME:whmx-assistant>
-    --verbose 0
-    --no-quick-import
-    --no-translations
-    --no-libraries
 )
 
 install(TARGETS whmx-assistant
