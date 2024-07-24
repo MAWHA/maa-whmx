@@ -1,3 +1,13 @@
+# ```
+# AppVersion          <major> * 1000000 + <minor> * 1000 + <patch>
+# AppVersionNameFull  <major>.<minor> [ .<patch> [ .<alpha>_alpha | _beta ] ]
+# AppVersionNameMajor <major>.<minor>
+# AppVersionNameSmall <major>.<minor> [ .<patch> ]
+# AppVersionStr       <major>.<minor>.<patch>
+# AlphaVersion        <alpha>
+# BetaChannel         <beta>
+# ```
+
 function(desktop_app_parse_version file)
     file(STRINGS ${file} lines)
     foreach(line ${lines})
