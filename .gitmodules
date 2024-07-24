@@ -1,0 +1,3 @@
+[submodule "deps/MaaFramework"]
+	path = deps/MaaFramework
+	url = https://github.com/MAWHA/maafw-prebuild
