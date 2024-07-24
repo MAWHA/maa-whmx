@@ -1,6 +1,7 @@
 {
     "Test.SampleEntry": {
         "next": [
+            "Test.Research.DefensiveUpgrade",
             "Test.Research.ResolveAnecdoteUnderTargetCategory"
         ]
     },
@@ -37,7 +38,7 @@
         "recognition": "Custom",
         "custom_recognition": "Research.ParseAnecdote",
         "custom_recognition_param": {
-            "category": "千里江山图"
+            "category": "雪景寒林图"
         },
         "action": "Custom",
         "custom_action": "Research.ResolveAnecdote"
