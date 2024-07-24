@@ -48,7 +48,7 @@ function(desktop_app_parse_version file)
     math(EXPR version_int "${major} * 1000000 + ${minor} * 1000 + ${patch}")
 
     set(major_name "${major}.${minor}")
-    set(normal_name "${major_name}.${alpha}")
+    set(normal_name "${major_name}.${patch}")
     if(${patch} STREQUAL 0)
         set(small_name "${major_name}")
     else()
