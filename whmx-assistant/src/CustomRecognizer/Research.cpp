@@ -282,6 +282,9 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
     if (!opt_entry.has_value()) { co_return resp; }
     const auto &entry = opt_entry.value().get();
 
+    //! NOTE: 0.0 is the best score to indicate a mannually specified start-stage, see the following code for more details
+    double option_score = 0.0;
+
     //! TODO: check option stage
 
     if (opt.start_stage == -1) {
@@ -301,12 +304,14 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
         }
         if (stage == -1) { co_return resp; }
         opt.start_stage = stage;
+        option_score    = max_score;
     }
 
     json::object resp_data{
         {"category", opt.category   },
         {"name",     entry.name()   },
         {"stage",    opt.start_stage},
+        {"score",    option_score   },
     };
 
     resp.result     = true;

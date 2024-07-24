@@ -39,6 +39,8 @@ std::optional<ResearchAnecdoteOption> ResearchAnecdoteOption::parse(const json::
         resp.type = ResearchAnecdoteOption::Normal;
     }
 
+    resp.next_entry_hint = resp.type == ResearchAnecdoteOption::Random ? -1 : value.get("next", -1);
+
     return std::make_optional(std::move(resp));
 }
 

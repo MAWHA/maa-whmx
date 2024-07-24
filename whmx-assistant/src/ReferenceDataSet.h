@@ -46,6 +46,7 @@ public:
     std::string name;
     TypeKind    type;
     bool        positive;
+    int         next_entry_hint;
 };
 
 class ResearchAnecdoteOptionGroup {
