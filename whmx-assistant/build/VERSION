@@ -1,7 +1,7 @@
-AppVersion          0
-AppVersionNameFull  0.1.0
+AppVersion          1001
+AppVersionNameFull  0.1.1.1_alpha
 AppVersionNameMajor 0.1
-AppVersionNameSmall 0.1
-AppVersionStr       0.1
-AlphaVersion        0
+AppVersionNameSmall 0.1.1
+AppVersionStr       0.1.1
+AlphaVersion        1
 BetaChannel         0
