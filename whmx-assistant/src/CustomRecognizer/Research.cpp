@@ -23,6 +23,7 @@
 #include <array>
 #include <opencv2/imgproc.hpp>
 #include <QtCore/QDebug>
+#include <QtCore/QElapsedTimer>
 
 namespace Rec::Research {
 
@@ -266,18 +267,25 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
 
     const auto ocr_params = make_ocr_params();
 
+    QElapsedTimer timer;
+
+    timer.restart();
     const auto title_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi_title));
     const auto opt_title  = parse_and_get_best_ocr_record(json::parse(title_resp.rec_detail).value());
+    qDebug().noquote()
+        << QString("%1: %2: cost time %3ms").arg(QString::fromUtf8(task_name)).arg("title recognition").arg(timer.elapsed());
     if (!opt_title.has_value()) { co_return resp; }
 
     const auto title = opt_title.value();
 
+    timer.restart();
     const auto content_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi_content));
     const auto opt_content  = parse_and_get_full_text_ocr_result(json::parse(content_resp.rec_detail).value());
+    qDebug().noquote()
+        << QString("%1: %2: cost time %3ms").arg(QString::fromUtf8(task_name)).arg("content recognition").arg(timer.elapsed());
     if (!opt_content.has_value()) { co_return resp; }
 
-    const auto content = opt_content.value();
-
+    const auto content   = opt_content.value();
     const auto opt_entry = category.entry(title.text);
     if (!opt_entry.has_value()) { co_return resp; }
     const auto &entry = opt_entry.value().get();
