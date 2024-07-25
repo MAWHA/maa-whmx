@@ -54,7 +54,7 @@ RELATIVE ${CMAKE_SOURCE_DIR}/deps/MaaFramework/bin
     MaaAdbControlUnit.dll
 )
 
-add_custom_target(predeploy
+add_custom_target(pre-deploy
 COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --config $<CONFIG> --target install
 )
 
@@ -65,5 +65,12 @@ COMMAND
     --no-quick-import
     --no-translations
     --no-libraries
-DEPENDS predeploy
+DEPENDS pre-deploy
 )
+
+add_custom_target(post-deploy
+COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_INSTALL_PREFIX} $<TARGET_FILE_DIR:whmx-assistant>
+DEPENDS deploy
+)
+
+add_custom_target(deploy-all DEPENDS post-deploy)

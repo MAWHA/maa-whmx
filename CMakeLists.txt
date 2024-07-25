@@ -26,3 +26,5 @@ include(cmake/config_opencv.cmake)
 
 add_subdirectory(deps/Qt6)
 add_subdirectory(whmx-assistant)
+
+set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT whmx-assistant)
