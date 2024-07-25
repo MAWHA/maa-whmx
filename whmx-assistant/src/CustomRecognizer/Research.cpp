@@ -166,18 +166,18 @@ coro::Promise<AnalyzeResult> ParseGradeOptionsOnModify::research__parse_grade_op
     }
 
     struct RecTask {
-        std::shared_ptr<details::Image> image;
-        coro::Promise<AnalyzeResult>    promise;
+        AnalyzeResult result;
     };
 
     const auto ocr_params = make_ocr_params();
 
+    //! WARNING: fxxk the hell! NEVER make the SyncContext calls into concurrent condition, it's not async safe!
+
     std::array<RecTask, 6> tasks;
     for (const auto &[index, geo, image] : faces) {
-        auto &[image_object, promise] = tasks[index];
-        image_object                  = details::Image::make();
+        auto image_object = details::Image::make();
         MaaSetImageRawData(image_object->handle(), image.data, image.cols, image.rows, image.type());
-        promise = context->run_recognition(image_object, "OCR", ocr_params);
+        tasks[index].result = co_await context->run_recognition(image_object, "OCR", ocr_params);
     }
 
     constexpr int UNKNOWN_GRADE = -1;
@@ -192,8 +192,8 @@ coro::Promise<AnalyzeResult> ParseGradeOptionsOnModify::research__parse_grade_op
     for (int i = 0; i < tasks.size(); ++i) {
         int grade = UNKNOWN_GRADE;
 
-        const auto recog_resp = co_await tasks[i].promise;
-        const auto face_resp  = json::parse(recog_resp.rec_detail);
+        const auto &recog_resp = tasks[i].result;
+        const auto  face_resp  = json::parse(recog_resp.rec_detail);
         do {
             //! TODO: fallback to "all" if "best" is not found
             if (!face_resp->contains("best")) { break; }
