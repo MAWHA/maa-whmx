@@ -79,4 +79,23 @@ private:
         MaaStringView                     cur_rec_detail);
 };
 
+class PerformItemPairsMatch {
+public:
+    static std::string name() {
+        return "Research.PerformItemPairsMatch";
+    }
+
+    static std::shared_ptr<maa::CustomAction> make() {
+        return maa::CustomAction::make(&PerformItemPairsMatch::research__perform_item_pairs_match);
+    }
+
+private:
+    static maa::coro::Promise<bool> research__perform_item_pairs_match(
+        std::shared_ptr<maa::SyncContext> context,
+        MaaStringView                     task_name,
+        MaaStringView                     param,
+        const MaaRect                    &cur_box,
+        MaaStringView                     cur_rec_detail);
+};
+
 } // namespace Action::Research

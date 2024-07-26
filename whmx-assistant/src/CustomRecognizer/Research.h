@@ -57,4 +57,19 @@ private:
         maa::SyncContextHandle context, maa::ImageHandle image, std::string_view task_name, std::string_view param);
 };
 
+class AnalyzeItemPairs {
+public:
+    static std::string name() {
+        return "Research.AnalyzeItemPairs";
+    }
+
+    static std::shared_ptr<maa::CustomRecognizer> make() {
+        return maa::CustomRecognizer::make(&AnalyzeItemPairs::research__analyze_item_pairs);
+    }
+
+private:
+    static maa::coro::Promise<maa::AnalyzeResult> research__analyze_item_pairs(
+        maa::SyncContextHandle context, maa::ImageHandle image, std::string_view task_name, std::string_view param);
+};
+
 } // namespace Rec::Research

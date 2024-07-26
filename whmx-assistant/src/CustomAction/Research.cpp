@@ -191,4 +191,48 @@ coro::Promise<bool> ResolveAnecdote::research__resolve_anecdote(
     co_return true;
 }
 
+coro::Promise<bool> PerformItemPairsMatch::research__perform_item_pairs_match(
+    std::shared_ptr<SyncContext> context,
+    MaaStringView                task_name,
+    MaaStringView                param,
+    const MaaRect               &cur_box,
+    MaaStringView                cur_rec_detail) {
+    const int     n_hori      = 4;
+    const int     n_vert      = 3;
+    const int     total_items = n_hori * n_vert;
+    const MaaRect roi_all{550, 152, 596, 478};
+    const int     roi_width  = roi_all.width / n_hori;
+    const int     roi_height = roi_all.height / n_vert;
+
+    std::vector<std::pair<int, int>> item_pairs;
+    for (const auto data = unwrap_custom_recognizer_analyze_result(cur_rec_detail); const auto &pair : data.as_array()) {
+        item_pairs.push_back({pair.at(0).as_integer(), pair.at(1).as_integer()});
+    }
+
+    qDebug() << "wait matching game to start";
+    co_await context->run_task("Research.WaitMatchingGameToStart");
+
+    qDebug() << "perform item pairs match";
+    for (const auto &pair : item_pairs) {
+        qDebug().noquote() << QString("match pair (%1)[row=%2,col=%3], (%4)[row=%5,col=%6]")
+                                  .arg(pair.first)
+                                  .arg(pair.first / n_hori + 1)
+                                  .arg(pair.first % n_hori + 1)
+                                  .arg(pair.second)
+                                  .arg(pair.second / n_hori + 1)
+                                  .arg(pair.second % n_hori + 1);
+        for (const int item : std::initializer_list<int>{pair.first, pair.second}) {
+            const int row      = item / n_hori;
+            const int col      = item % n_hori;
+            const int center_x = roi_all.x + col * roi_width + roi_width / 2;
+            const int center_y = roi_all.y + row * roi_height + roi_height / 2;
+            co_await context->click(center_x, center_y);
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+
+    co_return true;
+}
+
 } // namespace Action::Research

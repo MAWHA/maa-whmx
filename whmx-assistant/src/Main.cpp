@@ -151,8 +151,10 @@ coro::Promise<int> async_main() {
 
     instance->bind<Rec::Research::ParseGradeOptionsOnModify>();
     instance->bind<Rec::Research::ParseAnecdote>();
+    instance->bind<Rec::Research::AnalyzeItemPairs>();
     instance->bind<Action::Research::SelectGradeOption>();
     instance->bind<Action::Research::ResolveAnecdote>();
+    instance->bind<Action::Research::PerformItemPairsMatch>();
 
     //! TODO: check if the app is already started
     //! TODO: check if the app is in the foreground

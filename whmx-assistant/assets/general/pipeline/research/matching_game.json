@@ -1,0 +1,15 @@
+{
+    "Research.WaitMatchingGameToStart": {
+        "recognition": "TemplateMatch",
+        "template": "Research/MatchingGame/StartInitialState.png",
+        "roi": [
+            550,
+            152,
+            596,
+            478
+        ],
+        "threshold": 0.95,
+        "timeout": 5000,
+        "timeout_next": "Research.WaitMatchingGameToStart"
+    }
+}

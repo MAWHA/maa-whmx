@@ -21,6 +21,8 @@
 #include <map>
 #include <limits>
 #include <array>
+#include <vector>
+#include <set>
 #include <opencv2/imgproc.hpp>
 #include <QtCore/QDebug>
 #include <QtCore/QElapsedTimer>
@@ -106,6 +108,10 @@ cv::Mat crop_grade_option_face(const GradeOptionPartInfo &part, const GradeOptio
     const int h  = face.origin_geo.height;
     return part.image.rowRange(dy, dy + h).colRange(dx, dx + w);
 };
+
+cv::Mat crop_image(const cv::Mat &src, const MaaRect &rect) {
+    return src.rowRange(rect.y, rect.y + rect.height).colRange(rect.x, rect.x + rect.width);
+}
 
 coro::Promise<AnalyzeResult> ParseGradeOptionsOnModify::research__parse_grade_options_on_modify(
     SyncContextHandle context, ImageHandle image, std::string_view task_name, std::string_view param) {
@@ -324,6 +330,64 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
 
     resp.result     = true;
     resp.rec_detail = resp_data.to_string();
+    co_return resp;
+}
+
+coro::Promise<AnalyzeResult> AnalyzeItemPairs::research__analyze_item_pairs(
+    SyncContextHandle context, ImageHandle image, std::string_view task_name, std::string_view param) {
+    const int     n_hori      = 4;
+    const int     n_vert      = 3;
+    const int     total_items = n_hori * n_vert;
+    const MaaRect roi_all{550, 152, 596, 478};
+    const int     roi_width  = roi_all.width / n_hori;
+    const int     roi_height = roi_all.height / n_vert;
+
+    std::vector<cv::Mat> item_images;
+    {
+        const cv::Mat im(image->height(), image->width(), image->type(), image->raw_data());
+        for (int i = 0; i < n_vert; ++i) {
+            for (int j = 0; j < n_hori; ++j) {
+                const MaaRect roi{roi_all.x + j * roi_width, roi_all.y + i * roi_height, roi_width, roi_height};
+                item_images.push_back(crop_image(im, roi));
+            }
+        }
+    }
+
+    std::set<int> left_items;
+    for (int i = 0; i < total_items; ++i) { left_items.insert(i); }
+
+    std::vector<std::pair<int, int>> matched_pairs;
+    while (!left_items.empty()) {
+        const int item = *left_items.begin();
+        left_items.erase(item);
+        int    matched_item = -1;
+        double max_score    = std::numeric_limits<double>::lowest();
+        for (const int other : left_items) {
+            const auto &lhs = item_images.at(item);  //<! template image
+            const auto &rhs = item_images.at(other); //<! image to be matched
+            //! NOTE: here 1 equals to (rhs.cols - lhs.cols + 1) and (rhs.rows - lhs.rows + 1)
+            cv::Mat result(1, 1, CV_32FC1);
+            double  score = std::numeric_limits<double>::lowest();
+            cv::matchTemplate(rhs, lhs, result, cv::TM_CCOEFF_NORMED);
+            cv::minMaxLoc(result, nullptr, &score);
+            if (score > max_score) {
+                max_score    = score;
+                matched_item = other;
+            }
+        }
+        left_items.erase(matched_item);
+        matched_pairs.push_back({item, matched_item});
+    }
+
+    json::array resp_data;
+    for (const auto &[item, other] : matched_pairs) { resp_data.push_back(json::array({item, other})); }
+
+    AnalyzeResult resp;
+    resp.result     = true;
+    resp.rec_detail = resp_data.to_string();
+
+    qDebug().noquote() << "matched pairs:" << resp.rec_detail;
+
     co_return resp;
 }
 

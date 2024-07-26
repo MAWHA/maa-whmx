@@ -2,7 +2,8 @@
     "Test.SampleEntry": {
         "next": [
             "Test.Research.DefensiveUpgrade",
-            "Test.Research.ResolveAnecdoteUnderTargetCategory"
+            "Test.Research.ResolveAnecdoteUnderTargetCategory",
+            "Test.Research.PlayMatchingGame"
         ]
     },
     "Test.Research.DefensiveUpgrade": {
@@ -42,5 +43,11 @@
         },
         "action": "Custom",
         "custom_action": "Research.ResolveAnecdote"
+    },
+    "Test.Research.PlayMatchingGame": {
+        "recognition": "Custom",
+        "custom_recognition": "Research.AnalyzeItemPairs",
+        "action": "Custom",
+        "custom_action": "Research.PerformItemPairsMatch"
     }
 }
