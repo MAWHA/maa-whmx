@@ -1,0 +1,74 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "type": "object",
+    "properties": {
+        "bingdings": {
+            "type": "array",
+            "description": "核心任务绑定列表",
+            "items": {
+                "type": "object",
+                "description": "核心任务绑定信息",
+                "properties": {
+                    "major_task": {
+                        "type": "string",
+                        "description": "核心任务名称",
+                        "enum": [
+                            "DailySignin",
+                            "GetFreeGiftPack",
+                            "ConsumeExpiringVitalityPotion",
+                            "PurchaseVitality",
+                            "PurchaseRandomProduct",
+                            "GetRoutineTaskReward",
+                            "GetJourneyReward",
+                            "ReceiveMail",
+                            "MopupResourceLevel",
+                            "EnlistCharacter",
+                            "RecruitCharacter",
+                            "SpecialActivitySignin",
+                            "AssignOfficeProduct",
+                            "AssignWorkshopProduct",
+                            "FindCat",
+                            "AssignEquipmentOrder",
+                            "GetOrderedEquipment",
+                            "GetOrderedProduct",
+                            "GetFavorability",
+                            "GetAccumulatedVitality",
+                            "ReplaceFullFavorabilityCharacter",
+                            "ChatOverTea",
+                            "PlayMergeGame",
+                            "PlayMiZongPan",
+                            "PlayFourInARow",
+                            "GetFurnitureBlueprint",
+                            "SwitchFurnitureLayout",
+                            "GetResearchReward",
+                            "DoResearch",
+                            "PurchasePiecesOfPainting",
+                            "UnlockPaintingAndBuff",
+                            "UnlockResearchNews",
+                            "PlayDongguPreliminary",
+                            "PlayDongguCompetition",
+                            "PurchaseDongguProduct",
+                            "GetDongguReward"
+                        ]
+                    },
+                    "entry": {
+                        "type": "string",
+                        "description": "核心任务绑定的任务入口",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "major_task",
+                    "entry"
+                ]
+            }
+        },
+        "data": {
+            "type": "object",
+            "description": "核心任务参数配置"
+        }
+    },
+    "required": [
+        "bingdings"
+    ]
+}
