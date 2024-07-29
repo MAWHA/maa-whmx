@@ -15,6 +15,19 @@
 
 #pragma once
 
-#include <QtCore/QString>
+#include <QtWidgets/QWidget>
 
-int min_edit_distance(const QString &src, const QString &dst);
+namespace UI {
+
+class Settings : public QWidget {
+    Q_OBJECT
+
+public:
+    Settings(QWidget *parent = nullptr);
+    ~Settings() override;
+
+protected:
+    void setup();
+};
+
+} // namespace UI

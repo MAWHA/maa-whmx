@@ -15,6 +15,19 @@
 
 #pragma once
 
-#include <QtCore/QString>
+#include "MajorTask.h"
 
-int min_edit_distance(const QString &src, const QString &dst);
+#include <QtCore/QString>
+#include <QtCore/QMap>
+#include <QtCore/QVariant>
+
+namespace Task {
+
+struct Config {
+    QMap<MajorTask, QString>  task_entries;
+    QMap<MajorTask, QVariant> task_params;
+};
+
+bool load_task_config(Config& config, const QString& file_path);
+
+} // namespace Task

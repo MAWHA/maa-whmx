@@ -15,6 +15,18 @@
 
 #pragma once
 
-#include <QtCore/QString>
+#include "FlatButton.h"
 
-int min_edit_distance(const QString &src, const QString &dst);
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QComboBox>
+
+namespace UI {
+
+QWidget *make_titled_widget(const QString &title, QWidget *widget, QWidget *right_side_widget = nullptr);
+void     config_list_widget(QListWidget *widget);
+void     config_flat_button(FlatButton *button, const QString &text);
+void     config_combo_box(QComboBox *combo, const QString &placeholder_text = QString());
+void     append_list_widget_item(QListWidget *list, QWidget *item_widget, const QString &text = QString());
+
+} // namespace UI

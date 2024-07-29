@@ -15,6 +15,22 @@
 
 #pragma once
 
-#include <QtCore/QString>
+#include <QtWidgets/QLabel>
 
-int min_edit_distance(const QString &src, const QString &dst);
+namespace UI {
+
+class ClickableLabel : public QLabel {
+    Q_OBJECT
+
+public:
+    ClickableLabel(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    ClickableLabel(const QString &text, QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+
+signals:
+    void clicked();
+
+protected:
+    void mouseReleaseEvent(QMouseEvent *event) override;
+};
+
+} // namespace UI

@@ -13,8 +13,13 @@
    limitations under the License.
 */
 
-#pragma once
+#include "Scrollbar.h"
 
-#include <QtCore/QString>
+namespace UI {
 
-int min_edit_distance(const QString &src, const QString &dst);
+Scrollbar::Scrollbar(QWidget *parent)
+    : QtMaterialScrollBar(parent) {
+    setHideOnMouseOut(false);
+}
+
+} // namespace UI

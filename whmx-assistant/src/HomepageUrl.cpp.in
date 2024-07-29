@@ -13,8 +13,8 @@
    limitations under the License.
 */
 
-#pragma once
+#include <string>
 
-#include <QtCore/QString>
-
-int min_edit_distance(const QString &src, const QString &dst);
+namespace Consts {
+std::string HOMEPAGE_URL = "@desktop_app_homepage_url@";
+} // namespace Consts

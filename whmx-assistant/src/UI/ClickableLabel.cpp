@@ -13,8 +13,20 @@
    limitations under the License.
 */
 
-#pragma once
+#include "ClickableLabel.h"
 
-#include <QtCore/QString>
+#include <QtGui/QMouseEvent>
 
-int min_edit_distance(const QString &src, const QString &dst);
+namespace UI {
+
+ClickableLabel::ClickableLabel(QWidget *parent, Qt::WindowFlags f)
+    : QLabel(parent, f) {}
+
+ClickableLabel::ClickableLabel(const QString &text, QWidget *parent, Qt::WindowFlags f)
+    : QLabel(text, parent, f) {}
+
+void ClickableLabel::mouseReleaseEvent(QMouseEvent *event) {
+    if (contentsRect().contains(event->pos())) { emit clicked(); }
+}
+
+} // namespace UI

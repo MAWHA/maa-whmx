@@ -15,6 +15,15 @@
 
 #pragma once
 
-#include <QtCore/QString>
+#include <qtmaterialscrollbar.h>
 
-int min_edit_distance(const QString &src, const QString &dst);
+namespace UI {
+
+class Scrollbar : public QtMaterialScrollBar {
+    Q_OBJECT
+
+public:
+    Scrollbar(QWidget *parent = nullptr);
+};
+
+} // namespace UI

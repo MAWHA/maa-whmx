@@ -21,21 +21,24 @@
 
 using namespace maa;
 
-coro::Promise<std::optional<AdbDevice>> find_adb_device(const std::string &adb_hint) {
+coro::Promise<QList<AdbDevice>> list_adb_devices() {
     const auto devices = co_await AdbDeviceFinder::find();
-    if (!devices || devices->empty()) {
-        qDebug("no device found");
+    if (!devices || devices->empty()) { co_return {}; }
+    co_return QList<AdbDevice>(devices->begin(), devices->end());
+}
+
+coro::Promise<std::optional<AdbDevice>> find_adb_device(const std::string &adb_hint) {
+    const auto devices = co_await list_adb_devices();
+    if (devices.empty()) {
+        qDebug() << "no adb devices found";
         co_return std::nullopt;
     }
-
-    const auto device_resp =
-        std::find_if(devices->begin(), devices->end(), [pattern = std::regex(adb_hint)](const auto &device) {
-            return std::regex_match(device.name, pattern);
-        });
-    if (device_resp == devices->end()) {
-        qDebug(R"(no device matched regex hint "%s")", adb_hint.c_str());
+    const auto device_resp = std::find_if(devices.begin(), devices.end(), [pattern = std::regex(adb_hint)](const auto &device) {
+        return std::regex_match(device.name, pattern);
+    });
+    if (device_resp == devices.end()) {
+        qDebug() << "no device matched regex hint" << adb_hint;
         co_return std::nullopt;
     }
-
     co_return std::make_optional(*device_resp);
 }

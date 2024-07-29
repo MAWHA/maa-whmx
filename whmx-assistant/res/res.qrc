@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/settings.png</file>
+        <file>icons/settings-hover.png</file>
+        <file>icons/arrow-down.png</file>
+        <file>icons/arrow-down-hover.png</file>
+        <file>icons/arrow-up.png</file>
+        <file>icons/arrow-up-hover.png</file>
+        <file>icons/close-circle.png</file>
+        <file>icons/close-circle-hover.png</file>
+        <file>icons/settings.png</file>
+        <file>icons/settings-hover.png</file>
+        <file>icons/skip-down.png</file>
+        <file>icons/skip-down-hover.png</file>
+        <file>icons/skip-up.png</file>
+        <file>icons/skip-up-hover.png</file>
+        <file>icons/settings@2x.png</file>
+        <file>icons/settings-hover@2x.png</file>
+        <file>icons/arrow-down@2x.png</file>
+        <file>icons/arrow-down-hover@2x.png</file>
+        <file>icons/arrow-up@2x.png</file>
+        <file>icons/arrow-up-hover@2x.png</file>
+        <file>icons/close-circle@2x.png</file>
+        <file>icons/close-circle-hover@2x.png</file>
+        <file>icons/settings@2x.png</file>
+        <file>icons/settings-hover@2x.png</file>
+        <file>icons/skip-down@2x.png</file>
+        <file>icons/skip-down-hover@2x.png</file>
+        <file>icons/skip-up@2x.png</file>
+        <file>icons/skip-up-hover@2x.png</file>
+    </qresource>
+</RCC>

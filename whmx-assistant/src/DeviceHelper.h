@@ -16,7 +16,9 @@
 #pragma once
 
 #include <MaaPP/MaaPP.hpp>
+#include <QtCore/QList>
 #include <string>
 #include <optional>
 
+maa::coro::Promise<QList<maa::AdbDevice>>         list_adb_devices();
 maa::coro::Promise<std::optional<maa::AdbDevice>> find_adb_device(const std::string &adb_hint);

@@ -44,10 +44,17 @@ public:
         auto               result_pro = Promise<R>();
 
         defer([result_pro, func = std::move(func)]() {
-            auto result = func();
-            EventLoop::current()->defer([result_pro, result = std::move(result)]() {
-                result_pro.resolve(result);
-            });
+            if constexpr (std::is_void_v<R>) {
+                func();
+                EventLoop::current()->defer([result_pro]() {
+                    result_pro.resolve();
+                });
+            } else {
+                auto result = func();
+                EventLoop::current()->defer([result_pro, result = std::move(result)]() {
+                    result_pro.resolve(result);
+                });
+            }
         });
 
         return result_pro;

@@ -10,6 +10,7 @@ COMPONENTS
     Widgets
     Network
     Svg
+    StateMachine
 )
 
 add_library(deps_qt6 INTERFACE)
@@ -21,6 +22,7 @@ INTERFACE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Svg
+    Qt${QT_VERSION_MAJOR}::StateMachine
 )
 
 add_library(desktop-app::Qt6 ALIAS deps_qt6)
