@@ -1,4 +1,4 @@
-add_executable(whmx-assistant)
+add_executable(whmx-assistant WIN32 MACOSX_BUNDLE)
 
 get_filename_component(SOURCE_DIR src REALPATH)
 nice_target_sources(whmx-assistant ${SOURCE_DIR}
