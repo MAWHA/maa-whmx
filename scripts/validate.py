@@ -9,6 +9,15 @@ def format_path(path: str) -> str:
         path = path[2:]
     return path.replace('\\', '/')
 
+def get_string_or_array(item: dict, key: str) -> list[str] | None:
+    value = item.get(key)
+    if isinstance(value, str):
+        return [value]
+    elif isinstance(value, list):
+        return value
+    else:
+        return None
+
 def validate_assets(assets_dir: str) -> None:
     if not os.path.exists(assets_dir):
         print(f"{assets_dir} does not exist")
@@ -20,7 +29,8 @@ def validate_assets(assets_dir: str) -> None:
     pipeline_assets = chain.from_iterable([[f'{dir}/{file}' for file in files if file.endswith(".json")] for dir, _, files in os.walk(pipeline_dir)])
     pipelines = [json.load(open(f, 'r', encoding='utf-8')) for f in pipeline_assets]
     defined_tasks = list(chain.from_iterable([list(pipeline.keys()) for pipeline in pipelines]))
-    ref_tasks = set(chain.from_iterable([product([entry[0]], entry[1].get('next') or []) for pipeline in pipelines for entry in pipeline.items()]))
+    ref_tasks = set(chain.from_iterable([product([entry[0]], get_string_or_array(entry[1], 'next') or []) for pipeline in pipelines for entry in pipeline.items()]))
+
 
     duplicate_tasks = list(filter(lambda e: e[1] > 1, Counter(defined_tasks).items()))
     if len(duplicate_tasks) > 0:
