@@ -4,7 +4,7 @@
             "daily1",
             "weekly1",
             "travel1",
-            "transition"
+            "mission1"
         ]
     },
     "daily1": {
@@ -21,7 +21,7 @@
             "all1",
             "receive1",
             "weekly1",
-            "Quit"
+            "Quti1"
         ]
     },
     "all1": {
@@ -39,20 +39,17 @@
             "material1",
             "receive1",
             "weekly1",
-            "transition",
             "reward1",
-            "Quit"
+            "Quti1"
         ]
     },
     "material1": {
         "recognition": "OCR",
         "expected": "获得物资",
         "action": "Click",
-        "post_delay":3000,
         "next": [
             "weekly1",
-            "transition",
-            "Quit"
+            "Quti1"
         ]
     },
     "weekly1": {
@@ -69,7 +66,7 @@
             "all1",
             "material1",
             "receive1",
-            "Quit"
+            "Quti1"
         ]
     },
     "receive1": {
@@ -86,7 +83,7 @@
         "next": [
             "material1",
             "weekly1",
-            "Quit"
+            "Quti1"
         ]
     },
     "travel1": {
@@ -102,7 +99,7 @@
         "next": [
             "mission1",
             "all1",
-            "Quit"
+            "Quti1"
         ]
     },
     "mission1": {
@@ -129,7 +126,7 @@
         "next": [
             "all1",
             "reward1",
-            "Quit"
+            "Quti1"
         ]
     },
     "reward1": {
@@ -147,15 +144,14 @@
             "Quit"
         ]
     },
-    "transition":{
-        "recognition":"OCR",
-        "expected":"路引",
-        "action":"DoNothing",
-        "next":[
+    "Quti1": {
+        "recognition": "TemplateMatch",
+        "template": "receive_reward/02.png",
+        "action": "Click",
+        "next": [
+            "travel1",
             "mission1",
-            "challenge",
-            "reward1",
-            "Quit"
+            "challenge"
         ]
     }
 }
