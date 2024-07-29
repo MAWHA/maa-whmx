@@ -172,10 +172,10 @@ void Workbench::notify_queued_task_finished(const QString &task_id, MaaStatus st
     }
     pending_task_accepted_.remove(task_id);
     if (status == MaaStatus_Success) {
+        qInfo().noquote() << "posted queued task" << task_id << "resolved successfully";
+    } else {
         qWarning().noquote() << "failed to resolve posted queued task" << task_id;
         qInfo().noquote() << "skip failed queued task" << task_id;
-    } else {
-        qInfo().noquote() << "posted queued task" << task_id << "resolved successfully";
     }
     pop_first_queued_task();
     post_next_queued_task();
