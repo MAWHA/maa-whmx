@@ -92,8 +92,7 @@
         ],
         "action": "Click",
         "next": [
-            "donshe",
-            "vending_machine"
+            "donshe"
         ]
     },
     "dispatch_company_three": {
@@ -138,8 +137,7 @@
             480
         ],
         "next": [
-            "vitality_one",
-            "vending_machine"
+            "vitality_one"
         ]
     },
     "vitality_one": {

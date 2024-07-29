@@ -297,25 +297,6 @@
             "choose"
         ]
     },
-    "mist": {
-        "recognition": "TemplateMatch",
-        "template": "Research/Research/11.png",
-        "action": "Click",
-        "roi": [
-            529,
-            65,
-            426,
-            104
-        ],
-        "post_wait_freezes": 2000,
-        "next": [
-            "snowscape_event",
-            "predestination",
-            "keep",
-            "keyword",
-            "upgrade_one"
-        ]
-    },
     "predestination": {
         "recognition": "TemplateMatch",
         "template": "Research/Research/86.png",
