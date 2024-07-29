@@ -289,6 +289,7 @@ void Workbench::handle_on_cancel_posted_queued_task(const QString &task_id) {
 
 void Workbench::handle_on_task_list_filter_changed(QListWidget *list, const QString &filter) {
     QRegularExpression regex(filter);
+    if (!regex.isValid()) { return; }
     for (int i = 0; i < list->count(); ++i) {
         const auto item       = list->item(i);
         const bool filter_out = !filter.isEmpty() && !regex.match(get_list_item_text(item)).hasMatch();
