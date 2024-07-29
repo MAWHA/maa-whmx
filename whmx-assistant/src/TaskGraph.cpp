@@ -98,6 +98,7 @@ bool TaskGraph::merge_pipeline(const QString &pipeline_file) {
 
     for (const auto &[task_name, params] : data->as_object()) {
         const auto pred = QString::fromUtf8(task_name);
+        add_node(pred);
         for (const auto key : std::initializer_list<std::string>{"next", "timeout_next", "runout_next"}) {
             if (!params.contains(key)) { continue; }
             if (const auto &next = params.at(key); next.is_array()) {
