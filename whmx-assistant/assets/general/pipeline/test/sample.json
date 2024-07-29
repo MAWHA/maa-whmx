@@ -1,11 +1,4 @@
 {
-    "Test.SampleEntry": {
-        "next": [
-            "Test.Research.DefensiveUpgrade",
-            "Test.Research.ResolveAnecdoteUnderTargetCategory",
-            "Test.Research.PlayMatchingGame"
-        ]
-    },
     "Test.Research.DefensiveUpgrade": {
         "next": [
             "Test.Research.DefensiveUpgrade.Select"
