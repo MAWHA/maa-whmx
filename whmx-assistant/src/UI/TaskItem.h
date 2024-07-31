@@ -16,6 +16,7 @@
 #pragma once
 
 #include "IconButton.h"
+#include "ElidedLabel.h"
 #include "../Task/MajorTask.h"
 
 #include <QtWidgets/QWidget>
@@ -65,7 +66,7 @@ protected:
 private:
     const Task::MajorTask task_;
     QCheckBox            *ui_select_    = nullptr;
-    QLabel               *ui_task_name_ = nullptr;
+    ElidedLabel          *ui_task_name_ = nullptr;
     IconButton           *ui_config_    = nullptr;
 };
 

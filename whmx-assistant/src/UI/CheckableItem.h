@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include "ElidedLabel.h"
+
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QLabel>
@@ -49,7 +51,7 @@ protected:
 private:
     const QString name_;
     QCheckBox    *ui_select_ = nullptr;
-    QLabel       *ui_name_   = nullptr;
+    ElidedLabel  *ui_name_   = nullptr;
 };
 
 } // namespace UI

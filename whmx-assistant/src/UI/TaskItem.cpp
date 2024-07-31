@@ -37,7 +37,7 @@ void TaskItem::setup() {
     const auto task_info = Task::get_task_info(task_);
 
     ui_select_    = new QCheckBox;
-    ui_task_name_ = new QLabel;
+    ui_task_name_ = new ElidedLabel;
 
     if (task_info.routine) { ui_select_->setCheckState(Qt::Checked); }
     ui_task_name_->setText(task_info.name);

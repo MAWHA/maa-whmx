@@ -35,7 +35,7 @@ QSize CheckableItem::sizeHint() const {
 
 void CheckableItem::setup() {
     ui_select_ = new QCheckBox;
-    ui_name_   = new QLabel;
+    ui_name_   = new ElidedLabel;
 
     ui_name_->setText(name_);
 
