@@ -66,6 +66,8 @@ PRIVATE
     UI/Client.h
     CustomAction/Research.cpp
     CustomAction/Research.h
+    CustomAction/FourInRow.h
+    CustomAction/FourInRow.cpp
     CustomRecognizer/Research.cpp
     CustomRecognizer/Research.h
 )

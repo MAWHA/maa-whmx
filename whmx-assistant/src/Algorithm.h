@@ -16,5 +16,8 @@
 #pragma once
 
 #include <QtCore/QString>
+#include <QtCore/QList>
 
-int min_edit_distance(const QString &src, const QString &dst);
+int           min_edit_distance(const QString &src, const QString &dst);
+QList<double> softmax(const QList<double> &vec);
+int           choice(const QList<double> &weights);

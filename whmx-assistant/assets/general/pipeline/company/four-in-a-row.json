@@ -1,0 +1,85 @@
+{
+    "Company.StartFourInRow": {
+        "recognition": "TemplateMatch",
+        "template": "Company/FourInRow/Start.png",
+        "roi": [
+            968,
+            405,
+            124,
+            124
+        ],
+        "threshold": 0.95,
+        "action": "Click",
+        "target": [
+            1030,
+            467,
+            0,
+            0
+        ],
+        "timeout": 1000,
+        "timeout_next": "Company.StartFourInRow"
+    },
+    "Company.BeatFourInRow": {
+        "action": "Custom",
+        "custom_action": "SolveFourInRow",
+        "custom_action_param": {
+            "iter": 5000,
+            "mode": "black",
+            "retry": true
+        }
+    },
+    "Company.QuitFourInRowFinishedStage": {
+        "action": "Click",
+        "target": [
+            1072,
+            360,
+            0,
+            0
+        ],
+        "post_delay": 500
+    },
+    "Company.UnlimitedBeatFourInRow": {
+        "next": "Company.UnlimitedBeatFourInRow.Start"
+    },
+    "Company.UnlimitedBeatFourInRow.Start": {
+        "recognition": "TemplateMatch",
+        "template": "Company/FourInRow/Start.png",
+        "roi": [
+            968,
+            405,
+            124,
+            124
+        ],
+        "threshold": 0.95,
+        "action": "Click",
+        "target": [
+            1030,
+            467,
+            0,
+            0
+        ],
+        "timeout": 1000,
+        "timeout_next": "Company.UnlimitedBeatFourInRow.Start",
+        "next": "Company.UnlimitedBeatFourInRow.Beat"
+    },
+    "Company.UnlimitedBeatFourInRow.Beat": {
+        "action": "Custom",
+        "custom_action": "SolveFourInRow",
+        "custom_action_param": {
+            "iter": 5000,
+            "mode": "black",
+            "retry": true
+        },
+        "next": "Company.UnlimitedBeatFourInRow.Quit"
+    },
+    "Company.UnlimitedBeatFourInRow.Quit": {
+        "action": "Click",
+        "target": [
+            1072,
+            360,
+            0,
+            0
+        ],
+        "next": "Company.UnlimitedBeatFourInRow.Start"
+    }
+}

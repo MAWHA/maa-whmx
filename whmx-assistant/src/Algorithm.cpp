@@ -17,6 +17,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <random>
 
 int min_edit_distance(const QString &src, const QString &dst) {
     const int m = dst.length() + 1;
@@ -38,4 +39,27 @@ int min_edit_distance(const QString &src, const QString &dst) {
     }
 
     return dp.back();
+}
+
+QList<double> softmax(const QList<double> &vec) {
+    auto         probs  = vec;
+    const double maxval = *std::max_element(vec.begin(), vec.end());
+    for (auto &prob : probs) { prob = exp(prob - maxval); }
+    const double sum = std::accumulate(probs.begin(), probs.end(), 0.0);
+    for (auto &prob : probs) { prob /= sum; }
+    return probs;
+}
+
+int choice(const QList<double> &weights) {
+    if (weights.empty()) { return -1; }
+    QList<double> acc_weights;
+    acc_weights.append(weights.front());
+    for (int i = 1; i < weights.size(); ++i) { acc_weights.append(acc_weights[i - 1] + weights[i]); }
+    auto         dist = std::uniform_real_distribution<double>(0, acc_weights.back());
+    std::mt19937 rng(std::random_device{}());
+    const double value = dist(rng);
+    for (int i = 0; i < weights.size(); ++i) {
+        if (value <= acc_weights[i]) { return i; }
+    }
+    return weights.size() - 1;
 }

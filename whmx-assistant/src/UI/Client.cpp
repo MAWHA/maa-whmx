@@ -16,6 +16,7 @@
 #include "Client.h"
 #include "../CustomRecognizer/Research.h"
 #include "../CustomAction/Research.h"
+#include "../CustomAction/FourInRow.h"
 #include "../Consts.h"
 #include "../ReferenceDataSet.h"
 
@@ -226,6 +227,7 @@ void Client::handle_on_create_and_init_instance() {
     maa_instance_->bind<Action::Research::SelectGradeOption>();
     maa_instance_->bind<Action::Research::ResolveAnecdote>();
     maa_instance_->bind<Action::Research::PerformItemPairsMatch>();
+    maa_instance_->bind<Action::SolveFourInRow>();
     qInfo() << "maa instance created and initialized";
     ui_workbench_->accept_maa_instance(maa_instance_);
 }
