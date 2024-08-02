@@ -47,13 +47,23 @@ void LogPanel::detach_from_global_logger() const {
 void LogPanel::log(QString message) {
     std::lock_guard lock(log_mutex_);
 
-    if (log_text_container_->toPlainText().length() > max_log_len_) { flush(); }
+    auto      scrollbar       = log_text_container_->verticalScrollBar();
+    const int last_scroll_pos = scrollbar->sliderPosition();
+    bool      should_scroll   = last_scroll_pos == scrollbar->maximum();
+
+    if (log_text_container_->toPlainText().length() > max_log_len_) {
+        flush();
+        should_scroll = true;
+    }
 
     log_text_container_->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
     log_text_container_->insertPlainText(message);
 
-    auto scrollbar = log_text_container_->verticalScrollBar();
-    scrollbar->setSliderPosition(scrollbar->maximum());
+    if (should_scroll) {
+        scrollbar->setSliderPosition(scrollbar->maximum());
+    } else {
+        scrollbar->setSliderPosition(last_scroll_pos);
+    }
 }
 
 void LogPanel::clear() {
