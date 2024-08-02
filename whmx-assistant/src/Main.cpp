@@ -19,22 +19,46 @@
 
 #include <MaaPP/MaaPP.hpp>
 #include <QtWidgets/QApplication>
+#include <QtCore/QThread>
 
 using namespace maa;
 
-coro::Promise<int> async_main() {
-    //! ATTENTION: ctor of client contains async calls, thus the maa::coro::EventLoop must be created before it
-    UI::Client client;
-    client.show();
+class MaaWorker : public QThread {
+public:
+    MaaWorker(std::shared_ptr<maa::coro::EventLoop> ev, QObject *parent)
+        : QThread(parent)
+        , ev_(ev) {}
 
-    //! FIXME: coro::EventLoop must wait for all async calls to complete before returning, and the app dtor may destroy the
-    //! dependent objects held by the async calls
+    void run() override {
+        ev_->exec();
+    }
 
-    co_return QApplication::exec();
-}
+private:
+    std::shared_ptr<maa::coro::EventLoop> ev_;
+};
+
+class WhmxAssistant : public QApplication {
+public:
+    WhmxAssistant(int &argc, char **argv)
+        : QApplication(argc, argv)
+        , default_maa_event_loop_(std::make_shared<maa::coro::EventLoop>())
+        , maa_worker_(new MaaWorker(default_maa_event_loop_, this)) {
+        GlobalLoggerProxy::setup();
+
+        connect(this, &QApplication::aboutToQuit, this, [this] {
+            default_maa_event_loop_->stop();
+        });
+
+        maa_worker_->start();
+    }
+
+private:
+    std::shared_ptr<maa::coro::EventLoop> default_maa_event_loop_;
+    QThread                              *maa_worker_;
+};
 
 int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
+    WhmxAssistant app(argc, argv);
 
     QApplication::setOrganizationDomain("github.com/MAWHA");
     QApplication::setOrganizationName("MAWHA");
@@ -42,11 +66,8 @@ int main(int argc, char *argv[]) {
     QApplication::setApplicationDisplayName("物华弥新小助手");
     QApplication::setApplicationVersion(QString::fromUtf8(Consts::VERSION));
 
-    GlobalLoggerProxy::setup();
+    auto client = std::make_shared<UI::Client>();
+    client->show();
 
-    //! TODO: optimize threads assignment
-
-    coro::EventLoop ev;
-    ev.stop_after(async_main());
-    return ev.exec();
+    return app.exec();
 }
