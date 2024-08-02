@@ -48,6 +48,10 @@ public:
         bool operator<(const Move &other) const {
             return QPair<int, int>(row, col) < QPair<int, int>(other.row, other.col);
         }
+
+        bool operator==(const Move &other) const {
+            return row == other.row && col == other.col;
+        }
     };
 
     enum class RowType {
@@ -111,11 +115,11 @@ public:
         return row;
     }
 
-    bool check(const QList<int> &row, int player) {
+    bool check(const QList<int> &row, int player) const {
         int total_placed = 0;
         for (const int stone : row) {
             if (stone == player) {
-                ++total_placed;
+                if (++total_placed >= 4) { break; }
             } else {
                 total_placed = 0;
             }
@@ -167,6 +171,26 @@ public:
         } else {
             done = is_dead_heat();
         }
+
+        return {done, winner};
+    }
+
+    EvalResult test_evolve(Move move, int player) {
+        const int last_stone       = board_[move.col][move.row];
+        board_[move.col][move.row] = player;
+
+        bool done   = false;
+        int  winner = NON_PLAYER;
+
+        if (check(get_row(RowType::Row, move), player) || check(get_row(RowType::Col, move), player)
+            || check(get_row(RowType::Diag, move), player) || check(get_row(RowType::OppoDiag, move), player)) {
+            done   = true;
+            winner = player;
+        } else {
+            done = is_dead_heat();
+        }
+
+        board_[move.col][move.row] = last_stone;
 
         return {done, winner};
     }
@@ -341,7 +365,7 @@ static void run_mcts_once(const Game &board, std::shared_ptr<MctsNode> root) {
     node->backup(-neg_leaf_value);
 }
 
-static QDebug operator<<(QDebug dbg, const Game &game) {
+QDebug operator<<(QDebug dbg, const Game &game) {
     QDebugStateSaver saver(dbg);
     for (int i = game.ROW - 1; i >= 0; --i) {
         for (int j = 0; j < game.COL; ++j) { dbg.space() << game.at(i, j); }
@@ -350,7 +374,7 @@ static QDebug operator<<(QDebug dbg, const Game &game) {
     return dbg;
 }
 
-static QDebug operator<<(QDebug dbg, const Game::Move &move) {
+QDebug operator<<(QDebug dbg, const Game::Move &move) {
     QDebugStateSaver saver(dbg);
     dbg.nospace() << "Move(" << move.row << ", " << move.col << ")";
     return dbg;
@@ -408,7 +432,7 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
         co_return false;
     }
     if (opt.mode == SolveFourInRowParam::Mode::Random) {
-        qCritical().noquote() << task_name << ": random mode is not supported yet";
+        qCritical().nospace().noquote() << task_name << ": random mode is not supported yet";
         co_return true;
     }
 
@@ -513,41 +537,73 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
             auto root = std::make_shared<MctsNode>(nullptr, 1.0);
             for (int i = 0; i < opt.mcts_iters; ++i) { run_mcts_once(game, root); }
 
-            const auto move = root->get_move();
+            const auto mcts_best_move = root->get_move();
+
+            auto valid_moves_before_drop = game.get_valid_moves();
+            valid_moves_before_drop.removeOne(mcts_best_move);
+
+            auto move = mcts_best_move;
+            for (const auto &oppo_valid_move : valid_moves_before_drop) {
+                const auto test_evolve_result = game.test_evolve(oppo_valid_move, ai_stone);
+                if (test_evolve_result.done && test_evolve_result.winner == ai_stone) {
+                    move = oppo_valid_move;
+                    break;
+                }
+            }
+
+            Game::EvalResult evolve_result;
+            if (move != mcts_best_move) {
+                qInfo() << "cancel mcts best drop" << mcts_best_move << "to avoid being beaten";
+                evolve_result = game.evolve(move);
+            } else {
+                const auto saved_board = game.board();
+                evolve_result          = game.evolve(mcts_best_move);
+                if (!evolve_result.done && mcts_best_move.row + 1 < Game::ROW && !valid_moves_before_drop.empty()) {
+                    //! NOTE: test ai drop with greedy policy and decide whether to drop or not
+                    const Game::Move prob_oppo_move{mcts_best_move.row + 1, mcts_best_move.col};
+                    const auto       test_evolve_result = game.test_evolve(prob_oppo_move, ai_stone);
+                    if (test_evolve_result.done && test_evolve_result.winner == ai_stone) {
+                        qInfo() << "predict ai drop with greedy policy, cancel mcts best drop";
+                        game.update(saved_board);
+                        game.add_player(ai_stone);
+                        move          = valid_moves_before_drop[choice(0, valid_moves_before_drop.size() - 1)];
+                        evolve_result = game.evolve(move);
+                    }
+                }
+            }
+
+            done   = evolve_result.done;
+            winner = evolve_result.winner;
+
+            opt_last_board = game.board();
+
             qInfo() << "player" << game.get_current_player() << "drop" << move;
 
             const int click_pos_x = roi.x + move.col * cell_width + cell_width / 2;
             const int click_pos_y = roi.y + (Game::ROW - 1 - move.row) * cell_height + cell_height / 2;
             co_await context->click(click_pos_x, click_pos_y);
 
-            const auto evolve_result = game.evolve(move);
-            opt_last_board           = game.board();
-
-            done   = evolve_result.done;
-            winner = evolve_result.winner;
-
             wait();
         }
 
         //! FIXME: in terminated state, sometimes we need quit the finished stage, but sometimes we don't
 
-        bool should_quit_page = true;
         if (terminated) {
             //! NOTE: generally it indicates the failure of the game
             qWarning() << "game is terminated unexpectedly";
-            // should_quit_page = false;
         } else if (winner == Game::NON_PLAYER) {
             qInfo() << "game ends in a tie";
         } else {
             qInfo() << "player" << winner << "wins";
         }
 
-        if (should_quit_page) { co_await context->run_task("Company.QuitFourInRowFinishedStage"); }
+        //! NOTE: maybe fail when terminated, but it doesn't matter
+        co_await context->run_task("Company.QuitFourInRowFinishedStage");
 
         if ((terminated || winner != my_stone) && opt.retry) {
             qInfo() << "retry after termination";
             reenter = true;
-            co_await context->run_task("Company.StartFourInRow");
+            co_await context->run_task("Company.StartFourInRowNoRetry");
             continue;
         }
 

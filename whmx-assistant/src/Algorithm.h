@@ -21,3 +21,4 @@
 int           min_edit_distance(const QString &src, const QString &dst);
 QList<double> softmax(const QList<double> &vec);
 int           choice(const QList<double> &weights);
+int           choice(int min_index, int max_index);

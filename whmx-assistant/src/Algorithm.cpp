@@ -63,3 +63,8 @@ int choice(const QList<double> &weights) {
     }
     return weights.size() - 1;
 }
+
+int choice(int min_index, int max_index) {
+    std::mt19937 rng(std::random_device{}());
+    return rng() % (max_index - min_index + 1) + min_index;
+}

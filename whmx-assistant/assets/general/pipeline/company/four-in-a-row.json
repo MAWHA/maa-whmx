@@ -19,6 +19,26 @@
         "timeout": 1000,
         "timeout_next": "Company.StartFourInRow"
     },
+    "Company.StartFourInRowNoRetry": {
+        "recognition": "TemplateMatch",
+        "template": "Company/FourInRow/Start.png",
+        "roi": [
+            968,
+            405,
+            124,
+            124
+        ],
+        "threshold": 0.95,
+        "action": "Click",
+        "target": [
+            1030,
+            467,
+            0,
+            0
+        ],
+        "timeout": 1000,
+        "times_limit": 1
+    },
     "Company.BeatFourInRow": {
         "action": "Custom",
         "custom_action": "SolveFourInRow",
@@ -70,16 +90,6 @@
             "mode": "black",
             "retry": true
         },
-        "next": "Company.UnlimitedBeatFourInRow.Quit"
-    },
-    "Company.UnlimitedBeatFourInRow.Quit": {
-        "action": "Click",
-        "target": [
-            1072,
-            360,
-            0,
-            0
-        ],
         "next": "Company.UnlimitedBeatFourInRow.Start"
     }
 }
