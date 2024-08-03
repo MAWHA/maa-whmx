@@ -25,6 +25,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtCore/QUuid>
 #include <QtCore/QTimer>
+#include <QtCore/QElapsedTimer>
 #include <magic_enum.hpp>
 #include <qtmaterialscrollbar.h>
 
@@ -174,7 +175,7 @@ void Workbench::notify_queued_task_finished(const QString &task_id, MaaStatus st
     if (status == MaaStatus_Success) {
         qInfo().noquote() << "posted queued task" << task_id << "resolved successfully";
     } else {
-        qWarning().noquote() << "failed to resolve posted queued task" << task_id;
+        qWarning().noquote() << "failed to resolve posted queued task" << task_id << "status:" << status;
         qInfo().noquote() << "skip failed queued task" << task_id;
     }
     pop_first_queued_task();
@@ -235,6 +236,19 @@ void Workbench::pause_pipeline(std::optional<std::function<void()>> opt_on_pause
     }
     pipeline_state_    = PipelineState_PendingPause;
     fut_pending_pause_ = coro::EventLoop::current()->eval([this, opt_on_paused] {
+        QElapsedTimer tm;
+        bool          done = false;
+        while (!done) {
+            tm.restart();
+            while (tm.elapsed() < 500 && !done) {
+                //! ATTENTION: instance_->running() is unreliable
+                //! FIXME: stop only stop the PIPELINE, that means the current task will run to the end, manully terminate the
+                //! task is expected
+                done = instance_->stop();
+            }
+            if (done) { break; }
+            std::this_thread::yield();
+        }
         handle_on_pending_pipeline_pause_done();
         if (opt_on_paused.has_value()) { std::invoke(*opt_on_paused); }
     });
