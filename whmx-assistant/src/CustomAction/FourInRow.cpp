@@ -598,12 +598,14 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
         }
 
         //! NOTE: maybe fail when terminated, but it doesn't matter
+        //! FIXME: possible to fall through before the specified task finished in the emulator device
         co_await context->run_task("Company.QuitFourInRowFinishedStage");
 
         if ((terminated || winner != my_stone) && opt.retry) {
             qInfo() << "retry after termination";
             reenter = true;
-            co_await context->run_task("Company.StartFourInRowNoRetry");
+            //! NOTE: let it fallthrough if not at the start page
+            co_await context->run_task("Company.StartFourInRow");
             continue;
         }
 
