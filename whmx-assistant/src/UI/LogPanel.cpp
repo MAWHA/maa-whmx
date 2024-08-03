@@ -86,7 +86,7 @@ void LogPanel::set_max_len(int max_len) {
 
 LogPanel::LogPanel(QWidget *parent)
     : QWidget(parent)
-    , max_log_len_(1000000) {
+    , max_log_len_(10000) {
     setup();
 }
 
