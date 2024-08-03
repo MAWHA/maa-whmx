@@ -13,6 +13,11 @@
         "next": "Company.BeatFourInRow.EnsureBack"
     },
     "Company.BeatFourInRow.EnsureBack": {
+        "timeout": 500,
+        "next": "Company.BeatFourInRow.TestAndStop",
+        "timeout_next": "Company.BeatFourInRow.Back"
+    },
+    "Company.BeatFourInRow.TestAndStop": {
         "recognition": "TemplateMatch",
         "template": "Company/FourInRow/Start.png",
         "roi": [
@@ -21,9 +26,7 @@
             124,
             124
         ],
-        "threshold": 0.95,
-        "times_limit": 3,
-        "runout_next": "Company.BeatFourInRow.Back"
+        "threshold": 0.95
     },
     "Company.BeatFourInRow.Back": {
         "action": "Click",
@@ -68,18 +71,9 @@
         "next": "Company.UnlimitedBeatFourInRow.EnsureBack"
     },
     "Company.UnlimitedBeatFourInRow.EnsureBack": {
-        "recognition": "TemplateMatch",
-        "template": "Company/FourInRow/Start.png",
-        "roi": [
-            968,
-            405,
-            124,
-            124
-        ],
-        "threshold": 0.95,
-        "times_limit": 3,
-        "runout_next": "Company.UnlimitedBeatFourInRow.Back",
-        "next": "Company.UnlimitedBeatFourInRow.Start"
+        "timeout": 500,
+        "next": "Company.UnlimitedBeatFourInRow.TestAndStart",
+        "timeout_next": "Company.UnlimitedBeatFourInRow.Back"
     },
     "Company.UnlimitedBeatFourInRow.Back": {
         "action": "Click",
@@ -89,10 +83,18 @@
             0,
             0
         ],
-        "post_delay": 500,
         "next": "Company.UnlimitedBeatFourInRow.EnsureBack"
     },
-    "Company.UnlimitedBeatFourInRow.Start": {
+    "Company.UnlimitedBeatFourInRow.TestAndStart": {
+        "recognition": "TemplateMatch",
+        "template": "Company/FourInRow/Start.png",
+        "roi": [
+            968,
+            405,
+            124,
+            124
+        ],
+        "threshold": 0.95,
         "action": "Click",
         "target": [
             1030,
