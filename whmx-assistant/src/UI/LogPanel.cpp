@@ -16,30 +16,29 @@
 #include "LogPanel.h"
 #include "Scrollbar.h"
 
-#include <QtCore/QReadWriteLock>
 #include <QtWidgets/QVBoxLayout>
 #include <qtmaterialscrollbar.h>
+#include <shared_mutex>
 
 namespace UI {
 
-QReadWriteLock    GLOBAL_LOG_PANELS_LOCK;
+std::shared_mutex GLOBAL_LOG_PANELS_LOCK;
 QList<LogPanel *> GLOBAL_LOG_PANELS;
 
 QList<LogPanel *> LogPanel::global_logger_panels() {
-    GLOBAL_LOG_PANELS_LOCK.lockForRead();
-    const auto resp = GLOBAL_LOG_PANELS;
-    GLOBAL_LOG_PANELS_LOCK.unlock();
+    std::shared_lock lock(GLOBAL_LOG_PANELS_LOCK);
+    const auto       resp = GLOBAL_LOG_PANELS;
     return std::move(resp);
 }
 
 void LogPanel::attach_to_global_logger() {
-    GLOBAL_LOG_PANELS_LOCK.lockForWrite();
+    std::unique_lock lock(GLOBAL_LOG_PANELS_LOCK);
     if (!GLOBAL_LOG_PANELS.contains(this)) { GLOBAL_LOG_PANELS.append(this); }
     GLOBAL_LOG_PANELS_LOCK.unlock();
 }
 
 void LogPanel::detach_from_global_logger() const {
-    GLOBAL_LOG_PANELS_LOCK.lockForWrite();
+    std::unique_lock lock(GLOBAL_LOG_PANELS_LOCK);
     if (GLOBAL_LOG_PANELS.contains(this)) { GLOBAL_LOG_PANELS.remove(GLOBAL_LOG_PANELS.indexOf(this)); }
     GLOBAL_LOG_PANELS_LOCK.unlock();
 }
