@@ -265,6 +265,7 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
     const MaaRect roi_title{600, 120, 460, 32};
     const MaaRect roi_content{600, 170, 490, 196};
 
+    //! roi for options, used by Action::ResolveAnecdote
     const int opt_size_w  = 350;
     const int opt_size_h  = 28;
     const int opt_x       = 620;

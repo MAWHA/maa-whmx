@@ -21,8 +21,6 @@
 #include <QtWidgets/QApplication>
 #include <QtCore/QThread>
 
-using namespace maa;
-
 class MaaWorker : public QThread {
 public:
     MaaWorker(std::shared_ptr<maa::coro::EventLoop> ev, QObject *parent)

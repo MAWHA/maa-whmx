@@ -8,8 +8,6 @@
             596,
             478
         ],
-        "threshold": 0.95,
-        "timeout": 5000,
-        "timeout_next": "Research.WaitMatchingGameToStart"
+        "threshold": 0.95
     }
 }

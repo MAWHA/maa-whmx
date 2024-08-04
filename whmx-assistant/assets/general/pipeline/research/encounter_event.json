@@ -1,0 +1,85 @@
+{
+    "Research.ResolveResultOfAnecdoteChoice": {
+        "next": "Research.ResolveResultOfAnecdoteChoice.Wait"
+    },
+    "Research.ResolveResultOfAnecdoteChoice.Wait": {
+        "post_wait_freezes": {
+            "target": [
+                200,
+                100,
+                920,
+                500
+            ],
+            "time": 200
+        },
+        "times_limit": 4,
+        "next": "Research.ResolveResultOfAnecdoteChoice.Exec"
+    },
+    "Research.ResolveResultOfAnecdoteChoice.Exec": {
+        "action": "Click",
+        "target": [
+            362,
+            312,
+            0,
+            0
+        ]
+    },
+    "Research.ResolveGotExtraResourceOnEventDone": {
+        "post_wait_freezes": {
+            "target": [
+                200,
+                100,
+                920,
+                500
+            ],
+            "time": 1000
+        },
+        "timeout": 5000,
+        "next": [
+            "Research.ResolveGotMapClues",
+            "Research.ResolveGotStuff"
+        ]
+    },
+    "Research.ResolveGotMapClues": {
+        "timeout": 2000,
+        "next": "Research.ResolveGotMapClues.TestAndExec"
+    },
+    "Research.ResolveGotMapClues.TestAndExec": {
+        "recognition": "TemplateMatch",
+        "template": "Research/EncounterEvent/GotClues.png",
+        "roi": [
+            454,
+            54,
+            277,
+            72
+        ],
+        "action": "Click",
+        "target": [
+            362,
+            312,
+            0,
+            0
+        ]
+    },
+    "Research.ResolveGotStuff": {
+        "timeout": 2000,
+        "next": "Research.ResolveGotStuff.TestAndExec"
+    },
+    "Research.ResolveGotStuff.TestAndExec": {
+        "recognition": "TemplateMatch",
+        "template": "Research/EncounterEvent/GotStuff.png",
+        "roi": [
+            979,
+            104,
+            127,
+            488
+        ],
+        "action": "Click",
+        "target": [
+            1180,
+            360,
+            0,
+            0
+        ]
+    }
+}

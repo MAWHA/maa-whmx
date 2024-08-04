@@ -15,6 +15,8 @@
 
 #include "Research.h"
 #include "../Decode.h"
+#include "../Algorithm.h"
+#include "../ReferenceDataSet.h"
 
 #include <array>
 #include <vector>
@@ -186,8 +188,63 @@ coro::Promise<bool> ResolveAnecdote::research__resolve_anecdote(
     MaaStringView                param,
     const MaaRect               &cur_box,
     MaaStringView                cur_rec_detail) {
-    qDebug().noquote() << QString::fromUtf8(unwrap_custom_recognizer_analyze_result(cur_rec_detail).to_string());
-    Q_UNIMPLEMENTED();
+    const int opt_size_w  = 350;
+    const int opt_size_h  = 28;
+    const int opt_x       = 620;
+    const int first_opt_y = 400;
+    const int opt_dy      = 68;
+
+    const auto anecdote_data = unwrap_custom_recognizer_analyze_result(cur_rec_detail);
+
+    const auto category = anecdote_data.at("category").as_string();
+    const auto name     = anecdote_data.at("name").as_string();
+    const int  stage    = anecdote_data.at("stage").as_integer();
+
+    const auto &anecdote_entry = Ref::ResearchAnecdoteSet::instance()->entry(category).value().get().entry(name).value().get();
+
+    int current_stage = stage;
+    while (current_stage >= 0 && current_stage < anecdote_entry.total_stages()) {
+        const auto &event_stage = anecdote_entry.stage(current_stage);
+        if (event_stage.options.empty()) {
+            qCritical() << "no options for stage" << current_stage << "of anecdote" << category << name;
+            co_return false;
+        }
+
+        int best_choice = -1;
+        if (event_stage.has_recommended_option()) {
+            best_choice = event_stage.recommended;
+        } else {
+            for (int i = 0; i < event_stage.options.size(); ++i) {
+                if (event_stage.options[i].positive) {
+                    best_choice = i;
+                    break;
+                }
+            }
+        }
+        if (best_choice == -1) {
+            qWarning() << "no positive option for stage" << current_stage << "of anecdote" << category << name
+                       << ", make random choice";
+            best_choice = choice(0, event_stage.options.size() - 1);
+        }
+
+        const auto &option = event_stage.options[best_choice];
+
+        //! TODO: check whether the given option is valid
+        const int click_y_pos = first_opt_y + best_choice * opt_dy + opt_size_h / 2;
+        const int click_x_pos = opt_x + opt_size_w / 4;
+
+        co_await context->click(click_x_pos, click_y_pos);
+
+        //! FIXME: not support random option yet
+
+        const bool has_next = option.next_entry_hint >= 0 && option.next_entry_hint < anecdote_entry.total_stages();
+        if (has_next) { co_await context->run_task("Research.ResolveResultOfAnecdoteChoice"); }
+
+        current_stage = option.next_entry_hint;
+    }
+
+    co_await context->run_task("Research.ResolveGotExtraResourceOnEventDone");
+
     co_return true;
 }
 
