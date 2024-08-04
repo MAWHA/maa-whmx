@@ -1,0 +1,14 @@
+["Research/EncounterEvent/GotClues.png"]
+roi = [470, 70, 245, 40]
+
+["Research/EncounterEvent/GotStuff.png"]
+roi = [995, 120, 95, 456]
+
+["Research/MatchingGame/StartInitialState.png"]
+roi = [550, 152, 596, 478]
+
+["Company/FourInRow/Start.png"]
+roi = [968, 405, 124, 124]
+
+["Research/GradeOption/Commit.png"]
+roi = [880, 540, 170, 60]
