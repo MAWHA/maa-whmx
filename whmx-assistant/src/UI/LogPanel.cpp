@@ -34,13 +34,11 @@ QList<LogPanel *> LogPanel::global_logger_panels() {
 void LogPanel::attach_to_global_logger() {
     std::unique_lock lock(GLOBAL_LOG_PANELS_LOCK);
     if (!GLOBAL_LOG_PANELS.contains(this)) { GLOBAL_LOG_PANELS.append(this); }
-    GLOBAL_LOG_PANELS_LOCK.unlock();
 }
 
 void LogPanel::detach_from_global_logger() const {
     std::unique_lock lock(GLOBAL_LOG_PANELS_LOCK);
     if (GLOBAL_LOG_PANELS.contains(this)) { GLOBAL_LOG_PANELS.remove(GLOBAL_LOG_PANELS.indexOf(this)); }
-    GLOBAL_LOG_PANELS_LOCK.unlock();
 }
 
 void LogPanel::log(QString message) {
