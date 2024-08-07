@@ -42,7 +42,7 @@ struct AssignEquipmentOrderParam {};
 
 struct ReplaceFullFavorabilityCharacterParam {};
 
-struct ChatOverTeaParam {};
+struct PlayFourInRowParam {};
 
 struct PlayMiZongPanParam {};
 

@@ -212,7 +212,7 @@ static std::map<MajorTask, TaskInfo> TASK_INFO_TABLE{
          .scheduable = false,
          .difficult  = true,
      }},
-    {MajorTask::PlayFourInARow,
+    {MajorTask::PlayFourInRow,
      {
          .name       = "派遣公司-四子棋",
          .routine    = false,

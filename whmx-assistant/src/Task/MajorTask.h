@@ -51,7 +51,7 @@ enum class MajorTask {
     ChatOverTea,                      //<! [配置] 派遣公司-品茗
     PlayMergeGame,                    //<! 派遣公司-和合
     PlayMiZongPan,                    //<! [高难][配置] 派遣公司-迷踪盘
-    PlayFourInARow,                   //<! [配置] 派遣公司-四子棋
+    PlayFourInRow,                    //<! [配置] 派遣公司-四子棋
     GetFurnitureBlueprint,            //<! [常规][调度] 派遣公司-家具蓝图获取
     SwitchFurnitureLayout,            //<! [配置] 派遣公司-家具布局替换
     GetResearchReward,                //<! [调度] 博物研学-周常奖励
