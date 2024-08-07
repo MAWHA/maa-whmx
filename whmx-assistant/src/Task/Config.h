@@ -20,6 +20,7 @@
 #include <QtCore/QString>
 #include <QtCore/QMap>
 #include <QtCore/QVariant>
+#include <memory>
 
 namespace Task {
 
@@ -27,6 +28,9 @@ struct Config {
     QMap<MajorTask, QString>  task_entries;
     QMap<MajorTask, QVariant> task_params;
 };
+
+void                    reset_shared_task_config(const std::shared_ptr<Config> config);
+std::shared_ptr<Config> shared_task_config();
 
 bool     load_task_config(Config& config, const QString& file_path);
 QVariant get_default_task_param(MajorTask task);

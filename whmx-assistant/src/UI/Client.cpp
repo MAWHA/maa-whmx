@@ -54,7 +54,7 @@ void Client::reload_anecdotes() {
 
 void Client::reload_task_config() {
     const auto task_config_path = data_dir() + "/task_bindings.json";
-    if (const bool loaded = Task::load_task_config(task_config_, task_config_path)) {
+    if (const bool loaded = Task::load_task_config(*task_config_, task_config_path)) {
         qInfo() << "task bindings reloaded";
     } else {
         qInfo() << "failed to load task bindings";
@@ -103,16 +103,16 @@ void Client::open_task_config_panel(Task::MajorTask task) {
         return;
     }
 
-    if (auto &params = task_config_.task_params; !params.contains(task)) {
+    if (auto &params = task_config_->task_params; !params.contains(task)) {
         params.insert(task, Task::get_default_task_param(task));
     }
 
-    auto panel = TaskConfigPanel::build(task, task_config_.task_params.value(task));
+    auto panel = TaskConfigPanel::build(task, task_config_->task_params.value(task));
     addTab(panel, QString("核心任务配置·%1").arg(task_info.name));
     setCurrentIndex(count() - 1);
 
     connect(panel, &TaskConfigPanel::on_config_change, [this](Task::MajorTask task, QVariant config) {
-        task_config_.task_params[task] = config;
+        task_config_->task_params[task] = config;
     });
 }
 
@@ -153,7 +153,7 @@ void Client::handle_on_sync_res_dir_done(int maa_status) {
     } else {
         qInfo() << "sync res dir successfully";
         qInfo().noquote() << "found" << maa_res_->task_list()->size() << "tasks under" << assets_dir();
-        QStringList major_tasks_bindings(task_config_.task_entries.values());
+        QStringList major_tasks_bindings(task_config_->task_entries.values());
         ui_workbench_->reload_pipeline_tasks(task_graph_.find_left_root_tasks(major_tasks_bindings));
     }
 }
@@ -173,13 +173,13 @@ void Client::execute_pipeline_task(QString task_id, QVariant task) {
 }
 
 void Client::execute_major_task(const QString &task_id, Task::MajorTask task) {
-    if (!task_config_.task_entries.contains(task)) {
+    if (!task_config_->task_entries.contains(task)) {
         qWarning().noquote() << "failed to execute task" << task_id << ": task entry not found for major task"
                              << magic_enum::enum_name(task);
         ui_workbench_->notify_queued_task_finished(task_id, MaaStatus_Invalid);
     } else {
         //! TODO: pass major task params
-        const auto task_entry = task_config_.task_entries.value(task);
+        const auto task_entry = task_config_->task_entries.value(task);
         coro::EventLoop::current()->eval([this, task_id, task_entry] {
             const auto status = instance()->post_task(task_entry.toUtf8().toStdString())->wait().sync_wait();
             QMetaObject::invokeMethod(
@@ -285,9 +285,11 @@ void Client::handle_on_switch_tab(int index) {
 Client::Client(const QString &user_path, QWidget *parent)
     : QTabWidget(parent)
     , startup_time_(QDateTime::currentDateTime())
-    , first_time_to_flush_log_(true) {
+    , first_time_to_flush_log_(true)
+    , task_config_(std::make_shared<Task::Config>()) {
     setup();
     config_maa(user_path);
+    Task::reset_shared_task_config(task_config_);
 }
 
 Client::~Client() {

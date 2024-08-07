@@ -23,6 +23,16 @@
 
 namespace Task {
 
+std::shared_ptr<Config> SHARED_TASK_CONFIG;
+
+void reset_shared_task_config(const std::shared_ptr<Config> config) {
+    SHARED_TASK_CONFIG = config;
+}
+
+std::shared_ptr<Config> shared_task_config() {
+    return SHARED_TASK_CONFIG;
+}
+
 bool load_task_config(Config& config, const QString& file_path) {
     //! TODO: parse task_params
 

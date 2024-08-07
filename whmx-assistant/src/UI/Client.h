@@ -126,7 +126,7 @@ private:
     const QDateTime                  startup_time_;
     bool                             first_time_to_flush_log_;
     QString                          user_path_;
-    Task::Config                     task_config_;
+    std::shared_ptr<Task::Config>    task_config_;
     TaskGraph                        task_graph_;
     std::shared_ptr<maa::Controller> maa_ctrl_;
     std::shared_ptr<maa::Resource>   maa_res_;
