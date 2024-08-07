@@ -39,8 +39,7 @@ public:
         return maa::CustomAction::make(&SolveFourInRow::solve_four_in_row);
     }
 
-    static double eval_color_distance(const int (&lhs_rgb)[3], const int (&rhs_rgb)[3]);
-    static bool   parse_params(SolveFourInRowParam &param_out, MaaStringView raw_param);
+    static bool parse_params(SolveFourInRowParam &param_out, MaaStringView raw_param);
 
 private:
     static maa::coro::Promise<bool> solve_four_in_row(

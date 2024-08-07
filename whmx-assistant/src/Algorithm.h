@@ -22,3 +22,5 @@ int           min_edit_distance(const QString &src, const QString &dst);
 QList<double> softmax(const QList<double> &vec);
 int           choice(const QList<double> &weights);
 int           choice(int min_index, int max_index);
+QList<int>    multi_choice(int n, int min_index, int max_index);
+double        eval_color_distance(const int (&lhs_rgb)[3], const int (&rhs_rgb)[3]);

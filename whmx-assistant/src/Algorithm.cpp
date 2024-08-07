@@ -68,3 +68,28 @@ int choice(int min_index, int max_index) {
     std::mt19937 rng(std::random_device{}());
     return rng() % (max_index - min_index + 1) + min_index;
 }
+
+QList<int> multi_choice(int n, int min_index, int max_index) {
+    //! TODO: better algorithm
+    const int expected = std::min(std::max(1, n), max_index - min_index + 1);
+    Q_ASSERT(expected == n);
+    QList<int> choices;
+    while (choices.size() < expected) {
+        const int value = choice(min_index, max_index);
+        if (choices.contains(value)) { continue; }
+        choices.append(value);
+    }
+    return choices;
+}
+
+double eval_color_distance(const int (&lhs_rgb)[3], const int (&rhs_rgb)[3]) {
+    //! NOTE: see https://www.compuphase.com/cmetric.htm
+    const double r_mean       = (lhs_rgb[0] + rhs_rgb[0]) * 0.5;
+    const double diff_r       = lhs_rgb[0] - rhs_rgb[0];
+    const double diff_g       = lhs_rgb[1] - rhs_rgb[1];
+    const double diff_b       = lhs_rgb[2] - rhs_rgb[2];
+    const double diff_r_squre = diff_r * diff_r;
+    const double diff_g_squre = diff_g * diff_g;
+    const double diff_b_squre = diff_b * diff_b;
+    return sqrt((2 + r_mean / 256) * diff_r_squre + 4 * diff_g_squre + (2 + (255 - r_mean) / 256) * diff_b_squre);
+}

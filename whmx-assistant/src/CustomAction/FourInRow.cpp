@@ -384,18 +384,6 @@ static cv::Mat crop_image(const cv::Mat &src, const MaaRect &rect) {
     return src.rowRange(rect.y, rect.y + rect.height).colRange(rect.x, rect.x + rect.width);
 }
 
-double SolveFourInRow::eval_color_distance(const int (&lhs_rgb)[3], const int (&rhs_rgb)[3]) {
-    //! NOTE: see https://www.compuphase.com/cmetric.htm
-    const double r_mean       = (lhs_rgb[0] + rhs_rgb[0]) * 0.5;
-    const double diff_r       = lhs_rgb[0] - rhs_rgb[0];
-    const double diff_g       = lhs_rgb[1] - rhs_rgb[1];
-    const double diff_b       = lhs_rgb[2] - rhs_rgb[2];
-    const double diff_r_squre = diff_r * diff_r;
-    const double diff_g_squre = diff_g * diff_g;
-    const double diff_b_squre = diff_b * diff_b;
-    return sqrt((2 + r_mean / 256) * diff_r_squre + 4 * diff_g_squre + (2 + (255 - r_mean) / 256) * diff_b_squre);
-}
-
 bool SolveFourInRow::parse_params(SolveFourInRowParam &param_out, MaaStringView raw_param) {
     using Mode = SolveFourInRowParam::Mode;
 
