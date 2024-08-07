@@ -25,16 +25,6 @@
         ]
     },
     "Research.ResolveGotExtraResourceOnEventDone": {
-        "post_wait_freezes": {
-            "target": [
-                200,
-                100,
-                920,
-                500
-            ],
-            "time": 1000
-        },
-        "timeout": 5000,
         "next": [
             "Research.ResolveGotMapClues",
             "Research.ResolveGotStuff"
