@@ -14,6 +14,7 @@
 */
 
 #include "Client.h"
+#include "TaskConfigPanel.h"
 #include "../CustomRecognizer/Research.h"
 #include "../CustomAction/Research.h"
 #include "../CustomAction/FourInRow.h"
@@ -96,7 +97,23 @@ void Client::config_maa(const QString &user_path) {
 }
 
 void Client::open_task_config_panel(Task::MajorTask task) {
-    QMessageBox::information(this, "核心任务配置", "暂未开放核心任务配置面板，敬请期待之后的更新~");
+    const auto task_info = Task::get_task_info(task);
+    if (!task_info.has_config) {
+        qCritical() << "try to open config panel for task" << magic_enum::enum_name(task) << "which has no config";
+        return;
+    }
+
+    if (auto &params = task_config_.task_params; !params.contains(task)) {
+        params.insert(task, Task::get_default_task_param(task));
+    }
+
+    auto panel = TaskConfigPanel::build(task, task_config_.task_params.value(task));
+    addTab(panel, QString("核心任务配置·%1").arg(task_info.name));
+    setCurrentIndex(count() - 1);
+
+    connect(panel, &TaskConfigPanel::on_config_change, [this](Task::MajorTask task, QVariant config) {
+        task_config_.task_params[task] = config;
+    });
 }
 
 void Client::handle_on_reload_assets() {
@@ -252,6 +269,19 @@ void Client::handle_on_logging_flush(QString loggings) {
     file.write(loggings.toUtf8());
 }
 
+void Client::handle_on_leave_task_config_panel() {
+    const int confg_panel_index = count() - 1;
+    Q_ASSERT(tabText(confg_panel_index).startsWith("核心任务配置"));
+    auto panel = widget(confg_panel_index);
+    removeTab(confg_panel_index);
+    panel->deleteLater();
+}
+
+void Client::handle_on_switch_tab(int index) {
+    const int last_tab = count() - 1;
+    if (index != last_tab && tabText(last_tab).startsWith("核心任务配置")) { handle_on_leave_task_config_panel(); }
+}
+
 Client::Client(const QString &user_path, QWidget *parent)
     : QTabWidget(parent)
     , startup_time_(QDateTime::currentDateTime())
@@ -296,6 +326,7 @@ void Client::setup() {
     connect(ui_workbench_->logger(), &LogPanel::on_flush, this, &Client::handle_on_logging_flush);
     connect(ui_workbench_, &Workbench::on_post_queued_task, this, &Client::execute_pipeline_task);
     connect(ui_workbench_, &Workbench::on_request_open_task_config_panel, this, &Client::open_task_config_panel);
+    connect(this, &Client::currentChanged, this, &Client::handle_on_switch_tab);
 }
 
 } // namespace UI

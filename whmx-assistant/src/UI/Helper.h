@@ -20,6 +20,7 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QSpinBox>
 
 namespace UI {
 
@@ -27,6 +28,22 @@ QWidget *make_titled_widget(const QString &title, QWidget *widget, QWidget *righ
 void     config_list_widget(QListWidget *widget);
 void     config_flat_button(FlatButton *button, const QString &text);
 void     config_combo_box(QComboBox *combo, const QString &placeholder_text = QString());
+void     config_spin(QSpinBox *spin, int value);
 void     append_list_widget_item(QListWidget *list, QWidget *item_widget, const QString &text = QString());
+
+template <typename T>
+inline void combo_set_current_item(QComboBox *combo, const T &value) {
+    const bool blocked = combo->signalsBlocked();
+    bool       found   = false;
+    combo->blockSignals(true);
+    for (int i = 0; i < combo->count(); ++i) {
+        if (combo->itemData(i).value<T>() != value) { continue; }
+        combo->setCurrentIndex(i);
+        found = true;
+        break;
+    }
+    if (!found) { combo->setCurrentIndex(-1); }
+    combo->blockSignals(blocked);
+}
 
 } // namespace UI

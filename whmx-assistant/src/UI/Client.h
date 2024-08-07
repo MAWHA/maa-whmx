@@ -108,6 +108,8 @@ protected slots:
     void handle_on_request_connect_device(MaaAdbDevice device);
     void handle_on_create_and_init_instance();
     void handle_on_logging_flush(QString loggings);
+    void handle_on_leave_task_config_panel();
+    void handle_on_switch_tab(int index);
 
 signals:
     void on_sync_res_dir_done(int maa_status);

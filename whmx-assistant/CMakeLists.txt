@@ -62,6 +62,8 @@ PRIVATE
     UI/DeviceConn.h
     UI/Settings.cpp
     UI/Settings.h
+    UI/TaskConfigPanel.cpp
+    UI/TaskConfigPanel.h
     UI/Client.cpp
     UI/Client.h
     CustomAction/Research.cpp

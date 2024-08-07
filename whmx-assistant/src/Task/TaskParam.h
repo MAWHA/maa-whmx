@@ -17,47 +17,158 @@
 
 #include <QtCore/QString>
 #include <QtCore/QList>
+#include <QtCore/QMetaType>
 
 namespace Task {
 
-struct GetFreeGiftPackParam {};
+//! 道具分页
+enum class PropCategory {
+    ExpBook,     //<! 办公室-制造-“经验书”分页
+    Prop,        //<! 工作间-制造-“道具"分页
+    Material,    //<! 工作间-物质交换机-“材料”分页
+    Certificate, //<! 工作间-物质交换机-“核定牌”分页
+};
 
-struct ConsumeExpiringVitalityPotionParam {};
+//! 产品制造策略
+enum class ProductionStrategy {
+    AlwaysReassign, //<! 总是停止当前工作立即替换
+    ReassignOnDiff, //<! 仅当工作内容不同时替换工作
+    AssignOnIdle,   //<! 仅当空闲时分配工作
+};
 
-struct PurchaseVitalityParam {};
+struct GetFreeGiftPackParam {
+    enum class Strategy {
+        DailyAllowanceOnly, //<! [默认] 仅“冬谷每日补贴”
+        FindAll,            //<! 尝试寻找并领取所有免费礼包
+    };
 
-struct PurchaseRandomProductParam {};
+    //! 领取策略
+    Strategy strategy = Strategy::DailyAllowanceOnly;
+};
 
-struct MopupResourceLevelParam {};
+struct ConsumeExpiringVitalityPotionParam {
+    enum class Strategy {
+        LowVitalityPotionOnly,  //<! [默认] 仅“冬谷畅饮水”
+        HighVitalityPotionOnly, //<! 仅“冬谷神秘水”
+        All,                    //<! 尝试所有体力水，优先消耗“冬谷畅饮水”
+    };
 
-struct EnlistCharacterParam {};
+    //! 消费策略
+    Strategy strategy = Strategy::LowVitalityPotionOnly;
+    //! 消费的体力水数量，-1 表示消费至最大值；消费的数量最多不超过体力上限
+    int number = 1;
+    //! 临期阈值（天），小于等于该值时消费体力水
+    int expire_threshold = 2;
+};
 
-struct RecruitCharacterParam {};
+struct PurchaseVitalityParam {
+    enum class Strategy {
+        Fixed,   //<! [默认] 固定数量购买
+        Maximum, //<! 购买至最大数量，直到无法继续购买（体力到上限，清仓，灰珀不足）
+        Auto,    //<! 购买至最大数量，直到低于设定的灰珀阈值或无法继续购买
+    };
 
-struct AssignOfficeProductParam {};
+    //! 购买策略
+    Strategy strategy = Strategy::Fixed;
+    //! Fixed 策略下的购买数量
+    int number = 1;
+    //! Auto 策略下的灰珀阈值（下限）
+    int coin_threshold = 500;
+};
 
-struct AssignWorkshopProductParam {};
+struct PurchaseRandomProductParam {
+    //! TODO: impl PurchaseRandomProduct
+};
 
-struct AssignEquipmentOrderParam {};
+struct MopupResourceLevelParam {
+    //! TODO: impl MopupResourceLevel
+};
 
-struct ReplaceFullFavorabilityCharacterParam {};
+struct EnlistCharacterParam {
+    //! TODO: impl EnlistCharacter
+};
 
-struct PlayFourInRowParam {};
+struct RecruitCharacterParam {
+    //! TODO: impl RecruitCharacter
+};
 
-struct PlayMiZongPanParam {};
+struct AssignOfficeProductParam {
+    //! 产品所在道具分页
+    PropCategory category = PropCategory::ExpBook;
+    //! 产品名称
+    QString product_name = "进阶社会学";
+    //! 分配策略
+    ProductionStrategy strategy = ProductionStrategy::AlwaysReassign;
+    //! 是否自动添加新订单
+    bool auto_assign = true;
+};
 
-struct PlayFourInARowParam {};
+struct AssignWorkshopProductParam {
+    //! 产品所在道具分页
+    PropCategory category = PropCategory::Prop;
+    //! 产品名称
+    QString product_name = "錾银石墨条";
+    //! 分配策略
+    ProductionStrategy strategy = ProductionStrategy::AlwaysReassign;
+    //! 是否自动添加新订单
+    bool auto_assign = true;
+};
 
-struct SwitchFurnitureLayoutParam {};
+struct AssignEquipmentOrderParam {
+    //! TODO: impl AssignEquipmentOrder
+};
 
-struct DoResearchParam {};
+struct ReplaceFullFavorabilityCharacterParam {
+    //! TODO: impl ReplaceFullFavorabilityCharacter
+};
+
+struct ChatOverTeaParam {
+    //! TODO: impl ChatOverTea
+};
+
+struct PlayMiZongPanParam {
+    //! TODO: impl PlayMiZongPan
+};
+
+struct PlayFourInRowParam {
+    enum class Role {
+        Black,  //<! [默认] 黑棋（先手）
+        White,  //<! 白棋（后手）
+        Random, //<! 随机
+    };
+
+    enum class Mode {
+        Normal,    //<! [默认] 普通模式
+        Difficult, //<! 困难模式
+    };
+
+    //! 棋手角色
+    Role role = Role::Black;
+    //! 难度模式
+    Mode mode = Mode::Normal;
+    //! 期望胜局局数
+    int rounds = 1;
+};
+
+struct SwitchFurnitureLayoutParam {
+    //! TODO: impl SwitchFurnitureLayout
+};
+
+struct DoResearchParam {
+    //! 研学收集方向
+    QString category;
+    //! 偏好增益列表
+    QList<QString> buff_preference;
+};
 
 struct PurchasePiecesOfPaintingParam {
     //! 购买方案，按给出的画作顺序购买对应碎片
     QList<QString> queue;
 };
 
-struct PlayDongguCompetitionParam {};
+struct PlayDongguCompetitionParam {
+    //! TODO: impl PlayDongguCompetition
+};
 
 struct PurchaseDongguProductParam {
     struct Order {
@@ -68,9 +179,9 @@ struct PurchaseDongguProductParam {
             Maximum,     //<! 购买最大数量（直到清仓或余额不足）
         };
 
-        QString  product_name = "";
-        Strategy strategy     = Strategy::One;
-        int      number       = -1;
+        QString  product_name = "";            //<! 商品名称
+        Strategy strategy     = Strategy::One; //<! 购买策略
+        int      number       = -1;            //<! Fixed 策略下的购买数量
     };
 
     //! 购买方案，按顺序购买商品
@@ -78,3 +189,30 @@ struct PurchaseDongguProductParam {
 };
 
 } // namespace Task
+
+Q_DECLARE_METATYPE(Task::PropCategory);
+Q_DECLARE_METATYPE(Task::ProductionStrategy);
+Q_DECLARE_METATYPE(Task::GetFreeGiftPackParam);
+Q_DECLARE_METATYPE(Task::GetFreeGiftPackParam::Strategy);
+Q_DECLARE_METATYPE(Task::ConsumeExpiringVitalityPotionParam);
+Q_DECLARE_METATYPE(Task::ConsumeExpiringVitalityPotionParam::Strategy);
+Q_DECLARE_METATYPE(Task::PurchaseVitalityParam);
+Q_DECLARE_METATYPE(Task::PurchaseRandomProductParam);
+Q_DECLARE_METATYPE(Task::MopupResourceLevelParam);
+Q_DECLARE_METATYPE(Task::EnlistCharacterParam);
+Q_DECLARE_METATYPE(Task::RecruitCharacterParam);
+Q_DECLARE_METATYPE(Task::AssignOfficeProductParam);
+Q_DECLARE_METATYPE(Task::AssignWorkshopProductParam);
+Q_DECLARE_METATYPE(Task::AssignEquipmentOrderParam);
+Q_DECLARE_METATYPE(Task::ReplaceFullFavorabilityCharacterParam);
+Q_DECLARE_METATYPE(Task::ChatOverTeaParam);
+Q_DECLARE_METATYPE(Task::PlayMiZongPanParam);
+Q_DECLARE_METATYPE(Task::PlayFourInRowParam);
+Q_DECLARE_METATYPE(Task::PlayFourInRowParam::Role);
+Q_DECLARE_METATYPE(Task::PlayFourInRowParam::Mode);
+Q_DECLARE_METATYPE(Task::SwitchFurnitureLayoutParam);
+Q_DECLARE_METATYPE(Task::DoResearchParam);
+Q_DECLARE_METATYPE(Task::PurchasePiecesOfPaintingParam);
+Q_DECLARE_METATYPE(Task::PlayDongguCompetitionParam);
+Q_DECLARE_METATYPE(Task::PurchaseDongguProductParam);
+Q_DECLARE_METATYPE(Task::PurchaseDongguProductParam::Order::Strategy);

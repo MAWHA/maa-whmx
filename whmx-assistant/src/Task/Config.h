@@ -28,6 +28,7 @@ struct Config {
     QMap<MajorTask, QVariant> task_params;
 };
 
-bool load_task_config(Config& config, const QString& file_path);
+bool     load_task_config(Config& config, const QString& file_path);
+QVariant get_default_task_param(MajorTask task);
 
 } // namespace Task

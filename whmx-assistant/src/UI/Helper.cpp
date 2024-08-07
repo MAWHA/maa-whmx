@@ -124,6 +124,23 @@ void config_combo_box(QComboBox *combo, const QString &placeholder_text) {
     )");
 }
 
+void config_spin(QSpinBox *spin, int value) {
+    spin->setValue(qBound(spin->minimum(), value, spin->maximum()));
+    spin->setStyleSheet(R"(
+    QSpinBox {
+        font-size: 12pt;
+        padding: 4px 10px 4px 10px;
+        color: #000000;
+        background-color: #ffffff;
+        border: 1px solid rgba(228,228,228,1);
+        border-radius: 5px 5px 0px 0px;
+    }
+    )");
+    spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    spin->setButtonSymbols(QAbstractSpinBox::NoButtons);
+    spin->setAlignment(Qt::AlignCenter);
+}
+
 void append_list_widget_item(QListWidget *list, QWidget *item_widget, const QString &text) {
     auto item = new QListWidgetItem(nullptr, QListWidgetItem::UserType);
     item->setSizeHint(item_widget->sizeHint());

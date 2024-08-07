@@ -14,6 +14,7 @@
 */
 
 #include "Config.h"
+#include "TaskParam.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QMap>
@@ -51,6 +52,71 @@ bool load_task_config(Config& config, const QString& file_path) {
     }
 
     return true;
+}
+
+QVariant get_default_task_param(MajorTask task) {
+    switch (task) {
+        case MajorTask::GetFreeGiftPack: {
+            return QVariant::fromValue(Task::GetFreeGiftPackParam{});
+        } break;
+        case MajorTask::ConsumeExpiringVitalityPotion: {
+            return QVariant::fromValue(Task::ConsumeExpiringVitalityPotionParam{});
+        } break;
+        case MajorTask::PurchaseVitality: {
+            return QVariant::fromValue(Task::PurchaseVitalityParam{});
+        } break;
+        case MajorTask::PurchaseRandomProduct: {
+            return QVariant::fromValue(Task::PurchaseRandomProductParam{});
+        } break;
+        case MajorTask::MopupResourceLevel: {
+            return QVariant::fromValue(Task::MopupResourceLevelParam{});
+        } break;
+        case MajorTask::EnlistCharacter: {
+            return QVariant::fromValue(Task::EnlistCharacterParam{});
+        } break;
+        case MajorTask::RecruitCharacter: {
+            return QVariant::fromValue(Task::RecruitCharacterParam{});
+        } break;
+        case MajorTask::AssignOfficeProduct: {
+            return QVariant::fromValue(Task::AssignOfficeProductParam{});
+        } break;
+        case MajorTask::AssignWorkshopProduct: {
+            return QVariant::fromValue(Task::AssignWorkshopProductParam{});
+        } break;
+        case MajorTask::AssignEquipmentOrder: {
+            return QVariant::fromValue(Task::AssignEquipmentOrderParam{});
+        } break;
+        case MajorTask::ReplaceFullFavorabilityCharacter: {
+            return QVariant::fromValue(Task::ReplaceFullFavorabilityCharacterParam{});
+        } break;
+        case MajorTask::ChatOverTea: {
+            return QVariant::fromValue(Task::ChatOverTeaParam{});
+        } break;
+        case MajorTask::PlayMiZongPan: {
+            return QVariant::fromValue(Task::PlayMiZongPanParam{});
+        } break;
+        case MajorTask::PlayFourInRow: {
+            return QVariant::fromValue(Task::PlayFourInRowParam{});
+        } break;
+        case MajorTask::SwitchFurnitureLayout: {
+            return QVariant::fromValue(Task::SwitchFurnitureLayoutParam{});
+        } break;
+        case MajorTask::DoResearch: {
+            return QVariant::fromValue(Task::DoResearchParam{});
+        } break;
+        case MajorTask::PurchasePiecesOfPainting: {
+            return QVariant::fromValue(Task::PurchasePiecesOfPaintingParam{});
+        } break;
+        case MajorTask::PlayDongguCompetition: {
+            return QVariant::fromValue(Task::PlayDongguCompetitionParam{});
+        } break;
+        case MajorTask::PurchaseDongguProduct: {
+            return QVariant::fromValue(Task::PurchaseDongguProductParam{});
+        } break;
+        default: {
+            std::unreachable();
+        } break;
+    }
 }
 
 } // namespace Task
