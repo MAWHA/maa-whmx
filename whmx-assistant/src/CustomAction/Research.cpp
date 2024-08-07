@@ -17,6 +17,8 @@
 #include "../Decode.h"
 #include "../Algorithm.h"
 #include "../ReferenceDataSet.h"
+#include "../Task/Config.h"
+#include "../Task/TaskParam.h"
 
 #include <array>
 #include <vector>
@@ -288,6 +290,86 @@ coro::Promise<bool> PerformItemPairsMatch::research__perform_item_pairs_match(
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
+
+    co_return true;
+}
+
+coro::Promise<bool> ResolveBuffSelection::research__resolve_buff_selection(
+    std::shared_ptr<SyncContext> context,
+    MaaStringView                task_name,
+    MaaStringView                param,
+    const MaaRect               &cur_box,
+    MaaStringView                cur_rec_detail) {
+    QStringList preferred_buffs;
+    if (false) {
+        //! TODO: enable input param to override the value provieded by shared-task-config
+    } else if (const auto config = Task::shared_task_config()) {
+        const auto param = config->task_params.value(Task::MajorTask::DoResearch, QVariant::fromValue(Task::DoResearchParam{}));
+        preferred_buffs  = param.value<Task::DoResearchParam>().buff_preference;
+    }
+
+    QStringList buff_names;
+    for (const auto data = unwrap_custom_recognizer_analyze_result(cur_rec_detail); const auto &buff : data.as_array()) {
+        buff_names.append(QString::fromUtf8(buff.as_string()));
+    }
+
+    const int center_pos_x = 640;
+    const int pos_y        = 340;
+    const int dx           = 274;
+
+    bool need_select     = true;
+    int  choice_expected = 0;
+
+    if (const int total_buffs = buff_names.size(); total_buffs == 1) {
+        need_select = false;
+    } else if (total_buffs == 3) {
+        choice_expected = 1;
+    } else if (total_buffs == 5) {
+        choice_expected = 2;
+    } else {
+        qCritical() << "invalid number of buffs" << total_buffs;
+        co_return false;
+    }
+
+    QList<int> choices;
+
+    if (need_select) {
+        Q_ASSERT(choice_expected > 0);
+        for (const auto &preferred_buff : preferred_buffs) {
+            const int index = buff_names.indexOf(preferred_buff);
+            if (index == -1) { continue; }
+            choices.append(index);
+            if (choices.size() >= choice_expected) { break; }
+        }
+        Q_ASSERT(choices.size() <= choice_expected);
+        if (choices.size() < choice_expected) {
+            QList<int> candidates;
+            for (int i = 0; i < buff_names.size(); ++i) {
+                if (choices.contains(i)) { continue; }
+                candidates.append(i);
+            }
+            const auto indicies = multi_choice(choice_expected, 0, candidates.size() - 1);
+            for (const int index : indicies) { choices.append(candidates[index]); }
+        }
+    } else {
+        choices.append(0);
+    }
+
+    {
+        QStringList selected_buffs;
+        for (const int choice_index : choices) { selected_buffs.append(QString("\"%1\"").arg(buff_names[choice_index])); }
+        qInfo().noquote() << "select buffs: [" << selected_buffs.join(", ") << "]";
+    }
+
+    if (need_select) {
+        for (const int choice_index : choices) {
+            const int pos_x = center_pos_x + dx * (choice_index - buff_names.size() / 2);
+            co_await context->click(pos_x, pos_y);
+        }
+        co_await context->run_task("Research.ConfirmBuffSelection");
+    }
+
+    co_await context->run_task("Research.ResolveGotBuff");
 
     co_return true;
 }

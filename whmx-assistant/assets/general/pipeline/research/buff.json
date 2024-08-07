@@ -1,0 +1,40 @@
+{
+    "Research.ConfirmBuffSelection": {
+        "recognition": "TemplateMatch",
+        "template": "Research/Buff/Confirm.png",
+        "roi": [
+            520,
+            619,
+            240,
+            49
+        ],
+        "threshold": 0.95,
+        "action": "Click",
+        "target": [
+            640,
+            644,
+            0,
+            0
+        ],
+        "times_limit": 32
+    },
+    "Research.ResolveGotBuff": {
+        "recognition": "TemplateMatch",
+        "template": "Research/Buff/GotBuff.png",
+        "roi": [
+            511,
+            64,
+            257,
+            29
+        ],
+        "threshold": 0.9,
+        "action": "Click",
+        "target": [
+            640,
+            78,
+            0,
+            0
+        ],
+        "times_limit": 32
+    }
+}

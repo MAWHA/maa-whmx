@@ -392,4 +392,80 @@ coro::Promise<AnalyzeResult> AnalyzeItemPairs::research__analyze_item_pairs(
     co_return resp;
 }
 
+coro::Promise<AnalyzeResult> GetCandidateBuffs::research__get_candidate_buffs(
+    SyncContextHandle context, ImageHandle image, std::string_view task_name, std::string_view param) {
+    AnalyzeResult resp;
+    resp.result = false;
+
+    //! NOTE: recog buff type (1/3/5 buffs or 1 debuff) via hit-test pixel on several points on the buff card
+
+    const MaaRect center_roi{550, 326, 178, 30};
+
+    const int buff_feature_rgb[2][3]{
+        {227, 227, 211},
+        {67,  103, 68 },
+    };
+    const int buff_feature_pos[2][2]{
+        {554, 232},
+        {547, 339},
+    };
+    const int dx = 274;
+
+    cv::Mat im(image->height(), image->width(), image->type(), image->raw_data());
+    int     total_buff = 0;
+    {
+        int index = 0;
+        while (index < 3) {
+            bool pass = true;
+            for (int i = 0; i < 2; ++i) {
+                const int    pos_x = buff_feature_pos[i][0] + dx * index;
+                const int    pos_y = buff_feature_pos[i][1];
+                const auto   pixel = im.at<cv::Vec3b>(pos_y, pos_x);
+                const int    rgb[3]{pixel[0], pixel[1], pixel[2]};
+                const double distance = eval_color_distance(buff_feature_rgb[i], rgb);
+                if (distance > 64) {
+                    pass = false;
+                    break;
+                }
+            }
+            if (!pass) { break; }
+            ++index;
+        }
+        if (index > 0) { total_buff = index * 2 - 1; }
+    }
+
+    if (total_buff == -1) {
+        qCritical() << "failed to recognize buff type";
+        co_return resp;
+    }
+
+    json::array resp_data;
+    {
+        const int r = total_buff / 2;
+        for (int i = -r; i <= r; ++i) {
+            const MaaRect roi{qBound(0, center_roi.x + i * dx, im.cols), center_roi.y, center_roi.width, center_roi.height};
+            const auto    recog_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi));
+            const auto    data       = json::parse(recog_resp.rec_detail);
+            if (data->contains("best")) {
+                const auto buff_name = QString::fromUtf8(data->at("best").at("text").as_string());
+                if (buff_name.contains(QChar(U'·'))) {
+                    resp_data.push_back(buff_name.split(QChar(U'·')).back().toStdString());
+                } else {
+                    resp_data.push_back(buff_name.toStdString());
+                }
+            } else {
+                //! NOTE: it doesn't matter even if the recognition fails, just skip it
+                resp_data.push_back("");
+            }
+        }
+    }
+
+    resp.result     = true;
+    resp.rec_detail = resp_data.to_string();
+
+    qInfo().noquote() << "found candidate buffs:" << QString::fromUtf8(resp.rec_detail);
+
+    co_return resp;
+}
+
 } // namespace Rec::Research

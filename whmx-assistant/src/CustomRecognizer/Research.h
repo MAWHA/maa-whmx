@@ -72,4 +72,19 @@ private:
         maa::SyncContextHandle context, maa::ImageHandle image, std::string_view task_name, std::string_view param);
 };
 
+class GetCandidateBuffs {
+public:
+    static std::string name() {
+        return "Research.GetCandidateBuffs";
+    }
+
+    static std::shared_ptr<maa::CustomRecognizer> make() {
+        return maa::CustomRecognizer::make(&GetCandidateBuffs::research__get_candidate_buffs);
+    }
+
+private:
+    static maa::coro::Promise<maa::AnalyzeResult> research__get_candidate_buffs(
+        maa::SyncContextHandle context, maa::ImageHandle image, std::string_view task_name, std::string_view param);
+};
+
 } // namespace Rec::Research

@@ -12,3 +12,9 @@ roi = [968, 405, 124, 124]
 
 ["Research/GradeOption/Commit.png"]
 roi = [880, 540, 170, 60]
+
+["Research/Buff/Confirm.png"]
+roi = [520, 619, 240, 49]
+
+["Research/Buff/GotBuff.png"]
+roi = [511, 64, 257, 29]

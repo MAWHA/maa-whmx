@@ -98,4 +98,23 @@ private:
         MaaStringView                     cur_rec_detail);
 };
 
+class ResolveBuffSelection {
+public:
+    static std::string name() {
+        return "Research.ResolveBuffSelection";
+    }
+
+    static std::shared_ptr<maa::CustomAction> make() {
+        return maa::CustomAction::make(&ResolveBuffSelection::research__resolve_buff_selection);
+    }
+
+private:
+    static maa::coro::Promise<bool> research__resolve_buff_selection(
+        std::shared_ptr<maa::SyncContext> context,
+        MaaStringView                     task_name,
+        MaaStringView                     param,
+        const MaaRect                    &cur_box,
+        MaaStringView                     cur_rec_detail);
+};
+
 } // namespace Action::Research

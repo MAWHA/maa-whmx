@@ -42,5 +42,11 @@
         "custom_recognition": "Research.AnalyzeItemPairs",
         "action": "Custom",
         "custom_action": "Research.PerformItemPairsMatch"
+    },
+    "Test.Research.ResolveCandidateBuffs": {
+        "recognition": "Custom",
+        "custom_recognition": "Research.GetCandidateBuffs",
+        "action": "Custom",
+        "custom_action": "Research.ResolveBuffSelection"
     }
 }
