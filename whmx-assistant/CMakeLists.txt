@@ -31,6 +31,7 @@ PRIVATE
     Logger.h
     TaskGraph.cpp
     TaskGraph.h
+    MacroHelper.h
     Task/MajorTask.cpp
     Task/MajorTask.h
     Task/Config.cpp
