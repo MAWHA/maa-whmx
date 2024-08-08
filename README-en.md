@@ -1,5 +1,5 @@
 <div align="right">
-    <a href="README-en.md">English</a> | 中文
+    English | <a href="README.md">中文</a>
 </div>
 
 <p align="center">
@@ -8,9 +8,9 @@
 
 <div align="center">
 
-# 物华弥新小助手
+# whmx-assistant
 
-五花米线们自己的一键长草工具
+Powerful hang-up tool for WuHuaMiXin players
 
 </div>
 
@@ -22,25 +22,25 @@
   <img alt="stars" src="https://img.shields.io/github/stars/MAWHA/maa-whmx?style=social">
 </p>
 
-# 简介
+# About
 
-物华弥新小助手是一款基于 Qt6 开发，由 MaaFramework 强力驱动的高可定制的一键长草工具。
+whmx-assistant is a highly customizable hang-up tool based on Qt6 and powered by MaaFramework.
 
-本项目使用全新架构开发，致力于在保留与 MaaFramework 交互部分低代码特性的同时，实现对于目标游戏更高程度的特化、更友好的交互体验、更灵活的任务配置等目标。
+This project is developed with a new architecture, aiming to achieve a higher degree of specialization for the target game, a more friendly interaction experience, and a more flexible task configuration, while retaining the low-code features of the interaction with MaaFramework.
 
-# 快速开始
+# Quick Start
 
-- [快速开始](docs/zh_CN/快速开始.md)
-- [任务划分](docs/zh_CN/任务划分.md)
-- [核心任务](docs/zh_CN/核心任务.md)
-- [构建指南](docs/zh_CN/构建指南.md)
-- [移植指南](docs/zh_CN/移植指南.md)
+- [Gettting Started](docs/zh_CN/快速开始.md)
+- [Details of Tasks](docs/zh_CN/任务划分.md)
+- [Major Task and Task Bindings](docs/zh_CN/核心任务.md)
+- [Build](docs/zh_CN/构建指南.md)
+- [Migration](docs/zh_CN/移植指南.md)
 
-# 功能支持
+# Features
 
-_✨本项目的流水线资源由 [MWA](https://github.com/MAWHA/MWA) 协同提供✨_
+_✨pipeline resources are provided in collaboration with [MWA](https://github.com/MAWHA/MWA)✨_
 
-**集成方法**
+**Assembly Methods**
 
 - [x] 四子棋
 - [ ] 迷踪盘
@@ -51,15 +51,15 @@ _✨本项目的流水线资源由 [MWA](https://github.com/MAWHA/MWA) 协同提
 - [x] 研学-升降阶
 - [ ] 研学-钓鱼
 
-> 集成方法指代 `Recognizer` 与 `Action`，提供给流水线使用以取得更优秀的执行效率、稳定性及灵活性，或实现仅靠流水线内置方法无法实现的功能。
+> Assembly methods refer to `Recognizer` and `Action` that can be used by the pipeline to achieve better execution efficiency, stability and flexibility, or to implement functions that are not possible with the built-in methods in the pipeline alone.
 
-**支持流水线**
+**Major Pipelines**
 
-详情请见 [MWA](https://github.com/MAWHA/MWA)
+For more information, please visit [MWA](https://github.com/MAWHA/MWA)
 
-# 鸣谢
+# Acknowledgements
 
-感谢以下开源项目的助力：
+Thanks to the following open-source projects:
 
 - [MaaFramework](https://github.com/MAWHA/MaaFramework) \
   基于图像识别的自动化黑盒测试框架 | An automation black-box testing framework based on image recognition
@@ -74,18 +74,18 @@ _✨本项目的流水线资源由 [MWA](https://github.com/MAWHA/MWA) 协同提
 - [meojson](https://github.com/MistEO/meojson) \
   A modern all-platform Json/Json5 parser/serializer, which is header-only and used magic!
 
-# 许可证
+# License
 
-**物华弥新小助手** 在 [`Apache-2.0`](LICENSE) 许可证下开源。
+**whmx-assistant** is open-sourced under the [`Apache-2.0`](LICENSE) license.
 
-# 贡献者
+# Contributors
 
-感谢以下开发者对物华弥新小助手作出的贡献：
+Thanks to the following developers for their contributions to whmx-assistant:
 
 <a href="https://github.com/MAWHA/maa-whmx/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=MAWHA/maa-whmx&max=1000" />
 </a>
 
-# 讨论
+# Discussion
 
 ![qq-group](https://img.shields.io/badge/QQ-985099968-blue)
