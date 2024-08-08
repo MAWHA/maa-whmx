@@ -20,6 +20,8 @@
 #include <meojson/json.hpp>
 #include <initializer_list>
 
+namespace Task {
+
 void TaskGraphNode::add_succ(std::shared_ptr<TaskGraphNode> succ) {
     if (contains_succ(succ->task_name)) { return; }
     if (succ->contains_succ(task_name)) {
@@ -163,3 +165,5 @@ QStringList TaskGraph::find_left_root_tasks(const QStringList &exclude_tasks) co
     }
     return resp;
 }
+
+} // namespace Task

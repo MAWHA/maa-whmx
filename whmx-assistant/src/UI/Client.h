@@ -18,8 +18,9 @@
 #include "DeviceConn.h"
 #include "Workbench.h"
 #include "Settings.h"
-#include "../TaskGraph.h"
+#include "../Task/TaskGraph.h"
 #include "../Task/Config.h"
+#include "../Task/Router.h"
 
 #include <MaaPP/MaaPP.hpp>
 #include <QtWidgets/QTabWidget>
@@ -127,7 +128,8 @@ private:
     bool                             first_time_to_flush_log_;
     QString                          user_path_;
     std::shared_ptr<Task::Config>    task_config_;
-    TaskGraph                        task_graph_;
+    std::shared_ptr<Task::TaskGraph> task_graph_;
+    std::shared_ptr<Task::Router>    task_router_;
     std::shared_ptr<maa::Controller> maa_ctrl_;
     std::shared_ptr<maa::Resource>   maa_res_;
     std::shared_ptr<maa::Instance>   maa_instance_;

@@ -20,6 +20,8 @@
 #include <memory>
 #include <optional>
 
+namespace Task {
+
 struct TaskGraphNode : public std::enable_shared_from_this<TaskGraphNode> {
     QString task_name;
     int     source_nr;
@@ -61,3 +63,5 @@ struct TaskGraph {
     QStringList root_tasks() const;
     QStringList find_left_root_tasks(const QStringList &exclude_tasks) const;
 };
+
+} // namespace Task

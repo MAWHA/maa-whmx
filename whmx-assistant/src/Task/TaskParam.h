@@ -48,8 +48,7 @@ enum class LevelCategory {
     Resource,   //<! 执行-资源关卡
 };
 
-class GetFreeGiftPackParam : public PropGetter {
-public:
+struct GetFreeGiftPackParam : public PropGetter {
     enum class Strategy {
         DailyAllowanceOnly, //<! [默认] 仅“冬谷每日补贴”
         FindAll,            //<! 尝试寻找并领取所有免费礼包
@@ -58,12 +57,10 @@ public:
     //! 领取策略
     Strategy strategy = Strategy::DailyAllowanceOnly;
 
-private:
     DECLARE_PROPS(GetFreeGiftPackParam, strategy)
 };
 
-class ConsumeExpiringVitalityPotionParam : public PropGetter {
-public:
+struct ConsumeExpiringVitalityPotionParam : public PropGetter {
     enum class Strategy {
         LowVitalityPotionOnly,  //<! [默认] 仅“冬谷畅饮水”
         HighVitalityPotionOnly, //<! 仅“冬谷神秘水”
@@ -77,12 +74,10 @@ public:
     //! 临期阈值（天），小于等于该值时消费体力水
     int expire_threshold = 2;
 
-private:
     DECLARE_PROPS(ConsumeExpiringVitalityPotionParam, strategy, number, expire_threshold)
 };
 
-class PurchaseVitalityParam : public PropGetter {
-public:
+struct PurchaseVitalityParam : public PropGetter {
     enum class Strategy {
         Fixed,   //<! [默认] 固定数量购买
         Maximum, //<! 购买至最大数量，直到无法继续购买（体力到上限，清仓，灰珀不足）
@@ -96,20 +91,16 @@ public:
     //! Auto 策略下的灰珀阈值（下限）
     int coin_threshold = 500;
 
-private:
     DECLARE_PROPS(PurchaseVitalityParam, strategy, number, coin_threshold)
 };
 
-class PurchaseRandomProductParam : public PropGetter {
-public:
+struct PurchaseRandomProductParam : public PropGetter {
     //! TODO: impl PurchaseRandomProduct
 
-private:
     DECLARE_PROPS(PurchaseRandomProductParam)
 };
 
-class MopupResourceLevelParam : public PropGetter {
-public:
+struct MopupResourceLevelParam : public PropGetter {
     //! 关卡类别
     LevelCategory category = LevelCategory::Develop;
     //! 关卡名称
@@ -121,28 +112,22 @@ public:
     //! 是否扫荡
     bool mopup = true;
 
-private:
     DECLARE_PROPS(MopupResourceLevelParam, category, level_name, level_index, repeat_times, mopup)
 };
 
-class EnlistCharacterParam : public PropGetter {
-public:
+struct EnlistCharacterParam : public PropGetter {
     //! TODO: impl EnlistCharacter
 
-private:
     DECLARE_PROPS(EnlistCharacterParam)
 };
 
-class RecruitCharacterParam : public PropGetter {
-public:
+struct RecruitCharacterParam : public PropGetter {
     //! TODO: impl RecruitCharacter
 
-private:
     DECLARE_PROPS(RecruitCharacterParam)
 };
 
-class AssignOfficeProductParam : public PropGetter {
-public:
+struct AssignOfficeProductParam : public PropGetter {
     //! 产品所在道具分页
     PropCategory category = PropCategory::ExpBook;
     //! 产品名称
@@ -152,12 +137,10 @@ public:
     //! 是否自动添加新订单
     bool auto_assign = true;
 
-private:
     DECLARE_PROPS(AssignOfficeProductParam, category, product_name, strategy, auto_assign)
 };
 
-class AssignWorkshopProductParam : public PropGetter {
-public:
+struct AssignWorkshopProductParam : public PropGetter {
     //! 产品所在道具分页
     PropCategory category = PropCategory::Prop;
     //! 产品名称
@@ -167,44 +150,34 @@ public:
     //! 是否自动添加新订单
     bool auto_assign = true;
 
-private:
     DECLARE_PROPS(AssignWorkshopProductParam, category, product_name, strategy, auto_assign)
 };
 
-class AssignEquipmentOrderParam : public PropGetter {
-public:
+struct AssignEquipmentOrderParam : public PropGetter {
     //! TODO: impl AssignEquipmentOrder
 
-private:
     DECLARE_PROPS(AssignEquipmentOrderParam)
 };
 
-class ReplaceFullFavorabilityCharacterParam : public PropGetter {
-public:
+struct ReplaceFullFavorabilityCharacterParam : public PropGetter {
     //! TODO: impl ReplaceFullFavorabilityCharacter
 
-private:
     DECLARE_PROPS(ReplaceFullFavorabilityCharacterParam)
 };
 
-class ChatOverTeaParam : public PropGetter {
-public:
+struct ChatOverTeaParam : public PropGetter {
     //! TODO: impl ChatOverTea
 
-private:
     DECLARE_PROPS(ChatOverTeaParam)
 };
 
-class PlayMiZongPanParam : public PropGetter {
-public:
+struct PlayMiZongPanParam : public PropGetter {
     //! TODO: impl PlayMiZongPan
 
-private:
     DECLARE_PROPS(PlayMiZongPanParam)
 };
 
-class PlayFourInRowParam : public PropGetter {
-public:
+struct PlayFourInRowParam : public PropGetter {
     enum class Role {
         Black,  //<! [默认] 黑棋（先手）
         White,  //<! 白棋（后手）
@@ -223,48 +196,38 @@ public:
     //! 期望胜局局数
     int rounds = 1;
 
-private:
     DECLARE_PROPS(PlayFourInRowParam, role, mode, rounds)
 };
 
-class SwitchFurnitureLayoutParam : public PropGetter {
-public:
+struct SwitchFurnitureLayoutParam : public PropGetter {
     //! TODO: impl SwitchFurnitureLayout
 
-private:
     DECLARE_PROPS(SwitchFurnitureLayoutParam)
 };
 
-class DoResearchParam : public PropGetter {
-public:
+struct DoResearchParam : public PropGetter {
     //! 研学收集方向
     QString category;
     //! 偏好增益列表
     QList<QString> buff_preference;
 
-private:
     DECLARE_PROPS(DoResearchParam, category, buff_preference)
 };
 
-class PurchasePiecesOfPaintingParam : public PropGetter {
-public:
+struct PurchasePiecesOfPaintingParam : public PropGetter {
     //! 购买方案，按给出的画作顺序购买对应碎片
     QList<QString> queue;
 
-private:
     DECLARE_PROPS(PurchasePiecesOfPaintingParam, queue)
 };
 
-class PlayDongguCompetitionParam : public PropGetter {
-public:
+struct PlayDongguCompetitionParam : public PropGetter {
     //! TODO: impl PlayDongguCompetition
 
-private:
     DECLARE_PROPS(PlayDongguCompetitionParam)
 };
 
-class PurchaseDongguProductParam : public PropGetter {
-public:
+struct PurchaseDongguProductParam : public PropGetter {
     struct Order {
         enum class Strategy {
             One,         //<! [默认] 购买一件
@@ -281,9 +244,10 @@ public:
     //! 购买方案，按顺序购买商品
     QList<Order> order_plan;
 
-private:
     DECLARE_PROPS(PurchaseDongguProductParam, order_plan)
 };
+
+[[nodiscard]] std::shared_ptr<PropGetter> dump_task_param_to_prop_getter(const QVariant& param);
 
 } // namespace Task
 

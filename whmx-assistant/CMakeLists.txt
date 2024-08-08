@@ -29,15 +29,18 @@ PRIVATE
     Algorithm.h
     Logger.cpp
     Logger.h
-    TaskGraph.cpp
-    TaskGraph.h
     MacroHelper.h
+    Task/TaskGraph.cpp
+    Task/TaskGraph.h
     Task/MajorTask.cpp
     Task/MajorTask.h
     Task/Config.cpp
     Task/Config.h
+    Task/TaskParam.cpp
     Task/TaskParam.h
     Task/PropGetter.h
+    Task/Router.cpp
+    Task/Router.h
     UI/Helper.cpp
     UI/Helper.h
     UI/ClickableLabel.cpp

@@ -24,6 +24,8 @@
 
 namespace Task {
 
+class Router;
+
 struct Config {
     QMap<MajorTask, QString>  task_entries;
     QMap<MajorTask, QVariant> task_params;
@@ -32,7 +34,7 @@ struct Config {
 void                    reset_shared_task_config(const std::shared_ptr<Config> config);
 std::shared_ptr<Config> shared_task_config();
 
-bool     load_task_config(Config& config, const QString& file_path);
+bool     load_task_config(Config& config, const QString& file_path, std::shared_ptr<Router> router = nullptr);
 QVariant get_default_task_param(MajorTask task);
 
 } // namespace Task

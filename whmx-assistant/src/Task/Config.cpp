@@ -15,6 +15,7 @@
 
 #include "Config.h"
 #include "TaskParam.h"
+#include "Router.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QMap>
@@ -33,7 +34,7 @@ std::shared_ptr<Config> shared_task_config() {
     return SHARED_TASK_CONFIG;
 }
 
-bool load_task_config(Config& config, const QString& file_path) {
+bool load_task_config(Config& config, const QString& file_path, std::shared_ptr<Router> router) {
     //! TODO: parse task_params
 
     QFile file(file_path);
@@ -59,6 +60,10 @@ bool load_task_config(Config& config, const QString& file_path) {
         if (!rev_index_table.contains(major_task_name)) { continue; }
         const auto major_task           = rev_index_table.value(major_task_name);
         config.task_entries[major_task] = task_entry;
+    }
+
+    if (router && data->contains("router") && data->at("router").is_object()) {
+        Router::parse(*router, data->at("router").as_object());
     }
 
     return true;
