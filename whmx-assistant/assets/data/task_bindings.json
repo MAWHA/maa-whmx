@@ -44,5 +44,652 @@
             "major_task": "GetAccumulatedVitality",
             "entry": "dispatch_company_three"
         }
-    ]
+    ],
+    "router": {
+        "AssignOfficeProduct": [
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "初级社会指南"
+                },
+                "pipeline": [
+                    {
+                        "entry": "dispath_company_collect",
+                        "param": {
+                            "next": "dispatch_social_one"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "中级社会指南"
+                },
+                "pipeline": [
+                    {
+                        "entry": "dispath_company_collect",
+                        "param": {
+                            "next": "dispatch_social_tow"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "高级社会指南"
+                },
+                "pipeline": [
+                    {
+                        "entry": "dispath_company_collect",
+                        "param": {
+                            "next": "dispatch_social_three"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "进阶社会学"
+                },
+                "pipeline": [
+                    {
+                        "entry": "dispath_company_collect",
+                        "param": {
+                            "next": "dispatch_social_four"
+                        }
+                    }
+                ]
+            }
+        ],
+        "AssignWorkshopProduct": [
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "随机凌级装备"
+                },
+                "pipeline": [
+                    {
+                        "entry": "fabricate_all",
+                        "param": {
+                            "next": "fabricate_one"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "饰铜石墨条"
+                },
+                "pipeline": [
+                    {
+                        "entry": "fabricate_all",
+                        "param": {
+                            "next": "fabricate_tow"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "錾银石墨条"
+                },
+                "pipeline": [
+                    {
+                        "entry": "fabricate_all",
+                        "param": {
+                            "next": "fabricate_three"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "灰珀碎片涂料"
+                },
+                "pipeline": [
+                    {
+                        "entry": "fabricate_all",
+                        "param": {
+                            "next": "fabricate_four"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "I型拟态钢材"
+                },
+                "pipeline": [
+                    {
+                        "entry": "fabricate_all",
+                        "param": {
+                            "next": "fabricate_five_Swipe"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "II型拟态钢材"
+                },
+                "pipeline": [
+                    {
+                        "entry": "fabricate_all",
+                        "param": {
+                            "next": "fabricate_nine_Swipe"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "资质证明I"
+                },
+                "pipeline": [
+                    {
+                        "entry": "fabricate_all",
+                        "param": {
+                            "next": "fabricate_six_Swipe"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "资质证明II"
+                },
+                "pipeline": [
+                    {
+                        "entry": "fabricate_all",
+                        "param": {
+                            "next": "fabricate_seven_Swipe"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "资质证明III"
+                },
+                "pipeline": [
+                    {
+                        "entry": "fabricate_all",
+                        "param": {
+                            "next": "fabricate_ten_Swipe"
+                        }
+                    }
+                ]
+            },
+            {
+                "on": {
+                    "key": "product_name",
+                    "op": "eq",
+                    "operand": "高级制造申请"
+                },
+                "pipeline": [
+                    {
+                        "entry": "fabricate_all",
+                        "param": {
+                            "next": "fabricate_eight_Swipe"
+                        }
+                    }
+                ]
+            }
+        ],
+        "DoResearch": [
+            {
+                "on": {
+                    "key": "category",
+                    "op": "eq",
+                    "operand": "雪景寒林图"
+                },
+                "pipeline": [
+                    {
+                        "entry": "Research",
+                        "param": {
+                            "next": []
+                        }
+                    },
+                    [
+                        {
+                            "on": {
+                                "key": "buff_preference",
+                                "op": "contains",
+                                "operand": "炽刀"
+                            },
+                            "entry": "snowscape",
+                            "param": {
+                                "next": "Blazing_Knife"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "buff_preference",
+                                "op": "contains",
+                                "operand": "神射"
+                            },
+                            "entry": "snowscape",
+                            "param": {
+                                "next": "Marksmanship"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "buff_preference",
+                                "op": "contains",
+                                "operand": "术法精通"
+                            },
+                            "entry": "snowscape",
+                            "param": {
+                                "next": "Spells"
+                            }
+                        },
+                        {
+                            "entry": "snowscape",
+                            "param": {
+                                "next": "Blazing_Knife"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "MopupResourceLevel": [
+            {
+                "on": {
+                    "key": "category",
+                    "op": "in",
+                    "operand": [
+                        "Develop",
+                        "Assess"
+                    ]
+                },
+                "pipeline": [
+                    [
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "冬古币"
+                            },
+                            "entry": "StartTraining",
+                            "param": {
+                                "next": "Cash"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "教材"
+                            },
+                            "entry": "StartTraining",
+                            "param": {
+                                "next": "Experience"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "装备"
+                            },
+                            "entry": "StartTraining",
+                            "param": {
+                                "next": "Weapon"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "宿卫"
+                            },
+                            "entry": "StartTraining",
+                            "param": {
+                                "next": "Defender"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "构术"
+                            },
+                            "entry": "StartTraining",
+                            "param": {
+                                "next": "Caster"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "远击"
+                            },
+                            "entry": "StartTraining",
+                            "param": {
+                                "next": "Ranger"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "轻锐"
+                            },
+                            "entry": "StartTraining",
+                            "param": {
+                                "next": "LightMelee"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "战略"
+                            },
+                            "entry": "StartTraining",
+                            "param": {
+                                "next": "Tactical"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "on": {
+                                "key": "level_index",
+                                "op": "eq",
+                                "operand": 1
+                            },
+                            "entry": "SelectStage01"
+                        },
+                        {
+                            "on": {
+                                "key": "level_index",
+                                "op": "eq",
+                                "operand": 2
+                            },
+                            "entry": "SelectStage02"
+                        },
+                        {
+                            "on": {
+                                "key": "level_index",
+                                "op": "eq",
+                                "operand": 3
+                            },
+                            "entry": "SelectStage03"
+                        },
+                        {
+                            "on": {
+                                "key": "level_index",
+                                "op": "eq",
+                                "operand": 4
+                            },
+                            "entry": "SelectStage04"
+                        },
+                        {
+                            "on": {
+                                "key": "level_index",
+                                "op": "eq",
+                                "operand": 5
+                            },
+                            "entry": "SelectStage05"
+                        }
+                    ],
+                    [
+                        {
+                            "on": {
+                                "key": "mopup",
+                                "op": "false"
+                            },
+                            "entry": "fast",
+                            "param": {
+                                "next": "Start1"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "repeat_times",
+                                "op": "eq",
+                                "operand": 1
+                            },
+                            "entry": "fast",
+                            "param": {
+                                "next": "Speedrun1x"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "repeat_times",
+                                "op": "eq",
+                                "operand": 2
+                            },
+                            "entry": "fast",
+                            "param": {
+                                "next": "Speedrun2x"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "repeat_times",
+                                "op": "eq",
+                                "operand": 4
+                            },
+                            "entry": "fast",
+                            "param": {
+                                "next": "Speedrun4x"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "repeat_times",
+                                "op": "eq",
+                                "operand": 10
+                            },
+                            "entry": "fast",
+                            "param": {
+                                "next": "Speedrun10x"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "on": {
+                    "key": "category",
+                    "op": "eq",
+                    "operand": "Resource"
+                },
+                "pipeline": [
+                    [
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "来古-资源"
+                            },
+                            "entry": "resource_one"
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "汴都-资源"
+                            },
+                            "entry": "resource_two"
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "申海-资源"
+                            },
+                            "entry": "resource_three"
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "粤州-资源"
+                            },
+                            "entry": "resource_four"
+                        },
+                        {
+                            "on": {
+                                "key": "level_name",
+                                "op": "eq",
+                                "operand": "常安-资源"
+                            },
+                            "entry": "resource_five"
+                        },
+                        {
+                            "action": "break"
+                        }
+                    ],
+                    {
+                        "entry": "resource",
+                        "param": {
+                            "next": []
+                        }
+                    },
+                    [
+                        {
+                            "on": {
+                                "key": "level_index",
+                                "op": "eq",
+                                "operand": 1
+                            },
+                            "entry": "ancient_both_sea_cantonese_often1"
+                        },
+                        {
+                            "on": {
+                                "key": "level_index",
+                                "op": "eq",
+                                "operand": 2
+                            },
+                            "entry": "ancient_both_sea_cantonese_often2"
+                        },
+                        {
+                            "on": {
+                                "key": "level_index",
+                                "op": "eq",
+                                "operand": 3
+                            },
+                            "entry": "ancient_both_sea_cantonese_often3"
+                        },
+                        {
+                            "on": {
+                                "key": "level_index",
+                                "op": "eq",
+                                "operand": 4
+                            },
+                            "entry": "ancient_both_sea_cantonese_often4"
+                        },
+                        {
+                            "on": {
+                                "key": "level_index",
+                                "op": "eq",
+                                "operand": 5
+                            },
+                            "entry": "ancient_both_sea_cantonese_often5"
+                        }
+                    ],
+                    [
+                        {
+                            "on": {
+                                "key": "mopup",
+                                "op": "false"
+                            },
+                            "entry": "fast",
+                            "param": {
+                                "next": "Start1"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "repeat_times",
+                                "op": "eq",
+                                "operand": 1
+                            },
+                            "entry": "fast",
+                            "param": {
+                                "next": "Speedrun1x"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "repeat_times",
+                                "op": "eq",
+                                "operand": 2
+                            },
+                            "entry": "fast",
+                            "param": {
+                                "next": "Speedrun2x"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "repeat_times",
+                                "op": "eq",
+                                "operand": 4
+                            },
+                            "entry": "fast",
+                            "param": {
+                                "next": "Speedrun4x"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "repeat_times",
+                                "op": "eq",
+                                "operand": 10
+                            },
+                            "entry": "fast",
+                            "param": {
+                                "next": "Speedrun10x"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "PlayFourInRow": [
+            {
+                "repeat": "rounds",
+                "pipeline": [
+                    {
+                        "entry": "Company.StartFourInRow"
+                    },
+                    {
+                        "entry": "Company.BeatFourInRow"
+                    }
+                ]
+            }
+        ]
+    }
 }

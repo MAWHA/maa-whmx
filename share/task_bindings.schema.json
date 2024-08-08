@@ -66,9 +66,155 @@
         "data": {
             "type": "object",
             "description": "核心任务参数配置"
+        },
+        "router": {
+            "type": "object",
+            "description": "复杂核心任务路由配置",
+            "patternProperties": {
+                "^(?!.*?\\$schema).*$": {
+                    "type": "array",
+                    "description": "复杂核心任务",
+                    "items": {
+                        "type": "object",
+                        "description": "绑定任务入口项，按顺序匹配直到命中",
+                        "properties": {
+                            "on": {
+                                "$ref": "#/definitions/on"
+                            },
+                            "pipeline": {
+                                "type": "array",
+                                "description": "绑定的流水线",
+                                "items": {
+                                    "description": "当前次序任务入口",
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/definitions/complex_task_entry"
+                                        },
+                                        {
+                                            "type": "array",
+                                            "description": "互斥任务入口组",
+                                            "items": {
+                                                "$ref": "#/definitions/complex_task_entry"
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "repeat": {
+                                "anyOf": [
+                                    {
+                                        "type": "integer"
+                                    },
+                                    {
+                                        "type": "string",
+                                        "description": "核心任务参数的键值，作为重复次数"
+                                    }
+                                ],
+                                "description": "任务重复次数",
+                                "default": 1
+                            }
+                        },
+                        "required": [
+                            "pipeline"
+                        ]
+                    }
+                }
+            }
         }
     },
     "required": [
         "bindings"
-    ]
+    ],
+    "definitions": {
+        "complex_task_entry": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "description": "自定义动作\n若同时定义任务入口，则优先执行自定义动作",
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "break"
+                            ]
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "enum": [
+                                        "set-var"
+                                    ]
+                                },
+                                "param": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                "entry": {
+                    "type": "string",
+                    "description": "绑定的任务入口\n若同时定义自定义动作，则优先执行自定义动作"
+                },
+                "param": {
+                    "type": "object",
+                    "description": "需要覆写的任务参数"
+                },
+                "on": {
+                    "$ref": "#/definitions/on"
+                }
+            }
+        },
+        "on": {
+            "description": "触发条件",
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "description": "触发条件的键\n从核心任务参数或临时变量中获取，作为左操作数"
+                },
+                "op": {
+                    "type": "string",
+                    "enum": [
+                        "eq",
+                        "ne",
+                        "lt",
+                        "le",
+                        "gt",
+                        "ge",
+                        "empty",
+                        "true",
+                        "false",
+                        "between",
+                        "contains",
+                        "match",
+                        "in"
+                    ]
+                },
+                "operand": {
+                    "description": "触发条件的右操作数",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "array"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "key",
+                "op"
+            ]
+        }
+    }
 }
