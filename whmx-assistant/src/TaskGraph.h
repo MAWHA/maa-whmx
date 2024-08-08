@@ -22,6 +22,7 @@
 
 struct TaskGraphNode : public std::enable_shared_from_this<TaskGraphNode> {
     QString task_name;
+    int     source_nr;
 
     QList<std::shared_ptr<TaskGraphNode>> preds;
     QList<std::shared_ptr<TaskGraphNode>> succs;
@@ -46,12 +47,14 @@ struct TaskGraphNode : public std::enable_shared_from_this<TaskGraphNode> {
 
 struct TaskGraph {
     QList<std::shared_ptr<TaskGraphNode>> nodes;
+    QStringList                           sources;
 
     void clear();
     bool contains(const QString &task_name) const;
 
+    int                                           make_source_nr(const QString &pipeline_file);
     std::optional<std::shared_ptr<TaskGraphNode>> get(const QString &task_name) const;
-    std::shared_ptr<TaskGraphNode>                add_node(const QString &task_name);
+    std::shared_ptr<TaskGraphNode>                add_node(const QString &task_name, const QString &pipeline_file = QString());
     void                                          add_edge(const QString &pred_name, const QString &succ_name);
 
     bool        merge_pipeline(const QString &pipeline_file);

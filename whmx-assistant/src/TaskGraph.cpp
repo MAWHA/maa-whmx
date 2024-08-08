@@ -67,6 +67,16 @@ bool TaskGraph::contains(const QString &task_name) const {
     return false;
 }
 
+int TaskGraph::make_source_nr(const QString &pipeline_file) {
+    if (pipeline_file.isEmpty()) { return -1; }
+    const int index = sources.indexOf(pipeline_file);
+    if (index == -1) {
+        sources.append(pipeline_file);
+        return sources.size() - 1;
+    }
+    return index;
+}
+
 std::optional<std::shared_ptr<TaskGraphNode>> TaskGraph::get(const QString &task_name) const {
     for (const auto &node : nodes) {
         if (task_name == node->task_name) { return std::make_optional(node); }
@@ -74,12 +84,15 @@ std::optional<std::shared_ptr<TaskGraphNode>> TaskGraph::get(const QString &task
     return std::nullopt;
 }
 
-std::shared_ptr<TaskGraphNode> TaskGraph::add_node(const QString &task_name) {
+std::shared_ptr<TaskGraphNode> TaskGraph::add_node(const QString &task_name, const QString &pipeline_file) {
     if (const auto opt_node = get(task_name)) {
-        return opt_node.value();
+        auto node = opt_node.value();
+        if (node->source_nr == -1) { node->source_nr = make_source_nr(pipeline_file); }
+        return node;
     } else {
         auto node       = std::make_shared<TaskGraphNode>();
         node->task_name = task_name;
+        node->source_nr = make_source_nr(pipeline_file);
         nodes.append(node);
         return node;
     }
@@ -98,7 +111,7 @@ bool TaskGraph::merge_pipeline(const QString &pipeline_file) {
 
     for (const auto &[task_name, params] : data->as_object()) {
         const auto pred = QString::fromUtf8(task_name);
-        add_node(pred);
+        add_node(pred, pipeline_file);
         for (const auto key : std::initializer_list<std::string>{"next", "timeout_next", "runout_next"}) {
             if (!params.contains(key)) { continue; }
             if (const auto &next = params.at(key); next.is_array()) {
