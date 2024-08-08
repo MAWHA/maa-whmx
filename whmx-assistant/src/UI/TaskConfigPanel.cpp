@@ -90,7 +90,7 @@ void setup(TaskConfigPanel *panel, ConsumeExpiringVitalityPotionParam &param) {
         panel->notify_config_changed();
     });
 
-    QObject::connect(number, &QSpinBox::valueChanged, strategy, [=, &param](int value) {
+    QObject::connect(number, &QSpinBox::valueChanged, number, [=, &param](int value) {
         if (value == -1) {
             number->setPrefix("");
             number->setSuffix("");
@@ -102,7 +102,7 @@ void setup(TaskConfigPanel *panel, ConsumeExpiringVitalityPotionParam &param) {
         panel->notify_config_changed();
     });
 
-    QObject::connect(expire_threshold, &QSpinBox::valueChanged, strategy, [=, &param](int value) {
+    QObject::connect(expire_threshold, &QSpinBox::valueChanged, expire_threshold, [=, &param](int value) {
         param.expire_threshold = value;
         panel->notify_config_changed();
     });
@@ -149,12 +149,12 @@ void setup(TaskConfigPanel *panel, PurchaseVitalityParam &param) {
         panel->notify_config_changed();
     });
 
-    QObject::connect(number, &QSpinBox::valueChanged, strategy, [=, &param](int value) {
+    QObject::connect(number, &QSpinBox::valueChanged, number, [=, &param](int value) {
         param.number = value;
         panel->notify_config_changed();
     });
 
-    QObject::connect(coin_threshold, &QSpinBox::valueChanged, strategy, [=, &param](int value) {
+    QObject::connect(coin_threshold, &QSpinBox::valueChanged, coin_threshold, [=, &param](int value) {
         param.coin_threshold = value;
         panel->notify_config_changed();
     });
@@ -166,8 +166,75 @@ void setup(TaskConfigPanel *panel, PurchaseRandomProductParam &param) {
 }
 
 void setup(TaskConfigPanel *panel, MopupResourceLevelParam &param) {
-    Q_UNIMPLEMENTED();
-    panel->put_notice("暂未开放此项核心任务的配置面板，敬请期待之后的更新~");
+    using Category = LevelCategory;
+
+    static QMap<QString, Category> LEVEL_TABLE{
+        {"冬古币",     Category::Develop },
+        {"教材",        Category::Develop },
+        {"装备",        Category::Develop },
+        {"宿卫",        Category::Assess  },
+        {"构术",        Category::Assess  },
+        {"远击",        Category::Assess  },
+        {"轻锐",        Category::Assess  },
+        {"战略",        Category::Assess  },
+        {"来古-资源", Category::Resource},
+        {"汴都-资源", Category::Resource},
+        {"申海-资源", Category::Resource},
+        {"粤州-资源", Category::Resource},
+        {"常安-资源", Category::Resource},
+    };
+
+    auto level_name = new QComboBox;
+    {
+        level_name->addItems(LEVEL_TABLE.keys());
+        config_combo_box(level_name);
+        level_name->setCurrentText(param.level_name);
+    }
+
+    auto level_index = new QSpinBox;
+    {
+        level_index->setMinimum(1);
+        level_index->setMaximum(5);
+        level_index->setSingleStep(1);
+        config_spin(level_index, param.level_index);
+    }
+
+    auto repeat_times = new QSpinBox;
+    {
+        repeat_times->setMinimum(1);
+        repeat_times->setMaximum(10);
+        repeat_times->setSingleStep(1);
+        config_spin(repeat_times, param.repeat_times);
+    }
+
+    auto mopup = new QtMaterialToggle;
+    { mopup->setChecked(param.mopup); }
+
+    panel->append_config_item("关卡名称", "指定目标关卡名称/系列", level_name);
+    panel->append_config_item("关卡序号", "指定需要挑战的关卡在目标系列中的序号", level_index);
+    panel->append_config_item("挑战次数", "指定挑战次数\n体力不足时将自动截断", repeat_times);
+    panel->append_config_item("扫荡", "指定是否扫荡\n未解锁速通时可使用非扫荡模式", mopup);
+
+    QObject::connect(level_name, &QComboBox::currentIndexChanged, level_name, [=, &param](int index) {
+        param.level_name = level_name->itemText(index);
+        param.category   = LEVEL_TABLE.value(param.level_name, Category::Unknown);
+        panel->notify_config_changed();
+    });
+
+    QObject::connect(level_index, &QSpinBox::valueChanged, level_index, [=, &param](int value) {
+        param.level_index = value;
+        panel->notify_config_changed();
+    });
+
+    QObject::connect(repeat_times, &QSpinBox::valueChanged, repeat_times, [=, &param](int value) {
+        param.repeat_times = value;
+        panel->notify_config_changed();
+    });
+
+    QObject::connect(mopup, &QtMaterialToggle::toggled, mopup, [=, &param](bool checked) {
+        param.mopup = checked;
+        panel->notify_config_changed();
+    });
 }
 
 void setup(TaskConfigPanel *panel, EnlistCharacterParam &param) {

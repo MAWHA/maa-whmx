@@ -37,6 +37,7 @@ PRIVATE
     Task/Config.cpp
     Task/Config.h
     Task/TaskParam.h
+    Task/PropGetter.h
     UI/Helper.cpp
     UI/Helper.h
     UI/ClickableLabel.cpp
