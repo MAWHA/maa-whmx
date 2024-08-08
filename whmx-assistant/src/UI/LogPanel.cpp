@@ -44,9 +44,11 @@ void LogPanel::detach_from_global_logger() const {
 void LogPanel::log(QString message) {
     std::lock_guard lock(log_mutex_);
 
-    auto      scrollbar       = log_text_container_->verticalScrollBar();
-    const int last_scroll_pos = scrollbar->sliderPosition();
-    bool      should_scroll   = last_scroll_pos == scrollbar->maximum();
+    auto      vert_scrollbar   = log_text_container_->verticalScrollBar();
+    auto      hori_scrollbar   = log_text_container_->horizontalScrollBar();
+    const int last_scroll_vpos = vert_scrollbar->sliderPosition();
+    const int last_scroll_hpos = hori_scrollbar->sliderPosition();
+    bool      should_scroll    = last_scroll_vpos == vert_scrollbar->maximum();
 
     if (log_text_container_->toPlainText().length() > max_log_len_) {
         flush();
@@ -57,9 +59,10 @@ void LogPanel::log(QString message) {
     log_text_container_->insertPlainText(message);
 
     if (should_scroll) {
-        scrollbar->setSliderPosition(scrollbar->maximum());
+        vert_scrollbar->setSliderPosition(vert_scrollbar->maximum());
     } else {
-        scrollbar->setSliderPosition(last_scroll_pos);
+        vert_scrollbar->setSliderPosition(last_scroll_vpos);
+        hori_scrollbar->setSliderPosition(last_scroll_hpos);
     }
 }
 
