@@ -15,6 +15,7 @@
 
 #include "Consts.h"
 #include "Logger.h"
+#include "Task/Router.h"
 #include "UI/Client.h"
 
 #include <MaaPP/MaaPP.hpp>
@@ -42,6 +43,7 @@ public:
         , default_maa_event_loop_(std::make_shared<maa::coro::EventLoop>())
         , maa_worker_(new MaaWorker(default_maa_event_loop_, this)) {
         GlobalLoggerProxy::setup();
+        Task::Router::setup();
 
         connect(this, &QApplication::aboutToQuit, this, [this] {
             default_maa_event_loop_->stop();

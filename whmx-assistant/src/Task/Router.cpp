@@ -136,7 +136,7 @@ bool Router::register_operator(const QString &op, OperatorMethod method) {
     return true;
 }
 
-bool unregister_operator(const QString &op) {
+bool Router::unregister_operator(const QString &op) {
     if (!GLOBAL_ROUTER_OPERATORS.contains(op)) { return false; }
     GLOBAL_ROUTER_OPERATORS.remove(op);
     return true;
