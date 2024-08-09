@@ -88,6 +88,7 @@ void config_flat_button(FlatButton *button, const QString &text) {
 void config_combo_box(QComboBox *combo, const QString &placeholder_text) {
     for (int i = 0; i < combo->count(); ++i) { combo->setItemData(i, Qt::AlignCenter, Qt::TextAlignmentRole); }
     if (!placeholder_text.isEmpty()) { combo->setPlaceholderText(placeholder_text); }
+    combo->view()->setVerticalScrollBar(new Scrollbar);
     combo->setStyleSheet(R"(
     QComboBox {
         color: #666666;
