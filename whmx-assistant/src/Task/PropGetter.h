@@ -22,7 +22,11 @@
 
 namespace Task {
 
-#define DECLARE_PROP(prop) add(MH_STRINGIFY(prop), prop);
+#define DECLARE_PROP_GETTER_IMPL(prop)                                       \
+    [](PropGetter* self) {                                                   \
+        return QVariant::fromValue(static_cast<decltype(this)>(self)->prop); \
+    }
+#define DECLARE_PROP(prop) add(MH_STRINGIFY(prop), DECLARE_PROP_GETTER_IMPL(prop));
 #define DECLARE_PROPS(type, ...)                                                 \
     void init_props() override{MH_EXPAND(MH_FOREACH(DECLARE_PROP, __VA_ARGS__))} \
                                                                                  \
@@ -43,12 +47,12 @@ public:
         return *this;
     }
 
-    operator QVariant() const {
-        return value_;
-    }
-
     operator bool() const {
         return !is_null();
+    }
+
+    QVariant get() const {
+        return value_;
     }
 
     bool is_null() const {
@@ -80,38 +84,42 @@ public:
         return value_.toBool();
     }
 
+    QString to_string() const {
+        return value_.toString();
+    }
+
 private:
     QVariant value_;
 };
 
 class PropGetter {
+protected:
+    using GetterMethod = std::function<QVariant(PropGetter* self)>;
+
 public:
     virtual void init_props() = 0;
 
     QStringList keys() const {
-        return values_.keys();
+        return getters_.keys();
     }
 
     bool contains(const QString& key) const {
-        return values_.contains(key);
+        return getters_.contains(key);
     }
 
     Prop value(const QString& key) {
-        return Prop(values_.value(key));
+        const auto it = getters_.find(key);
+        if (it == getters_.end()) { return Prop(); }
+        return Prop(std::invoke(it.value(), this));
     }
 
 protected:
-    template <typename T>
-    void add(const QString& key, const T& value) {
-        add(key, QVariant::fromValue(value));
-    }
-
-    void add(const QString& key, const QVariant& value) {
-        values_[key] = value;
+    void add(const QString& key, GetterMethod getter) {
+        getters_[key] = getter;
     }
 
 private:
-    QMap<QString, QVariant> values_;
+    QMap<QString, GetterMethod> getters_;
 };
 
 } // namespace Task
