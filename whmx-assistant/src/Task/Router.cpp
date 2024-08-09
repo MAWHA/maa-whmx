@@ -338,7 +338,7 @@ std::optional<RouteContext::Task> RouteContext::next() {
             const auto &task_group = task_unit.exclusive_task_group.value();
             for (const auto &task_info : task_group) {
                 if (!task_info.trigger_condition.has_value() || test_condition(task_info.trigger_condition.value())) {
-                    opt_target_task = std::cref(task_unit.direct_entry.value());
+                    opt_target_task = std::cref(task_info);
                     break;
                 }
             }
