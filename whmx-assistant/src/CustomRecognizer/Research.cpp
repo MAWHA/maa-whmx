@@ -411,6 +411,8 @@ coro::Promise<AnalyzeResult> GetCandidateBuffs::research__get_candidate_buffs(
     };
     const int dx = 274;
 
+    const double threshould = 0.6;
+
     cv::Mat im(image->height(), image->width(), image->type(), image->raw_data());
     int     total_buff = 0;
     {
@@ -446,16 +448,12 @@ coro::Promise<AnalyzeResult> GetCandidateBuffs::research__get_candidate_buffs(
             const MaaRect roi{qBound(0, center_roi.x + i * dx, im.cols), center_roi.y, center_roi.width, center_roi.height};
             const auto    recog_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi));
             const auto    data       = json::parse(recog_resp.rec_detail);
-            if (data->contains("best")) {
-                const auto buff_name = QString::fromUtf8(data->at("best").at("text").as_string());
-                if (buff_name.contains(QChar(U'·'))) {
-                    resp_data.push_back(buff_name.split(QChar(U'·')).back().toStdString());
-                } else {
-                    resp_data.push_back(buff_name.toStdString());
-                }
+            if (!data->contains("best") || data->at("best").at("score").as_double() < threshould) { co_return resp; }
+            const auto buff_name = QString::fromUtf8(data->at("best").at("text").as_string());
+            if (buff_name.contains(QChar(U'·'))) {
+                resp_data.push_back(buff_name.split(QChar(U'·')).back().toStdString());
             } else {
-                //! NOTE: it doesn't matter even if the recognition fails, just skip it
-                resp_data.push_back("");
+                resp_data.push_back(buff_name.toStdString());
             }
         }
     }
