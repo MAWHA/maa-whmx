@@ -1,7 +1,7 @@
 ["Research/EncounterEvent/GotClues.png"]
 roi = [470, 70, 245, 40]
 
-["Research/EncounterEvent/GotStuff.png"]
+["Common/GotStuff.png"]
 roi = [995, 120, 95, 456]
 
 ["Research/MatchingGame/StartInitialState.png"]

@@ -27,14 +27,10 @@
     "Research.ResolveGotExtraResourceOnEventDone": {
         "next": [
             "Research.ResolveGotMapClues",
-            "Research.ResolveGotStuff"
+            "Common.ResolveGotStuff"
         ]
     },
     "Research.ResolveGotMapClues": {
-        "timeout": 2000,
-        "next": "Research.ResolveGotMapClues.TestAndExec"
-    },
-    "Research.ResolveGotMapClues.TestAndExec": {
         "recognition": "TemplateMatch",
         "template": "Research/EncounterEvent/GotClues.png",
         "roi": [
@@ -47,27 +43,6 @@
         "target": [
             362,
             312,
-            0,
-            0
-        ]
-    },
-    "Research.ResolveGotStuff": {
-        "timeout": 2000,
-        "next": "Research.ResolveGotStuff.TestAndExec"
-    },
-    "Research.ResolveGotStuff.TestAndExec": {
-        "recognition": "TemplateMatch",
-        "template": "Research/EncounterEvent/GotStuff.png",
-        "roi": [
-            979,
-            104,
-            127,
-            488
-        ],
-        "action": "Click",
-        "target": [
-            1180,
-            360,
             0,
             0
         ]

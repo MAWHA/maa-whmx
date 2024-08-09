@@ -1,0 +1,19 @@
+{
+    "Common.ResolveGotStuff": {
+        "recognition": "TemplateMatch",
+        "template": "Common/GotStuff.png",
+        "roi": [
+            979,
+            104,
+            127,
+            488
+        ],
+        "action": "Click",
+        "target": [
+            1180,
+            360,
+            0,
+            0
+        ]
+    }
+}
