@@ -207,16 +207,16 @@ struct SwitchFurnitureLayoutParam : public PropGetter {
 
 struct DoResearchParam : public PropGetter {
     //! 研学收集方向
-    QString category;
+    QString category = "雪景寒林图";
     //! 偏好增益列表
-    QList<QString> buff_preference;
+    QList<QString> buff_preference = QList<QString>();
 
     DECLARE_PROPS(DoResearchParam, category, buff_preference)
 };
 
 struct PurchasePiecesOfPaintingParam : public PropGetter {
     //! 购买方案，按给出的画作顺序购买对应碎片
-    QList<QString> queue;
+    QList<QString> queue = QList<QString>();
 
     DECLARE_PROPS(PurchasePiecesOfPaintingParam, queue)
 };
