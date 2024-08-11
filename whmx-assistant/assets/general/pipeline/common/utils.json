@@ -1,19 +1,11 @@
 {
-    "Common.ResolveGotStuff": {
-        "recognition": "TemplateMatch",
-        "template": "Common/GotStuff.png",
-        "roi": [
-            979,
-            104,
-            127,
-            488
-        ],
-        "action": "Click",
-        "target": [
-            1180,
-            360,
-            0,
-            0
-        ]
+    "Utils.LeafTask": {},
+    "Utils.Failure": {
+        "times_limit": 1,
+        "timeout": 1,
+        "next": "Utils.Failure.Catch"
+    },
+    "Utils.Failure.Catch": {
+        "inverse": true
     }
 }

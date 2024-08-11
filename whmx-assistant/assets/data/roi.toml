@@ -4,6 +4,12 @@ roi = [470, 70, 245, 40]
 ["Common/GotStuff.png"]
 roi = [995, 120, 95, 456]
 
+["Common/YesButton.png"]
+roi = [0, 0, 158, 50]
+
+["Common/Back.png"]
+roi = [39, 17, 36, 33]
+
 ["Research/MatchingGame/StartInitialState.png"]
 roi = [550, 152, 596, 478]
 
@@ -13,8 +19,110 @@ roi = [968, 405, 124, 124]
 ["Research/GradeOption/Commit.png"]
 roi = [880, 540, 170, 60]
 
+["Research/GradeOption/Hint.png"]
+roi = [425, 661, 430, 23]
+
 ["Research/Buff/Confirm.png"]
 roi = [520, 619, 240, 49]
 
 ["Research/Buff/GotBuff.png"]
 roi = [511, 64, 257, 29]
+
+["Research/Buff/GotDebuff.png"]
+roi = [482, 65, 317, 27]
+
+["Research/Field.png"]
+roi = [75, 22, 108, 25]
+
+["Research/Start.png"]
+roi = [980, 644, 161, 38]
+
+["Research/Continue.png"]
+roi = [980, 644, 161, 38]
+
+["Research/Done.png"]
+roi = [0, 0, 132, 80]
+
+["Research/DoResearch/Enter.png"]
+roi = [108, 518, 295, 63]
+
+["Research/DoResearch/Hint.png"]
+roi = [353, 84, 573, 41]
+
+["Research/DoResearch/XueJingHanLinTu.png"]
+roi = [113, 389, 79, 80]
+
+["Research/DoResearch/QianLiJiangShanTu.png"]
+roi = [498, 391, 74, 76]
+
+["Research/DoResearch/XiShanXingLvTu.png"]
+roi = [883, 389, 71, 79]
+
+["Research/DoResearch/MaskedMaleRole.png"]
+roi = [0, 0, 42, 90]
+
+["Research/DoResearch/MaskedFemaleRole.png"]
+roi = [0, 0, 42, 90]
+
+["Research/DoResearch/SelectRoute.png"]
+roi = [0, 0, 154, 38]
+
+["Research/FishingGame/Rod.png"]
+roi = [0, 0, 187, 178]
+
+["Common/ResearchEntry.png"]
+roi = [1134, 341, 70, 59]
+
+["Combat/FreeSlot.png"]
+roi = [26, 193, 147, 333]
+
+["Combat/LockedSlot.png"]
+roi = [488, 193, 147, 333]
+
+["Combat/ConfirmSelectedRole.png"]
+roi = [1126, 669, 126, 41]
+
+["Combat/StartFight.png"]
+roi = [0, 0, 247, 76]
+
+["Combat/MaskedAutoFightEnabled.png"]
+roi = [0, 0, 62, 77]
+
+["Combat/MaskedAutoFightDisabled.png"]
+roi = [0, 0, 62, 77]
+
+["Combat/Mopup"]
+text = "速通"
+roi = [979, 630, 102, 52]
+
+["Combat/Start"]
+text = "开始"
+roi = [1188, 645, 42, 17]
+
+["Combat/StartWithMopupDisabled"]
+text = "开始"
+roi = [1094, 645, 45, 17]
+
+["Common/MessageBoxText"]
+hint = "消息弹窗的文本信息"
+roi = [415, 250, 452, 134]
+
+["Common/MessageBoxYes.png"]
+hint = "消息弹窗的确认按钮"
+roi = [0, 0, 158, 50]
+
+["Common/MessageBoxNo.png"]
+hint = "消息弹窗的取消按钮"
+roi = [0, 0, 158, 50]
+
+["Research/FishingGame/ResultText"]
+hint = "钓鱼结果文本"
+roi = [493, 318, 279, 107]
+
+["Research/MatchingGame/Hint"]
+hint = "匹配游戏初始文本"
+roi = [623, 78, 442, 49]
+
+["Research/MatchingGame/Grade"]
+hint = "匹配游戏结果评价"
+roi = [779, 314, 140, 158]

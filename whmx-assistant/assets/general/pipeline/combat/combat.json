@@ -1,0 +1,122 @@
+{
+    "Combat.StartNoVitalityCheck": {
+        "recognition": "OCR",
+        "expected": "战前准备",
+        "roi": [
+            76,
+            23,
+            105,
+            25
+        ],
+        "next": [
+            "Combat.StartNoVitalityCheck.HasMopup",
+            "Combat.StartNoVitalityCheck.NoMopup"
+        ]
+    },
+    "Combat.StartNoVitalityCheck.TestHasMopup": {
+        "recognition": "OCR",
+        "expected": "速通",
+        "roi": [
+            979,
+            630,
+            102,
+            52
+        ]
+    },
+    "Combat.StartNoVitalityCheck.HasMopup": {
+        "recognition": "Custom",
+        "custom_recognition": "Utils.TwoStageTest",
+        "custom_recognition_param": {
+            "prerequisite": "Combat.StartNoVitalityCheck.TestHasMopup",
+            "recognition": {
+                "recognition": "OCR",
+                "expected": "开始",
+                "roi": [
+                    1188,
+                    645,
+                    42,
+                    17
+                ]
+            }
+        },
+        "action": "Click"
+    },
+    "Combat.StartNoVitalityCheck.NoMopup": {
+        "recognition": "OCR",
+        "expected": "开始",
+        "roi": [
+            1094,
+            645,
+            45,
+            17
+        ],
+        "action": "Click"
+    },
+    "Combat.BypassRiskyAlert": {
+        "recognition": "OCR",
+        "expected": [
+            "小队尚有空缺，是否以此阵容开始战斗？",
+            "当前等级相差过大，是否继续？"
+        ],
+        "roi": [
+            415,
+            250,
+            452,
+            134
+        ],
+        "next": "Common.MessageBoxSelectYes"
+    },
+    "Combat.BypassRiskyAlertOrSkip": {
+        "next": [
+            "Combat.BypassRiskyAlert",
+            "Utils.LeafTask"
+        ]
+    },
+    "Combat.EnsureAutoFightEnabled": {
+        "next": "Combat.EnsureAutoFightEnabled.Entry"
+    },
+    "Combat.EnsureAutoFightEnabled.Entry": {
+        "next": [
+            "Combat.EnsureAutoFightEnabled.DetectAndSwitch",
+            "Utils.LeafTask"
+        ]
+    },
+    "Combat.EnsureAutoFightEnabled.DetectAndSwitch": {
+        "recognition": "TemplateMatch",
+        "template": "Combat/MaskedAutoFightDisabled.png",
+        "threshold": 0.95,
+        "action": "Click",
+        "next": "Combat.EnsureAutoFightEnabled.Entry"
+    },
+    "Combat.StartFight": {
+        "recognition": "TemplateMatch",
+        "template": "Combat/StartFight.png",
+        "action": "Click"
+    },
+    "Combat.WaitFightToComplete": {
+        "next": "Combat.WaitFightToComplete.Entry"
+    },
+    "Combat.WaitFightToComplete.Entry": {
+        "next": [
+            "Combat.WaitFightToComplete.DetectAndQuit",
+            "Combat.WaitFightToComplete.Retry"
+        ]
+    },
+    "Combat.WaitFightToComplete.DetectAndQuit": {
+        "recognition": "TemplateMatch",
+        "template": "Common/YesButton.png",
+        "action": "Click",
+        "next": [
+            "Combat.WaitFightToComplete.EnsureDone",
+            "Utils.LeafTask"
+        ]
+    },
+    "Combat.WaitFightToComplete.EnsureDone": {
+        "recognition": "TemplateMatch",
+        "template": "Common/YesButton.png",
+        "next": "Combat.WaitFightToComplete.DetectAndQuit"
+    },
+    "Combat.WaitFightToComplete.Retry": {
+        "next": "Combat.WaitFightToComplete.Entry"
+    }
+}

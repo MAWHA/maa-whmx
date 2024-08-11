@@ -1,0 +1,63 @@
+{
+    "Combat.JoinSingleRole": {
+        "recognition": "OCR",
+        "expected": "器者列表",
+        "roi": [
+            76,
+            23,
+            105,
+            25
+        ],
+        "next": "Combat.JoinSingleRole.Select"
+    },
+    "Combat.JoinSingleRole.Select": {
+        "action": "Click",
+        "target": [
+            546,
+            192,
+            0,
+            0
+        ],
+        "next": "Combat.JoinSingleRole.Confirm"
+    },
+    "Combat.JoinSingleRole.Confirm": {
+        "recognition": "TemplateMatch",
+        "template": "Combat/ConfirmSelectedRoles.png",
+        "roi": [
+            1126,
+            669,
+            126,
+            41
+        ],
+        "action": "Click"
+    },
+    "Combat.WaitSquadLoaded": {
+        "recognition": "OCR",
+        "expected": "战前准备",
+        "roi": [
+            76,
+            23,
+            105,
+            25
+        ],
+        "post_wait_freezes": 1000
+    },
+    "Combat.FillSquadAtWill": {
+        "next": [
+            "Combat.FillSquadAtWill.TestAndExec",
+            "Utils.LeafTask"
+        ]
+    },
+    "Combat.FillSquadAtWill.TestAndExec": {
+        "recognition": "OCR",
+        "expected": "战前准备",
+        "roi": [
+            76,
+            23,
+            105,
+            25
+        ],
+        "action": "Custom",
+        "custom_action": "Combat.FillSquad"
+    }
+}

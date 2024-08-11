@@ -1,0 +1,44 @@
+{
+    "Common.ResolveGotStuff": {
+        "recognition": "TemplateMatch",
+        "template": "Common/GotStuff.png",
+        "roi": [
+            979,
+            104,
+            127,
+            488
+        ],
+        "action": "Click",
+        "target": [
+            1180,
+            360,
+            0,
+            0
+        ],
+        "next": [
+            "Common.ResolveGotStuff.EnsureResolved",
+            "Utils.LeafTask"
+        ]
+    },
+    "Common.ResolveGotStuff.EnsureResolved": {
+        "recognition": "TemplateMatch",
+        "template": "Common/GotStuff.png",
+        "roi": [
+            979,
+            104,
+            127,
+            488
+        ],
+        "next": "Common.ResolveGotStuff"
+    },
+    "Common.MessageBoxSelectYes": {
+        "recognition": "TemplateMatch",
+        "template": "Common/MessageBoxYes.png",
+        "action": "Click"
+    },
+    "Common.MessageBoxSelectNo": {
+        "recognition": "TemplateMatch",
+        "template": "Common/MessageBoxNo.png",
+        "action": "Click"
+    }
+}

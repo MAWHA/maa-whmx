@@ -262,6 +262,178 @@
         ],
         "DoResearch": [
             {
+                "pipeline": [
+                    {
+                        "entry": "Research.EnsureInResearchField"
+                    },
+                    {
+                        "entry": "Research.EnterDoResearch"
+                    },
+                    {
+                        "entry": "Research.SelectMapOrPass"
+                    },
+                    {
+                        "entry": "Research.GainBuff"
+                    },
+                    {
+                        "entry": "Research.FirstSingleRoute"
+                    },
+                    {
+                        "entry": "Research.ResolveEncounterEvent"
+                    },
+                    {
+                        "entry": "Research.ResolveGradeChange"
+                    },
+                    {
+                        "entry": "Research.FirstTriRoute"
+                    },
+                    {
+                        "entry": "Research.ResolveEncounterEvent"
+                    },
+                    {
+                        "entry": "Research.ResolveGradeChange"
+                    },
+                    {
+                        "entry": "Research.SelectFightRoute"
+                    },
+                    {
+                        "entry": "Research.FightAssess"
+                    },
+                    {
+                        "entry": "Research.GainBuff"
+                    },
+                    {
+                        "entry": "Combat.FillSquadAtWill",
+                        "param": {
+                            "next": "Combat.FillSquadAtWill.TestAndExec"
+                        }
+                    },
+                    {
+                        "entry": "Combat.StartNoVitalityCheck",
+                        "param": {
+                            "next": "Combat.StartNoVitalityCheck.NoMopup"
+                        }
+                    },
+                    {
+                        "entry": "Combat.BypassRiskyAlertOrSkip"
+                    },
+                    {
+                        "entry": "Combat.EnsureAutoFightEnabled",
+                        "param": {
+                            "timeout_next": "Combat.EnsureAutoFightEnabled"
+                        }
+                    },
+                    {
+                        "entry": "Combat.StartFight"
+                    },
+                    {
+                        "entry": "Combat.WaitFightToComplete"
+                    },
+                    {
+                        "entry": "Research.ResolveGradeChange"
+                    },
+                    {
+                        "entry": "Research.SecondSingleRoute"
+                    },
+                    {
+                        "entry": "Research.ResolveEncounterEvent"
+                    },
+                    {
+                        "entry": "Research.ResolveGradeChange"
+                    },
+                    {
+                        "entry": "Research.SecondTriRoute"
+                    },
+                    {
+                        "entry": "Research.ResolveAnyGame"
+                    },
+                    {
+                        "entry": "Research.ResolveGradeChange"
+                    },
+                    {
+                        "entry": "Research.SelectFightRoute"
+                    },
+                    {
+                        "entry": "Research.FightAssess"
+                    },
+                    {
+                        "entry": "Research.GainBuff"
+                    },
+                    {
+                        "entry": "Combat.FillSquadAtWill",
+                        "param": {
+                            "next": "Combat.FillSquadAtWill.TestAndExec"
+                        }
+                    },
+                    {
+                        "entry": "Combat.StartNoVitalityCheck",
+                        "param": {
+                            "next": "Combat.StartNoVitalityCheck.NoMopup"
+                        }
+                    },
+                    {
+                        "entry": "Combat.BypassRiskyAlertOrSkip"
+                    },
+                    {
+                        "entry": "Combat.StartFight"
+                    },
+                    {
+                        "entry": "Combat.WaitFightToComplete"
+                    },
+                    {
+                        "entry": "Research.ResolveGradeChange"
+                    },
+                    {
+                        "entry": "Research.ThirdSingleRoute"
+                    },
+                    {
+                        "entry": "Research.ResolveEncounterEvent"
+                    },
+                    {
+                        "entry": "Research.ResolveGradeChange"
+                    },
+                    {
+                        "entry": "Research.ForthSingleRoute"
+                    },
+                    {
+                        "entry": "Research.FightAssess"
+                    },
+                    {
+                        "entry": "Research.GainBuff"
+                    },
+                    {
+                        "entry": "Combat.FillSquadAtWill",
+                        "param": {
+                            "next": "Combat.FillSquadAtWill.TestAndExec"
+                        }
+                    },
+                    {
+                        "entry": "Combat.StartNoVitalityCheck",
+                        "param": {
+                            "next": "Combat.StartNoVitalityCheck.NoMopup"
+                        }
+                    },
+                    {
+                        "entry": "Combat.BypassRiskyAlertOrSkip"
+                    },
+                    {
+                        "entry": "Combat.StartFight"
+                    },
+                    {
+                        "entry": "Combat.WaitFightToComplete"
+                    },
+                    {
+                        "entry": "Research.ResolveGradeChange"
+                    },
+                    {
+                        "entry": "Research.FifthSingleRoute"
+                    },
+                    {
+                        "entry": "Research.CompleteAndQuit"
+                    }
+                ]
+            },
+            {
                 "on": {
                     "key": "category",
                     "op": "eq",

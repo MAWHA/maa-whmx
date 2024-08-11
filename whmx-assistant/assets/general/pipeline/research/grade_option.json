@@ -1,0 +1,49 @@
+{
+    "Research.ResolveGradeChange": {
+        "recognition": "TemplateMatch",
+        "template": "Research/GradeOption/Hint.png",
+        "roi": [
+            425,
+            661,
+            430,
+            23
+        ],
+        "next": [
+            "Research.ResolveGradeChange.Upgrade",
+            "Research.ResolveGradeChange.Downgrade"
+        ]
+    },
+    "Research.ResolveGradeChange.Upgrade": {
+        "recognition": "Custom",
+        "custom_recognition": "Research.ParseGradeOptionsOnModify",
+        "action": "Custom",
+        "custom_action": "Research.SelectGradeOption",
+        "custom_action_param": {
+            "mode": "upgrade",
+            "policy": "defensive"
+        },
+        "next": "Research.ResolveGradeChange.Commit"
+    },
+    "Research.ResolveGradeChange.Downgrade": {
+        "recognition": "Custom",
+        "custom_recognition": "Research.ParseGradeOptionsOnModify",
+        "action": "Custom",
+        "custom_action": "Research.SelectGradeOption",
+        "custom_action_param": {
+            "mode": "downgrade",
+            "policy": "defensive"
+        },
+        "next": "Research.ResolveGradeChange.Commit"
+    },
+    "Research.ResolveGradeChange.Commit": {
+        "recognition": "TemplateMatch",
+        "template": "Research/GradeOption/Commit.png",
+        "roi": [
+            880,
+            540,
+            170,
+            60
+        ],
+        "action": "Click"
+    }
+}

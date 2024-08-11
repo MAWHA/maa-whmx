@@ -1,0 +1,585 @@
+{
+    "Research.EnsureInResearchField": {
+        "next": [
+            "Research.EnsureInResearchField.CheckAndPass",
+            "Research.EnsureInResearchField.HomePage",
+            "Utils.Failure"
+        ]
+    },
+    "Research.EnsureInResearchField.HomePage": {
+        "recognition": "TemplateMatch",
+        "template": "Common/ResearchEntry.png",
+        "roi": [
+            1134,
+            341,
+            70,
+            59
+        ],
+        "action": "Click",
+        "post_delay": 2000,
+        "next": "Research.EnsureInResearchField.CheckAndPass"
+    },
+    "Research.EnsureInResearchField.CheckAndPass": {
+        "recognition": "TemplateMatch",
+        "template": "Research/Field.png",
+        "roi": [
+            75,
+            22,
+            108,
+            25
+        ]
+    },
+    "Research.EnterDoResearch": {
+        "next": [
+            "Research.EnterDoResearch.Start",
+            "Research.EnterDoResearch.Continue",
+            "Utils.Failure"
+        ]
+    },
+    "Research.EnterDoResearch.Start": {
+        "recognition": "TemplateMatch",
+        "template": "Research/Start.png",
+        "roi": [
+            980,
+            644,
+            161,
+            38
+        ],
+        "action": "Click",
+        "next": "Research.EnterDoResearch.PostCheck"
+    },
+    "Research.EnterDoResearch.Continue": {
+        "recognition": "TemplateMatch",
+        "template": "Research/Continue.png",
+        "roi": [
+            980,
+            644,
+            161,
+            38
+        ],
+        "action": "Click"
+    },
+    "Research.EnterDoResearch.PostCheck": {
+        "pre_wait_freezes": 200,
+        "next": [
+            "Research.EnterDoResearch.OnSelect",
+            "Utils.Failure"
+        ]
+    },
+    "Research.EnterDoResearch.OnSelect": {
+        "recognition": "TemplateMatch",
+        "template": "Research/DoResearch/Hint.png",
+        "roi": [
+            353,
+            84,
+            573,
+            41
+        ]
+    },
+    "Research.SelectMapOrPass": {
+        "next": [
+            "Research.SelectMapOrPass.CheckAndSelect",
+            "Utils.LeafTask"
+        ]
+    },
+    "Research.SelectMapOrPass.CheckAndSelect": {
+        "recognition": "TemplateMatch",
+        "template": "Research/DoResearch/Hint.png",
+        "roi": [
+            353,
+            84,
+            573,
+            41
+        ],
+        "next": [
+            "Research.SelectMapOrPass.XueJingHanLinTu",
+            "Research.SelectMapOrPass.QianLiJiangShanTu",
+            "Research.SelectMapOrPass.XiShanXingLvTu",
+            "Utils.Failure"
+        ]
+    },
+    "Research.SelectMapOrPass.XueJingHanLinTu": {
+        "recognition": "TemplateMatch",
+        "template": "Research/DoResearch/XueJingHanLinTu.png",
+        "roi": [
+            113,
+            389,
+            79,
+            80
+        ],
+        "action": "Click",
+        "target": [
+            256,
+            538,
+            0,
+            0
+        ]
+    },
+    "Research.SelectMapOrPass.QianLiJiangShanTu": {
+        "recognition": "TemplateMatch",
+        "template": "Research/DoResearch/QianLiJiangShanTu.png",
+        "roi": [
+            498,
+            391,
+            74,
+            76
+        ],
+        "action": "Click",
+        "target": [
+            641,
+            538,
+            0,
+            0
+        ]
+    },
+    "Research.SelectMapOrPass.XiShanXingLvTu": {
+        "recognition": "TemplateMatch",
+        "template": "Research/DoResearch/XiShanXingLvTu.png",
+        "roi": [
+            883,
+            389,
+            71,
+            79
+        ],
+        "action": "Click",
+        "target": [
+            1026,
+            538,
+            0,
+            0
+        ]
+    },
+    "Research.LocateRole": {
+        "next": [
+            "Research.LocateRole.Male",
+            "Research.LocateRole.Female"
+        ]
+    },
+    "Research.LocateRole.Male": {
+        "recognition": "TemplateMatch",
+        "template": "Research/DoResearch/MaskedMaleRole.png",
+        "green_mask": true,
+        "threshold": 0.6
+    },
+    "Research.LocateRole.Female": {
+        "recognition": "TemplateMatch",
+        "template": "Research/DoResearch/MaskedFemaleRole.png",
+        "green_mask": true,
+        "threshold": 0.6
+    },
+    "Research.EnsureRoleNoMotion": {
+        "pre_wait_freezes": 500,
+        "next": [
+            "Research.LocateRole.Male",
+            "Research.LocateRole.Female",
+            "Utils.Failure"
+        ]
+    },
+    "Research.SelectFightRoute": {
+        "recognition": "OCR",
+        "expected": "推荐等级",
+        "roi": [
+            240,
+            120,
+            730,
+            600
+        ],
+        "next": [
+            "Research.SelectFightRoute.Fight60",
+            "Research.SelectFightRoute.Fight70",
+            "Research.SelectFightRoute.Fight80"
+        ]
+    },
+    "Research.SelectFightRoute.Fight60": {
+        "recognition": "OCR",
+        "expected": "推荐等级：60",
+        "roi": [
+            240,
+            120,
+            730,
+            600
+        ],
+        "action": "Click",
+        "target_offset": [
+            50,
+            -30,
+            -50,
+            -30
+        ],
+        "next": "Research.SelectRoute"
+    },
+    "Research.SelectFightRoute.Fight70": {
+        "recognition": "OCR",
+        "expected": "推荐等级：70",
+        "roi": [
+            240,
+            120,
+            730,
+            600
+        ],
+        "action": "Click",
+        "target_offset": [
+            50,
+            -30,
+            -50,
+            -30
+        ],
+        "next": "Research.SelectRoute"
+    },
+    "Research.SelectFightRoute.Fight80": {
+        "recognition": "OCR",
+        "expected": "推荐等级：80",
+        "roi": [
+            240,
+            120,
+            730,
+            600
+        ],
+        "action": "Click",
+        "target_offset": [
+            50,
+            -30,
+            -50,
+            -30
+        ],
+        "next": "Research.SelectRoute"
+    },
+    "Research.SelectRoute": {
+        "recognition": "TemplateMatch",
+        "template": "Research/DoResearch/SelectRoute.png",
+        "action": "Click"
+    },
+    "Research.FightAssess": {
+        "recognition": "OCR",
+        "expected": "战前评定",
+        "roi": [
+            575,
+            152,
+            130,
+            27
+        ],
+        "post_wait_freezes": 200,
+        "next": "Research.FightAssess.Done"
+    },
+    "Research.FightAssess.Done": {
+        "recognition": "TemplateMatch",
+        "template": "Research/DoResearch/MaskedAssessDone.png",
+        "green_mask": true,
+        "threshold": 0.9,
+        "action": "Click",
+        "target": [
+            600,
+            360,
+            0,
+            0
+        ]
+    },
+    "Research.FirstSingleRoute.Prerequisite": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Research/DoResearch/MaskedMaleRole.png",
+            "Research/DoResearch/MaskedFemaleRole.png"
+        ],
+        "green_mask": true,
+        "threshold": 0.6,
+        "target_offset": [
+            211,
+            16,
+            -42,
+            -90
+        ],
+        "action": "Click"
+    },
+    "Research.FirstSingleRoute": {
+        "recognition": "Custom",
+        "custom_recognition": "Utils.TwoStageTest",
+        "custom_recognition_param": {
+            "prerequisite": "Research.FirstSingleRoute.Prerequisite",
+            "recognition": {
+                "recognition": "TemplateMatch",
+                "template": "Research/DoResearch/SelectRoute.png"
+            },
+            "timeout": 3000
+        },
+        "action": "Click"
+    },
+    "Research.SecondSingleRoute.Prerequisite": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Research/DoResearch/MaskedMaleRole.png",
+            "Research/DoResearch/MaskedFemaleRole.png"
+        ],
+        "green_mask": true,
+        "threshold": 0.6,
+        "target_offset": [
+            327,
+            139,
+            -42,
+            -90
+        ],
+        "action": "Click"
+    },
+    "Research.SecondSingleRoute": {
+        "recognition": "Custom",
+        "custom_recognition": "Utils.TwoStageTest",
+        "custom_recognition_param": {
+            "prerequisite": "Research.SecondSingleRoute.Prerequisite",
+            "recognition": {
+                "recognition": "TemplateMatch",
+                "template": "Research/DoResearch/SelectRoute.png"
+            },
+            "timeout": 3000
+        },
+        "action": "Click"
+    },
+    "Research.ThirdSingleRoute.Prerequisite": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Research/DoResearch/MaskedMaleRole.png",
+            "Research/DoResearch/MaskedFemaleRole.png"
+        ],
+        "green_mask": true,
+        "threshold": 0.6,
+        "target_offset": [
+            344,
+            45,
+            -42,
+            -90
+        ],
+        "action": "Click"
+    },
+    "Research.ThirdSingleRoute": {
+        "recognition": "Custom",
+        "custom_recognition": "Utils.TwoStageTest",
+        "custom_recognition_param": {
+            "prerequisite": "Research.ThirdSingleRoute.Prerequisite",
+            "recognition": {
+                "recognition": "TemplateMatch",
+                "template": "Research/DoResearch/SelectRoute.png"
+            },
+            "timeout": 3000
+        },
+        "action": "Click"
+    },
+    "Research.ForthSingleRoute.Prerequisite": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Research/DoResearch/MaskedMaleRole.png",
+            "Research/DoResearch/MaskedFemaleRole.png"
+        ],
+        "green_mask": true,
+        "threshold": 0.6,
+        "target_offset": [
+            344,
+            45,
+            -42,
+            -90
+        ],
+        "action": "Click"
+    },
+    "Research.ForthSingleRoute": {
+        "recognition": "Custom",
+        "custom_recognition": "Utils.TwoStageTest",
+        "custom_recognition_param": {
+            "prerequisite": "Research.ForthSingleRoute.Prerequisite",
+            "recognition": {
+                "recognition": "TemplateMatch",
+                "template": "Research/DoResearch/SelectRoute.png"
+            },
+            "timeout": 3000
+        },
+        "action": "Click"
+    },
+    "Research.FifthSingleRoute.Prerequisite": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Research/DoResearch/MaskedMaleRole.png",
+            "Research/DoResearch/MaskedFemaleRole.png"
+        ],
+        "green_mask": true,
+        "threshold": 0.6,
+        "target_offset": [
+            220,
+            25,
+            -42,
+            -90
+        ],
+        "action": "Click"
+    },
+    "Research.FifthSingleRoute": {
+        "recognition": "Custom",
+        "custom_recognition": "Utils.TwoStageTest",
+        "custom_recognition_param": {
+            "prerequisite": "Research.FifthSingleRoute.Prerequisite",
+            "recognition": {
+                "recognition": "TemplateMatch",
+                "template": "Research/DoResearch/SelectRoute.png"
+            },
+            "timeout": 3000
+        },
+        "action": "Click"
+    },
+    "Research.FirstTriRoute.Prerequisite": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Research/DoResearch/MaskedMaleRole.png",
+            "Research/DoResearch/MaskedFemaleRole.png"
+        ],
+        "green_mask": true,
+        "threshold": 0.6,
+        "target_offset": [
+            306,
+            45,
+            -42,
+            -90
+        ],
+        "action": "Click"
+    },
+    "Research.FirstTriRoute": {
+        "recognition": "Custom",
+        "custom_recognition": "Utils.TwoStageTest",
+        "custom_recognition_param": {
+            "prerequisite": "Research.FirstTriRoute.Prerequisite",
+            "recognition": {
+                "recognition": "TemplateMatch",
+                "template": "Research/DoResearch/SelectRoute.png"
+            },
+            "timeout": 3000
+        },
+        "action": "Click"
+    },
+    "Research.SecondTriRoute.Prerequisite": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Research/DoResearch/MaskedMaleRole.png",
+            "Research/DoResearch/MaskedFemaleRole.png"
+        ],
+        "green_mask": true,
+        "threshold": 0.6,
+        "target_offset": [
+            267,
+            7,
+            -42,
+            -90
+        ],
+        "action": "Click"
+    },
+    "Research.SecondTriRoute": {
+        "recognition": "Custom",
+        "custom_recognition": "Utils.TwoStageTest",
+        "custom_recognition_param": {
+            "prerequisite": "Research.SecondTriRoute.Prerequisite",
+            "recognition": {
+                "recognition": "TemplateMatch",
+                "template": "Research/DoResearch/SelectRoute.png"
+            },
+            "timeout": 3000
+        },
+        "action": "Click"
+    },
+    "Research.CompleteAndQuit": {
+        "recognition": "TemplateMatch",
+        "template": "Research/Done.png",
+        "action": "Click"
+    },
+    "Research.ResolveAnyGame": {
+        "next": [
+            "Research.MatchingGame",
+            "Research.FishingGame",
+            "Research.RecylceGame"
+        ]
+    },
+    "Research.MatchingGame": {
+        "recognition": "OCR",
+        "expected": "请注意文物对应位置",
+        "roi": [
+            623,
+            78,
+            442,
+            49
+        ],
+        "next": "Research.MatchingGame.Play"
+    },
+    "Research.MatchingGame.Play": {
+        "recognition": "Custom",
+        "custom_recognition": "Research.AnalyzeItemPairs",
+        "action": "Custom",
+        "custom_action": "Research.PerformItemPairsMatch",
+        "next": "Research.MatchingGame.Done"
+    },
+    "Research.MatchingGame.Done": {
+        "recognition": "OCR",
+        "expected": [
+            "优",
+            "良",
+            "中"
+        ],
+        "roi": [
+            779,
+            314,
+            140,
+            158
+        ],
+        "action": "Click"
+    },
+    "Research.FishingGame": {
+        "recognition": "TemplateMatch",
+        "template": "Research/FishingGame/Rod.png",
+        "next": "Research.FishingGame.Entry"
+    },
+    "Research.FishingGame.Entry": {
+        "next": [
+            "Research.FishingGame.DetectAndQuit",
+            "Research.FishingGame.PlayOnce",
+            "Utils.LeafTask"
+        ]
+    },
+    "Research.FishingGame.DetectAndQuit": {
+        "recognition": "OCR",
+        "expected": [
+            "胜利",
+            "失败"
+        ],
+        "roi": [
+            493,
+            318,
+            279,
+            107
+        ],
+        "action": "Click"
+    },
+    "Research.FishingGame.PlayOnce": {
+        "recognition": "TemplateMatch",
+        "template": "Research/FishingGame/Rod.png",
+        "action": "Click",
+        "next": "Research.FishingGame.Entry"
+    },
+    "Research.RecylceGame": {
+        "recognition": "OCR",
+        "expected": "战前准备",
+        "roi": [
+            76,
+            23,
+            105,
+            25
+        ],
+        "next": "Research.RecylceGame.Giveup"
+    },
+    "Research.RecylceGame.Giveup": {
+        "recognition": "TemplateMatch",
+        "template": "Common/Back.png",
+        "action": "Click",
+        "next": "Research.RecylceGame.EnsureGiveup"
+    },
+    "Research.RecylceGame.EnsureGiveup": {
+        "recognition": "OCR",
+        "expected": "是否放弃本次事件",
+        "roi": [
+            415,
+            250,
+            452,
+            134
+        ],
+        "next": "Common.MessageBoxSelectYes"
+    }
+}
