@@ -78,3 +78,15 @@ json::value unwrap_custom_recognizer_analyze_result(std::string_view rec_detail)
         return json::value();
     }
 }
+
+bool has_expected_match(const json::value &result) {
+    if (!result.is_object()) { return false; }
+    if (!result.contains("best")) { return false; }
+    const auto best = result.at("best");
+    if (!best.is_object()) { return false; }
+    return !best.as_object().empty();
+}
+
+bool has_expected_match(const std::string &result) {
+    return has_expected_match(json::parse(result).value_or(json::object()));
+}

@@ -252,7 +252,6 @@ struct PurchaseDongguProductParam : public PropGetter {
 } // namespace Task
 
 Q_DECLARE_METATYPE(Task::PropCategory);
-
 Q_DECLARE_METATYPE(Task::ProductionStrategy);
 Q_DECLARE_METATYPE(Task::LevelCategory);
 Q_DECLARE_METATYPE(Task::GetFreeGiftPackParam);

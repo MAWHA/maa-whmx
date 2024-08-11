@@ -19,6 +19,7 @@
 #include "../CustomRecognizer/Utils.h"
 #include "../CustomAction/Research.h"
 #include "../CustomAction/FourInRow.h"
+#include "../CustomAction/Combat.h"
 #include "../Consts.h"
 #include "../ReferenceDataSet.h"
 
@@ -281,6 +282,7 @@ void Client::handle_on_create_and_init_instance() {
     maa_instance_->bind<Action::Research::PerformItemPairsMatch>();
     maa_instance_->bind<Action::Research::ResolveBuffSelection>();
     maa_instance_->bind<Action::SolveFourInRow>();
+    maa_instance_->bind<Action::Combat::FillSquad>();
     qInfo() << "maa instance created and initialized";
     ui_workbench_->accept_maa_instance(maa_instance_);
 }

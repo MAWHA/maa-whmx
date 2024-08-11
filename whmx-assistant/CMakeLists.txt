@@ -73,8 +73,10 @@ PRIVATE
     UI/Client.h
     CustomAction/Research.cpp
     CustomAction/Research.h
-    CustomAction/FourInRow.h
     CustomAction/FourInRow.cpp
+    CustomAction/FourInRow.h
+    CustomAction/Combat.cpp
+    CustomAction/Combat.h
     CustomRecognizer/Utils.cpp
     CustomRecognizer/Utils.h
     CustomRecognizer/Research.cpp
