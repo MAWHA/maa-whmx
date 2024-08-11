@@ -16,6 +16,7 @@
 #include "Client.h"
 #include "TaskConfigPanel.h"
 #include "../CustomRecognizer/Research.h"
+#include "../CustomRecognizer/Utils.h"
 #include "../CustomAction/Research.h"
 #include "../CustomAction/FourInRow.h"
 #include "../Consts.h"
@@ -270,6 +271,7 @@ void Client::handle_on_create_and_init_instance() {
         qCritical() << "failed to init maa, view log file for details or check your assets integrity";
         return;
     }
+    maa_instance_->bind<Rec::Utils::TwoStageTest>();
     maa_instance_->bind<Rec::Research::ParseGradeOptionsOnModify>();
     maa_instance_->bind<Rec::Research::ParseAnecdote>();
     maa_instance_->bind<Rec::Research::AnalyzeItemPairs>();

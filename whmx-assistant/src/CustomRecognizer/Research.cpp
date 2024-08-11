@@ -56,7 +56,7 @@ static json::object make_ocr_params(const MaaRect &roi = MaaRect{0, 0, 0, 0}, co
         {"roi",         json::array{roi.x, roi.y, roi.width, roi.height}},
     };
     return json::object{
-        {"OCR", params}
+        {"OCR", params},
     };
 }
 

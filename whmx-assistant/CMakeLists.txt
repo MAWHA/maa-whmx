@@ -75,6 +75,8 @@ PRIVATE
     CustomAction/Research.h
     CustomAction/FourInRow.h
     CustomAction/FourInRow.cpp
+    CustomRecognizer/Utils.cpp
+    CustomRecognizer/Utils.h
     CustomRecognizer/Research.cpp
     CustomRecognizer/Research.h
 )
