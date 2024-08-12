@@ -282,7 +282,7 @@
                         "entry": "Research.ResolveEncounterEvent"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.FirstTriRoute"
@@ -291,7 +291,7 @@
                         "entry": "Research.ResolveEncounterEvent"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.SelectFightRoute"
@@ -330,7 +330,7 @@
                         "entry": "Combat.WaitFightToComplete"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.SecondSingleRoute"
@@ -339,7 +339,7 @@
                         "entry": "Research.ResolveEncounterEvent"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.SecondTriRoute"
@@ -348,7 +348,7 @@
                         "entry": "Research.ResolveAnyGame"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.SelectFightRoute"
@@ -381,7 +381,7 @@
                         "entry": "Combat.WaitFightToComplete"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.ThirdSingleRoute"
@@ -390,7 +390,7 @@
                         "entry": "Research.ResolveEncounterEvent"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.ForthSingleRoute"
@@ -423,7 +423,7 @@
                         "entry": "Combat.WaitFightToComplete"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.FifthSingleRoute"

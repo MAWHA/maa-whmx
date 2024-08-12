@@ -1,4 +1,9 @@
 {
+    "Research.WaitAndResolveGradeChangeOrSkip": {
+        "timeout": 10000,
+        "timeout_next": "Utils.LeafTask",
+        "next": "Research.ResolveGradeChange"
+    },
     "Research.ResolveGradeChange": {
         "recognition": "TemplateMatch",
         "template": "Research/GradeOption/Hint.png",
