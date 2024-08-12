@@ -1,7 +1,7 @@
-AppVersion          5000
-AppVersionNameFull  0.5.0_beta
+AppVersion          5001
+AppVersionNameFull  0.5.1
 AppVersionNameMajor 0.5
-AppVersionNameSmall 0.5
-AppVersionStr       0.5.0
+AppVersionNameSmall 0.5.1
+AppVersionStr       0.5.1
 AlphaVersion        0
-BetaChannel         1
+BetaChannel         0
