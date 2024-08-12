@@ -49,6 +49,7 @@ public:
         std::optional<QString>      task_entry;
         std::optional<json::object> override_task_params;
         std::optional<Condition>    trigger_condition;
+        bool                        fold_params;
 
         static TaskInfo parse(const json::object &data);
     };

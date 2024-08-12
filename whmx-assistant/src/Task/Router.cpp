@@ -179,6 +179,7 @@ Router::TaskInfo Router::TaskInfo::parse(const json::object &data) {
         if (data.contains("param")) { task_info.override_task_params = data.at("param").as_object(); }
     }
     if (data.contains("on")) { task_info.trigger_condition = Condition::parse(data.at("on").as_object()); }
+    task_info.fold_params = data.get("fold_params", true);
     return task_info;
 }
 
@@ -351,9 +352,27 @@ std::optional<RouteContext::Task> RouteContext::next() {
             }
             if (state_ != State::Running) { break; }
             if (target_task.task_entry.has_value()) {
-                const auto        &task_name     = target_task.task_entry.value();
-                const auto         origin_params = router_->origin_task_params(task_name);
-                const json::object task_params   = target_task.override_task_params.value_or(json::object()) | origin_params;
+                const auto  &task_name           = target_task.task_entry.value();
+                const auto   origin_params       = router_->origin_task_params(task_name);
+                const auto  &opt_override_params = target_task.override_task_params;
+                json::object entry_task_params;
+                bool         has_unfolded_param_for_entry_task = false;
+                if (target_task.fold_params) {
+                    entry_task_params = opt_override_params.value_or(json::object()) | origin_params;
+                } else if (opt_override_params.has_value() && opt_override_params->contains(task_name.toStdString())) {
+                    has_unfolded_param_for_entry_task = true;
+                    entry_task_params = opt_override_params->at(task_name.toStdString()).as_object() | origin_params;
+                } else {
+                    entry_task_params = origin_params;
+                }
+                json::object task_params{
+                    {task_name.toStdString(), entry_task_params},
+                };
+                if (!target_task.fold_params && opt_override_params.has_value()) {
+                    auto unfolded_params = opt_override_params.value();
+                    if (has_unfolded_param_for_entry_task) { unfolded_params.erase(task_name.toStdString()); }
+                    task_params |= unfolded_params;
+                }
                 return std::make_optional<Task>({task_name, task_params});
             }
         }
