@@ -35,7 +35,7 @@ private:
 };
 
 struct ParseAnecdoteParam {
-    std::string category;            //<! required
+    std::string category;            //<! default: "", means auto detect from the event title
     bool        enable_fuzzy_search; //<! default: false
     int         start_stage;         //<! default: -1, means auto detect
 };

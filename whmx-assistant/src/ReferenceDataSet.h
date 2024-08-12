@@ -182,6 +182,10 @@ public:
         return list;
     }
 
+    bool contains(const std::string &category) const {
+        return entries_.contains(category);
+    }
+
 private:
     std::map<std::string, ResearchAnecdoteEntry> entries_;
 };
