@@ -34,15 +34,27 @@
         },
         {
             "major_task": "GetOrderedProduct",
-            "entry": "dispatch_company_one"
+            "entry": "entry_resources"
         },
         {
             "major_task": "GetFavorability",
-            "entry": "dispatch_company_tow"
+            "entry": "entry_induction"
         },
         {
             "major_task": "GetAccumulatedVitality",
-            "entry": "dispatch_company_three"
+            "entry": "vitality"
+        },
+        {
+            "major_task": "ChatOverTea",
+            "entry": "tea"
+        },
+        {
+            "major_task": "GetOrderedEquipment",
+            "entry": "entry_weapons"
+        },
+        {
+            "major_task": "SpecialActivitySignin",
+            "entry": "activity_attendance"
         }
     ],
     "router": {

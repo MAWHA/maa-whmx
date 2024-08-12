@@ -1,167 +1,17 @@
 {
-    "dispatch_company_one": {
+    "dispatch_company_all": {
         "next": [
-            "entry_dispath_one",
-            "dispath_resources"
-        ]
-    },
-    "entry_dispath_one": {
-        "recognition": "TemplateMatch",
-        "template": "Company/d_company.png",
-        "action": "Click",
-        "post_wait_freezes": 1000,
-        "next": [
-            "dispath_resources"
-        ]
-    },
-    "dispath_resources": {
-        "recognition": "TemplateMatch",
-        "template": "Company/c_resources.png",
-        "roi": [
-            1009,
-            533,
-            271,
-            187
-        ],
-        "action": "Click",
-        "post_delay": 3000,
-        "next": [
-            "click_space",
-            "dc_back"
-        ]
-    },
-    "click_space": {
-        "recognition": "TemplateMatch",
-        "template": "Company/click_space.png",
-        "action": "Click",
-        "roi": [
-            988,
-            107,
-            240,
-            480
-        ],
-        "next": [
-            "dc_back"
+            "entry_one",
+            "entry_two",
+            "dispath_company_collect",
+            "fabricate",
+            "tea",
+            "vitality"
         ]
     },
     "dc_back": {
         "recognition": "TemplateMatch",
         "template": "Collect/06.png",
         "action": "Click"
-    },
-    "dispatch_company_tow": {
-        "next": [
-            "entry_dispath_tow",
-            "dispath_resources"
-        ]
-    },
-    "entry_dispath_tow": {
-        "recognition": "TemplateMatch",
-        "template": "Company/d_company.png",
-        "action": "Click",
-        "post_wait_freezes": 1000,
-        "next": [
-            "collect_induction"
-        ]
-    },
-    "collect_induction": {
-        "recognition": "TemplateMatch",
-        "template": "Company/c_induction.png",
-        "roi": [
-            913,
-            548,
-            184,
-            172
-        ],
-        "action": "Click",
-        "post_delay": 3000,
-        "next": [
-            "collect_induction_click",
-            "dc_back"
-        ]
-    },
-    "collect_induction_click": {
-        "recognition": "TemplateMatch",
-        "template": "Company/c_induction_click.png",
-        "post_delay": 3000,
-        "roi": [
-            408,
-            47,
-            566,
-            168
-        ],
-        "action": "Click",
-        "next": [
-            "donshe"
-        ]
-    },
-    "dispatch_company_three": {
-        "next": [
-            "entry_dispath_three",
-            "donshe",
-            "dc_back"
-        ]
-    },
-    "entry_dispath_three": {
-        "recognition": "TemplateMatch",
-        "template": "Company/d_company.png",
-        "action": "Click",
-        "post_wait_freezes": 1000,
-        "next": [
-            "donshe"
-        ]
-    },
-    "donshe": {
-        "recognition": "TemplateMatch",
-        "template": "Company/donshe.png",
-        "action": "Click",
-        "post_delay": 3000,
-        "roi": [
-            451,
-            477,
-            227,
-            211
-        ],
-        "next": [
-            "donshe_click_space"
-        ]
-    },
-    "donshe_click_space": {
-        "recognition": "TemplateMatch",
-        "template": "Company/click_space.png",
-        "action": "Click",
-        "roi": [
-            988,
-            107,
-            240,
-            480
-        ],
-        "next": [
-            "vitality_one"
-        ]
-    },
-    "vitality_one": {
-        "recognition": "TemplateMatch",
-        "template": "Company/21.png",
-        "action": "Click",
-        "post_delay": 2000,
-        "next": [
-            "vitality_tow"
-        ]
-    },
-    "vitality_tow": {
-        "recognition": "TemplateMatch",
-        "template": "Company/22.png",
-        "action": "Click",
-        "target": [
-            255,
-            665,
-            0,
-            0
-        ],
-        "post_wait_freezes": 3000,
-        "next": [
-            "dc_back"
-        ]
     }
 }
