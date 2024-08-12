@@ -91,6 +91,9 @@ roi = [0, 0, 62, 77]
 ["Combat/MaskedAutoFightDisabled.png"]
 roi = [0, 0, 62, 77]
 
+["Combat/Hint.png"]
+roi = [78, 24, 104, 24]
+
 ["Combat/Mopup"]
 text = "速通"
 roi = [979, 630, 102, 52]

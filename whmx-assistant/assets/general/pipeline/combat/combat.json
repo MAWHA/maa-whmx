@@ -1,5 +1,5 @@
 {
-    "Combat.StartNoVitalityCheck": {
+    "Combat.StartNoVitalityCheckViaTextMatch": {
         "recognition": "OCR",
         "expected": "战前准备",
         "roi": [
@@ -7,6 +7,20 @@
             23,
             105,
             25
+        ],
+        "next": [
+            "Combat.StartNoVitalityCheck.HasMopup",
+            "Combat.StartNoVitalityCheck.NoMopup"
+        ]
+    },
+    "Combat.StartNoVitalityCheck": {
+        "recognition": "TemplateMatch",
+        "template": "Combat/Hint.png",
+        "roi": [
+            78,
+            24,
+            104,
+            24
         ],
         "next": [
             "Combat.StartNoVitalityCheck.HasMopup",

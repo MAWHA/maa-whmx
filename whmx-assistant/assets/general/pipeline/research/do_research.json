@@ -303,7 +303,7 @@
         },
         "action": "Click"
     },
-    "Research.SecondSingleRoute.Prerequisite": {
+    "Research.SecondSingleRouteFromFight60.Prerequisite": {
         "recognition": "TemplateMatch",
         "template": [
             "Research/DoResearch/MaskedMaleRole.png",
@@ -319,11 +319,69 @@
         ],
         "action": "Click"
     },
-    "Research.SecondSingleRoute": {
+    "Research.SecondSingleRouteFromFight60": {
         "recognition": "Custom",
         "custom_recognition": "Utils.TwoStageTest",
         "custom_recognition_param": {
-            "prerequisite": "Research.SecondSingleRoute.Prerequisite",
+            "prerequisite": "Research.SecondSingleRouteFromFight60.Prerequisite",
+            "recognition": {
+                "recognition": "TemplateMatch",
+                "template": "Research/DoResearch/SelectRoute.png"
+            },
+            "timeout": 3000
+        },
+        "action": "Click"
+    },
+    "Research.SecondSingleRouteFromFight70.Prerequisite": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Research/DoResearch/MaskedMaleRole.png",
+            "Research/DoResearch/MaskedFemaleRole.png"
+        ],
+        "green_mask": true,
+        "threshold": 0.6,
+        "target_offset": [
+            237,
+            9,
+            -42,
+            -90
+        ],
+        "action": "Click"
+    },
+    "Research.SecondSingleRouteFromFight70": {
+        "recognition": "Custom",
+        "custom_recognition": "Utils.TwoStageTest",
+        "custom_recognition_param": {
+            "prerequisite": "Research.SecondSingleRouteFromFight70.Prerequisite",
+            "recognition": {
+                "recognition": "TemplateMatch",
+                "template": "Research/DoResearch/SelectRoute.png"
+            },
+            "timeout": 3000
+        },
+        "action": "Click"
+    },
+    "Research.SecondSingleRouteFromFight80.Prerequisite": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "Research/DoResearch/MaskedMaleRole.png",
+            "Research/DoResearch/MaskedFemaleRole.png"
+        ],
+        "green_mask": true,
+        "threshold": 0.6,
+        "target_offset": [
+            145,
+            -125,
+            -42,
+            -90
+        ],
+        "action": "Click"
+    },
+    "Research.SecondSingleRouteFromFight80": {
+        "recognition": "Custom",
+        "custom_recognition": "Utils.TwoStageTest",
+        "custom_recognition_param": {
+            "prerequisite": "Research.SecondSingleRouteFromFight80.Prerequisite",
             "recognition": {
                 "recognition": "TemplateMatch",
                 "template": "Research/DoResearch/SelectRoute.png"

@@ -269,9 +269,62 @@
                     {
                         "entry": "Research.EnterDoResearch"
                     },
-                    {
-                        "entry": "Research.SelectMapOrPass"
-                    },
+                    [
+                        {
+                            "on": {
+                                "key": "category",
+                                "op": "eq",
+                                "operand": "雪景寒林图"
+                            },
+                            "entry": "Research.SelectMapOrPass",
+                            "fold_params": false,
+                            "param": {
+                                "Research.SelectMapOrPass.CheckAndSelect": {
+                                    "next": [
+                                        "Research.SelectMapOrPass.XueJingHanLinTu",
+                                        "Utils.Failure"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "category",
+                                "op": "eq",
+                                "operand": "千里江山图"
+                            },
+                            "entry": "Research.SelectMapOrPass",
+                            "fold_params": false,
+                            "param": {
+                                "Research.SelectMapOrPass.CheckAndSelect": {
+                                    "next": [
+                                        "Research.SelectMapOrPass.QianLiJiangShanTu",
+                                        "Utils.Failure"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "category",
+                                "op": "eq",
+                                "operand": "溪山行旅图"
+                            },
+                            "entry": "Research.SelectMapOrPass",
+                            "fold_params": false,
+                            "param": {
+                                "Research.SelectMapOrPass.CheckAndSelect": {
+                                    "next": [
+                                        "Research.SelectMapOrPass.XiShanXingLvTu",
+                                        "Utils.Failure"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "action": "break"
+                        }
+                    ],
                     {
                         "entry": "Research.GainBuff"
                     },
@@ -293,9 +346,44 @@
                     {
                         "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
-                    {
-                        "entry": "Research.SelectFightRoute"
-                    },
+                    [
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 60
+                            },
+                            "entry": "Research.SelectFightRoute",
+                            "param": {
+                                "next": "Research.SelectFightRoute.Fight60"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 70
+                            },
+                            "entry": "Research.SelectFightRoute",
+                            "param": {
+                                "next": "Research.SelectFightRoute.Fight70"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 80
+                            },
+                            "entry": "Research.SelectFightRoute",
+                            "param": {
+                                "next": "Research.SelectFightRoute.Fight80"
+                            }
+                        },
+                        {
+                            "action": "break"
+                        }
+                    ],
                     {
                         "entry": "Research.FightAssess"
                     },
@@ -332,9 +420,35 @@
                     {
                         "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
-                    {
-                        "entry": "Research.SecondSingleRoute"
-                    },
+                    [
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 60
+                            },
+                            "entry": "Research.SecondSingleRouteFromFight60"
+                        },
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 70
+                            },
+                            "entry": "Research.SecondSingleRouteFromFight70"
+                        },
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 80
+                            },
+                            "entry": "Research.SecondSingleRouteFromFight80"
+                        },
+                        {
+                            "action": "break"
+                        }
+                    ],
                     {
                         "entry": "Research.ResolveEncounterEvent"
                     },
@@ -431,62 +545,6 @@
                     {
                         "entry": "Research.CompleteAndQuit"
                     }
-                ]
-            },
-            {
-                "on": {
-                    "key": "category",
-                    "op": "eq",
-                    "operand": "雪景寒林图"
-                },
-                "pipeline": [
-                    {
-                        "entry": "Research",
-                        "param": {
-                            "next": []
-                        }
-                    },
-                    [
-                        {
-                            "on": {
-                                "key": "buff_preference",
-                                "op": "contains",
-                                "operand": "炽刀"
-                            },
-                            "entry": "snowscape",
-                            "param": {
-                                "next": "Blazing_Knife"
-                            }
-                        },
-                        {
-                            "on": {
-                                "key": "buff_preference",
-                                "op": "contains",
-                                "operand": "神射"
-                            },
-                            "entry": "snowscape",
-                            "param": {
-                                "next": "Marksmanship"
-                            }
-                        },
-                        {
-                            "on": {
-                                "key": "buff_preference",
-                                "op": "contains",
-                                "operand": "术法精通"
-                            },
-                            "entry": "snowscape",
-                            "param": {
-                                "next": "Spells"
-                            }
-                        },
-                        {
-                            "entry": "snowscape",
-                            "param": {
-                                "next": "Blazing_Knife"
-                            }
-                        }
-                    ]
                 ]
             }
         ],

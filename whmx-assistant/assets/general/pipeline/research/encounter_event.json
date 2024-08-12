@@ -50,9 +50,6 @@
     "Research.ResolveEncounterEvent": {
         "recognition": "Custom",
         "custom_recognition": "Research.ParseAnecdote",
-        "custom_recognition_param": {
-            "category": "雪景寒林图"
-        },
         "action": "Custom",
         "custom_action": "Research.ResolveAnecdote"
     }
