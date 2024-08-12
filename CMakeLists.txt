@@ -19,18 +19,31 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 include(cmake/nice_target_sources.cmake)
 include(cmake/nice_install_files.cmake)
 include(cmake/install_agents.cmake)
 include(cmake/config_maafw.cmake)
 include(cmake/config_opencv.cmake)
+include(cmake/config_qt6.cmake)
+
+# Get the library directory for the current platform
+set(VCPKG_LIBRARY_ROOT "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}")
+set(VCPKG_LIBRARY_DIR "${VCPKG_LIBRARY_ROOT}/bin")
+set(VCPKG_DEBUG_LIBRARY_DIR "${VCPKG_LIBRARY_ROOT}/debug/bin")
+
+# Print the library paths
+message(STATUS "Vcpkg library directory: ${VCPKG_LIBRARY_DIR}")
+message(STATUS "Vcpkg debug library directory: ${VCPKG_DEBUG_LIBRARY_DIR}")
 
 set(MAGIC_ENUM_OPT_BUILD_EXAMPLES OFF)
 set(MAGIC_ENUM_OPT_BUILD_TESTS OFF)
 set(MAGIC_ENUM_OPT_INSTALL OFF)
 add_subdirectory(deps/magic_enum)
 
-add_subdirectory(deps/Qt6)
 add_subdirectory(deps/qt-material-widgets)
 add_subdirectory(whmx-assistant)
 

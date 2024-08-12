@@ -140,13 +140,18 @@ add_custom_target(pre-deploy
 COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --config $<CONFIG> --target install
 )
 
+find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt)
+message(STATUS "Windeployqt executable path: ${WINDEPLOYQT_EXECUTABLE}")
+
 add_custom_target(deploy
 COMMAND
-    windeployqt ${CMAKE_INSTALL_PREFIX}/$<TARGET_FILE_NAME:whmx-assistant>
+    "${WINDEPLOYQT_EXECUTABLE}" "${CMAKE_INSTALL_PREFIX}/$<TARGET_FILE_NAME:whmx-assistant>"
     --verbose 0
     --no-quick-import
     --no-translations
     --no-libraries
+    $<$<CONFIG:Debug>:--debug>
+    $<$<CONFIG:Release>:--release>
 DEPENDS pre-deploy
 )
 

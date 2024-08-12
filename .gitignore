@@ -309,3 +309,5 @@ install
 
 .cache
 .vscode
+
+vcpkg_installed/**
