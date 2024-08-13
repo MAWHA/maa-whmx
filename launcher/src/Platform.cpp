@@ -15,7 +15,6 @@
 
 #include "Platform.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QString>
 #include <QtCore/QRegularExpression>
 
