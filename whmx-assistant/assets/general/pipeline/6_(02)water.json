@@ -1,5 +1,6 @@
 {
     "drink": {
+        "post_delay":5000,
         "next": [
             "huipo",
             "water",

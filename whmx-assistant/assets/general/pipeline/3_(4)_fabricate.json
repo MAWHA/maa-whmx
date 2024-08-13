@@ -94,6 +94,12 @@
         "recognition": "TemplateMatch",
         "template": "Company/15.png",
         "action": "Click",
+        "target_offset": [
+            200,
+            0,
+            0,
+            0
+        ],
         "next": [
             "fabricate_max_2"
         ]
@@ -120,6 +126,12 @@
         "recognition": "TemplateMatch",
         "template": "Company/16.png",
         "action": "Click",
+        "target_offset": [
+            200,
+            0,
+            0,
+            0
+        ],
         "next": [
             "fabricate_max_2"
         ]
@@ -146,6 +158,12 @@
         "recognition": "TemplateMatch",
         "template": "Company/17.png",
         "action": "Click",
+        "target_offset": [
+            200,
+            0,
+            0,
+            0
+        ],
         "next": [
             "fabricate_max_2"
         ]
@@ -234,6 +252,12 @@
         "recognition": "TemplateMatch",
         "template": "Company/19.png",
         "action": "Click",
+        "target_offset": [
+            200,
+            0,
+            0,
+            0
+        ],
         "next": [
             "fabricate_max_2"
         ]
@@ -278,6 +302,12 @@
         "recognition": "TemplateMatch",
         "template": "Company/20.png",
         "action": "Click",
+        "target_offset": [
+            200,
+            0,
+            0,
+            0
+        ],
         "next": [
             "fabricate_max_2"
         ]
