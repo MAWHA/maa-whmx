@@ -47,7 +47,7 @@
     },
     "vitality_home": {
         "recognition": "TemplateMatch",
-        "template": "Startup\\10.png",
+        "template": "Startup/10.png",
         "action": "Click"
     }
 }

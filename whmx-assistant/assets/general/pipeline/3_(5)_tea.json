@@ -62,7 +62,7 @@
     },
     "drink_tea": {
         "recognition": "TemplateMatch",
-        "template": "Company\\23.png",
+        "template": "Company/23.png",
         "action": "Click",
         "post_delay": 3000,
         "target": [
@@ -131,9 +131,9 @@
     "Instrument": {
         "recognition": "TemplateMatch",
         "template": [
-            "Company\\24.png",
-            "Company\\25.png",
-            "Company\\26.png"
+            "Company/24.png",
+            "Company/25.png",
+            "Company/26.png"
         ],
         "action": "Click",
         "target_offset": [
@@ -203,7 +203,7 @@
     },
     "tea_click_two": {
         "recognition": "TemplateMatch",
-        "template": "Company\\27.png",
+        "template": "Company/27.png",
         "action": "Click",
         "green_mask": true,
         "index": -1,
@@ -274,7 +274,7 @@
     },
     "tea_home": {
         "recognition": "TemplateMatch",
-        "template": "Startup\\10.png",
+        "template": "Startup/10.png",
         "action": "Click",
         "post_delay": 5000
     }
