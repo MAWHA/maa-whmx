@@ -43,10 +43,6 @@
         {
             "major_task": "ChatOverTea",
             "entry": "tea"
-        },
-        {
-            "major_task": "GetOrderedEquipment",
-            "entry": "entry_weapons"
         }
     ],
     "router": {
