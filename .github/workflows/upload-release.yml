@@ -43,7 +43,7 @@ jobs:
           release_name: whmx-assistant ${{github.ref}}
           body: ${{steps.notes.outputs.release-notes}}
           draft: true
-          prerelease: false
+          prerelease: ${{endsWith("${{github.ref}}", "beta")}}
     
   release:
     name: Upload Release
