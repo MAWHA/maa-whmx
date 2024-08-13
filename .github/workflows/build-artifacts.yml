@@ -55,23 +55,23 @@ jobs:
       working-directory: ${{github.workspace}}
       env:
         VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-      run: cmake --preset ${{matrix.build-preset}}
+      run: cmake --preset "${{matrix.build-preset}}"
 
     - name: Build
       working-directory: ${{github.workspace}}
-      run: cmake --build ${{matrix.build-path}} --target all
+      run: cmake --build "${{matrix.build-path}}" --target all
 
     - name: Pre Packing
       working-directory: ${{github.workspace}}
       shell: pwsh
-      run: ./scripts/ci/pre-packing.ps1 -DirectoryPath ./${{matrix.build-path}}/bin
+      run: ./scripts/ci/pre-packing.ps1 -DirectoryPath "./${{matrix.build-path}}/bin"
 
     - name: Find Binary Files
       id: find-binary
       working-directory: ${{github.workspace}}
       shell: pwsh
       run: |
-        $result = & ./scripts/ci/find-binary.ps1 -DirectoryPath ./${{matrix.build-path}}/bin
+        $result = & ./scripts/ci/find-binary.ps1 -DirectoryPath "./${{matrix.build-path}}/bin"
         echo "exec_files=$result" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8
         Write-Host "Found executable and dynamic library files:" + $result
 
@@ -93,7 +93,7 @@ jobs:
       with:
         name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}
         path: |
-          ${{matrix.build-path}}/bin/**
+          "${{matrix.build-path}}/bin/**"
         compression-level: 9
 
     - name: Archive Artifacts (Not Signed)
@@ -102,5 +102,5 @@ jobs:
       with:
         name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}-Unsafe
         path: |
-          ${{matrix.build-path}}/bin/**
+          "${{matrix.build-path}}/bin/**"
         compression-level: 9
