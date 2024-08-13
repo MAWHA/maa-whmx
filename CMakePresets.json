@@ -1,4 +1,4 @@
-{
+﻿{
     "version": 5,
     "cmakeMinimumRequired": {
         "major": 3,
@@ -29,40 +29,6 @@
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
             }
-        },
-        {
-            "name": "MSVC 2022 Debug",
-            "displayName": "MSVC 2022 - Debug",
-            "description": "MSVC 2022 - Debug",
-            "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build/msvc-debug",
-            "installDir": "${sourceDir}/install/msvc-debug",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
-            }
-        },
-        {
-            "name": "MSVC 2022 Release",
-            "displayName": "MSVC 2022 - Release",
-            "description": "MSVC 2022 - Release",
-            "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build/msvc-release",
-            "installDir": "${sourceDir}/install/msvc-release",
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
-            }
         }
     ],
     "buildPresets": [
@@ -78,20 +44,6 @@
             "displayName": "Ninja Release",
             "description": "Ninja Release",
             "configurePreset": "Ninja Release",
-            "jobs": 16
-        },
-        {
-            "name": "MSVC 2022 - Debug",
-            "displayName": "MSVC 2022 Debug",
-            "description": "MSVC 2022 Debug",
-            "configurePreset": "MSVC 2022 Debug",
-            "jobs": 16
-        },
-        {
-            "name": "MSVC 2022 - Release",
-            "displayName": "MSVC 2022 Release",
-            "description": "MSVC 2022 Release",
-            "configurePreset": "MSVC 2022 Release",
             "jobs": 16
         }
     ]
