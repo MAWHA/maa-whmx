@@ -40,6 +40,8 @@ set(VCPKG_DEBUG_LIBRARY_DIR "${VCPKG_LIBRARY_ROOT}/debug/bin")
 message(STATUS "Vcpkg library directory: ${VCPKG_LIBRARY_DIR}")
 message(STATUS "Vcpkg debug library directory: ${VCPKG_DEBUG_LIBRARY_DIR}")
 
+set (OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin")
+
 set(MAGIC_ENUM_OPT_BUILD_EXAMPLES OFF)
 set(MAGIC_ENUM_OPT_BUILD_TESTS OFF)
 set(MAGIC_ENUM_OPT_INSTALL OFF)
@@ -49,5 +51,7 @@ add_subdirectory(deps/FileLocksmithLibInterop)
 add_subdirectory(deps/qt-material-widgets)
 add_subdirectory(whmx-assistant)
 add_subdirectory(launcher)
+
+add_dependencies(launcher whmx-assistant)
 
 set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT whmx-assistant)

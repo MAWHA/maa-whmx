@@ -1,7 +1,5 @@
 ﻿add_executable(whmx-assistant WIN32 MACOSX_BUNDLE)
 
-set (OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin")
-
 configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Version.cpp.in
 	${CMAKE_CURRENT_BINARY_DIR}/Version.cpp
