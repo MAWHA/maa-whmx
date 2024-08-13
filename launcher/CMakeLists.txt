@@ -1,4 +1,4 @@
-﻿add_executable(launcher WIN32 MACOSX_BUNDLE)
+add_executable(launcher WIN32 MACOSX_BUNDLE)
 
 get_filename_component(SOURCE_DIR src REALPATH)
 nice_target_sources(launcher ${SOURCE_DIR}
