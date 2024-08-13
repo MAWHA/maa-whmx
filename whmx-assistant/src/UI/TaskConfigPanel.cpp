@@ -433,6 +433,15 @@ void setup(TaskConfigPanel *panel, DoResearchParam &param) {
         category->setCurrentText(param.category);
     }
 
+    auto combat_level = new QComboBox;
+    {
+        combat_level->addItem("推荐等级：60", DoResearchParam::Level60);
+        combat_level->addItem("推荐等级：70", DoResearchParam::Level70);
+        combat_level->addItem("推荐等级：80", DoResearchParam::Level80);
+        config_combo_box(combat_level);
+        combo_set_current_item(combat_level, param.combat_level);
+    }
+
     auto buff_preference = new QtMaterialTextField;
     {
         buff_preference->setFont(panel->font());
@@ -442,11 +451,17 @@ void setup(TaskConfigPanel *panel, DoResearchParam &param) {
     }
 
     panel->append_config_item("研学方向", "指定研学的收集方向", category);
+    panel->append_config_item("战斗路线", "指定研学战斗的关卡推荐等级", combat_level);
     panel->append_config_item(
         "增益偏好", "偏好的增益列表，按分号划分\n选择增益时按给定顺序优先选取对应增幅，不存在时则随机选取", buff_preference);
 
     QObject::connect(category, &QComboBox::currentIndexChanged, category, [=, &param](int index) {
         param.category = category->itemText(index);
+        panel->notify_config_changed();
+    });
+
+    QObject::connect(combat_level, &QComboBox::currentIndexChanged, combat_level, [=, &param](int index) {
+        param.combat_level = combat_level->itemData(index).toInt();
         panel->notify_config_changed();
     });
 

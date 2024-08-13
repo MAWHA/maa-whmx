@@ -206,12 +206,20 @@ struct SwitchFurnitureLayoutParam : public PropGetter {
 };
 
 struct DoResearchParam : public PropGetter {
+    enum CombatLevel {
+        Level60 = 60, //<! [默认] 推荐等级：60
+        Level70 = 70, //<! 推荐等级：70
+        Level80 = 80, //<! 推荐等级：80
+    };
+
     //! 研学收集方向
     QString category = "雪景寒林图";
+    //! 战斗路线
+    int combat_level = CombatLevel::Level60;
     //! 偏好增益列表
     QList<QString> buff_preference = QList<QString>();
 
-    DECLARE_PROPS(DoResearchParam, category, buff_preference)
+    DECLARE_PROPS(DoResearchParam, category, combat_level, buff_preference)
 };
 
 struct PurchasePiecesOfPaintingParam : public PropGetter {

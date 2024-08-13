@@ -22,6 +22,10 @@ roi = [880, 540, 170, 60]
 ["Research/GradeOption/Hint.png"]
 roi = [425, 661, 430, 23]
 
+["Research/GradeOption/Type"]
+hint = "升阶/降阶文本"
+roi = [608, 147, 65, 32]
+
 ["Research/Buff/Confirm.png"]
 roi = [520, 619, 240, 49]
 
@@ -90,6 +94,9 @@ roi = [0, 0, 62, 77]
 
 ["Combat/MaskedAutoFightDisabled.png"]
 roi = [0, 0, 62, 77]
+
+["Combat/Hint.png"]
+roi = [78, 24, 104, 24]
 
 ["Combat/Mopup"]
 text = "速通"

@@ -1,4 +1,9 @@
 {
+    "Research.WaitAndResolveGradeChangeOrSkip": {
+        "timeout": 10000,
+        "timeout_next": "Utils.LeafTask",
+        "next": "Research.ResolveGradeChange"
+    },
     "Research.ResolveGradeChange": {
         "recognition": "TemplateMatch",
         "template": "Research/GradeOption/Hint.png",
@@ -9,9 +14,31 @@
             23
         ],
         "next": [
-            "Research.ResolveGradeChange.Upgrade",
-            "Research.ResolveGradeChange.Downgrade"
+            "Research.ResolveGradeChange.TestOnUpgrade",
+            "Research.ResolveGradeChange.TestOnDowngrade"
         ]
+    },
+    "Research.ResolveGradeChange.TestOnUpgrade": {
+        "recognition": "OCR",
+        "roi": [
+            608,
+            147,
+            65,
+            32
+        ],
+        "expected": "升阶",
+        "next": "Research.ResolveGradeChange.Upgrade"
+    },
+    "Research.ResolveGradeChange.TestOnDowngrade": {
+        "recognition": "OCR",
+        "roi": [
+            608,
+            147,
+            65,
+            32
+        ],
+        "expected": "降阶",
+        "next": "Research.ResolveGradeChange.Downgrade"
     },
     "Research.ResolveGradeChange.Upgrade": {
         "recognition": "Custom",

@@ -52,6 +52,7 @@
         "next": [
             "weekly1",
             "transition",
+            "transition_1",
             "Quit"
         ]
     },
@@ -150,6 +151,17 @@
     "transition": {
         "recognition": "OCR",
         "expected": "路引",
+        "action": "DoNothing",
+        "next": [
+            "mission1",
+            "challenge",
+            "reward1",
+            "Quit"
+        ]
+    },
+    "transition_1": {
+        "recognition": "OCR",
+        "expected": "本周",
         "action": "DoNothing",
         "next": [
             "mission1",

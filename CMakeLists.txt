@@ -45,7 +45,9 @@ set(MAGIC_ENUM_OPT_BUILD_TESTS OFF)
 set(MAGIC_ENUM_OPT_INSTALL OFF)
 add_subdirectory(deps/magic_enum)
 
+add_subdirectory(deps/FileLocksmithLibInterop)
 add_subdirectory(deps/qt-material-widgets)
 add_subdirectory(whmx-assistant)
+add_subdirectory(launcher)
 
 set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT whmx-assistant)

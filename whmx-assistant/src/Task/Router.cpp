@@ -25,6 +25,7 @@ namespace Task {
 QMap<QString, Router::OperatorMethod> GLOBAL_ROUTER_OPERATORS;
 
 static bool operator_eq(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test eq: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() == operand.toInt(); }
     if (prop.type_id() == QMetaType::QString) { return prop.as<QString>() == operand.toString(); }
@@ -32,6 +33,7 @@ static bool operator_eq(const Prop &prop, const QVariant &operand) {
 }
 
 static bool operator_ne(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test ne: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() != operand.toInt(); }
     if (prop.type_id() == QMetaType::QString) { return prop.as<QString>() != operand.toString(); }
@@ -39,48 +41,56 @@ static bool operator_ne(const Prop &prop, const QVariant &operand) {
 }
 
 static bool operator_lt(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test lt: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() < operand.toInt(); }
     return false;
 }
 
 static bool operator_le(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test le: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() <= operand.toInt(); }
     return false;
 }
 
 static bool operator_gt(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test gt: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() > operand.toInt(); }
     return false;
 }
 
 static bool operator_ge(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test ge: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() >= operand.toInt(); }
     return false;
 }
 
 static bool operator_empty(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test empty: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::QStringList) { return prop.as<QStringList>().empty(); }
     if (prop.type_id() == QMetaType::QVariantList) { return prop.as<QVariantList>().empty(); }
     return false;
 }
 
 static bool operator_true(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test true: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::Bool) { return prop.to_bool(); }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() != 0; }
     return false;
 }
 
 static bool operator_false(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test false: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::Bool) { return !prop.to_bool(); }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() == 0; }
     return false;
 }
 
 static bool operator_between(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test between: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::Int && operand.typeId() == QMetaType::QString) {
         const auto bounds = operand.toString().split(',');
         if (bounds.size() != 2) { return false; }
@@ -92,6 +102,7 @@ static bool operator_between(const Prop &prop, const QVariant &operand) {
 }
 
 static bool operator_contains(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test contains: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::QString && operand.typeId() == QMetaType::QStringList) {
         return prop.as<QStringList>().contains(operand.toString());
     }
@@ -99,6 +110,7 @@ static bool operator_contains(const Prop &prop, const QVariant &operand) {
 }
 
 static bool operator_match(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test match: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::QString && operand.typeId() == QMetaType::QString) {
         QRegularExpression regex(operand.toString());
         if (!regex.isValid()) { return false; }
@@ -108,6 +120,7 @@ static bool operator_match(const Prop &prop, const QVariant &operand) {
 }
 
 static bool operator_in(const Prop &prop, const QVariant &operand) {
+    qDebug().nospace() << "test in: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::QString && operand.typeId() == QMetaType::QStringList) {
         return operand.toStringList().contains(prop.as<QString>());
     }
@@ -179,6 +192,7 @@ Router::TaskInfo Router::TaskInfo::parse(const json::object &data) {
         if (data.contains("param")) { task_info.override_task_params = data.at("param").as_object(); }
     }
     if (data.contains("on")) { task_info.trigger_condition = Condition::parse(data.at("on").as_object()); }
+    task_info.fold_params = data.get("fold_params", true);
     return task_info;
 }
 
@@ -271,6 +285,8 @@ RouteContext::RouteContext(std::shared_ptr<Router> router, MajorTask major_task)
 bool RouteContext::test_condition(const Condition &condition) {
     const auto props = router_->major_task_config(major_task_);
     Prop       prop;
+    qDebug().nospace() << "test condition: { key: " << condition.key << ", op: " << condition.op
+                       << ", operand: " << condition.operand << " }";
     if (props->contains(condition.key)) {
         prop = props->value(condition.key);
     } else if (const auto opt_var = var(condition.key)) {
@@ -351,9 +367,27 @@ std::optional<RouteContext::Task> RouteContext::next() {
             }
             if (state_ != State::Running) { break; }
             if (target_task.task_entry.has_value()) {
-                const auto        &task_name     = target_task.task_entry.value();
-                const auto         origin_params = router_->origin_task_params(task_name);
-                const json::object task_params   = target_task.override_task_params.value_or(json::object()) | origin_params;
+                const auto  &task_name           = target_task.task_entry.value();
+                const auto   origin_params       = router_->origin_task_params(task_name);
+                const auto  &opt_override_params = target_task.override_task_params;
+                json::object entry_task_params;
+                bool         has_unfolded_param_for_entry_task = false;
+                if (target_task.fold_params) {
+                    entry_task_params = opt_override_params.value_or(json::object()) | origin_params;
+                } else if (opt_override_params.has_value() && opt_override_params->contains(task_name.toStdString())) {
+                    has_unfolded_param_for_entry_task = true;
+                    entry_task_params = opt_override_params->at(task_name.toStdString()).as_object() | origin_params;
+                } else {
+                    entry_task_params = origin_params;
+                }
+                json::object task_params{
+                    {task_name.toStdString(), entry_task_params},
+                };
+                if (!target_task.fold_params && opt_override_params.has_value()) {
+                    auto unfolded_params = opt_override_params.value();
+                    if (has_unfolded_param_for_entry_task) { unfolded_params.erase(task_name.toStdString()); }
+                    task_params |= unfolded_params;
+                }
                 return std::make_optional<Task>({task_name, task_params});
             }
         }

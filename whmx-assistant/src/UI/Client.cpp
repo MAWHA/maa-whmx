@@ -189,6 +189,7 @@ void Client::execute_major_task(const QString &task_id, Task::MajorTask task) {
             do {
                 const bool started = route->start();
                 if (!started) { break; }
+                qDebug().noquote() << "start route of" << task_id;
                 while (route->has_next()) {
                     if (ui_workbench_->pipeline_state().is_idle()) {
                         status = MaaStatus_Success;
@@ -199,12 +200,11 @@ void Client::execute_major_task(const QString &task_id, Task::MajorTask task) {
                         status = MaaStatus_Failed;
                         break;
                     }
-                    const auto   task       = opt_task.value();
-                    const auto   task_entry = task.task_entry.toUtf8().toStdString();
-                    json::object params{
-                        {task_entry, task.params},
-                    };
-                    const int task_status = instance()->post_task(task_entry, params)->wait().sync_wait();
+                    const auto task       = opt_task.value();
+                    const auto task_entry = task.task_entry.toUtf8().toStdString();
+                    qDebug().noquote() << "execute task" << task_entry << "with params"
+                                       << QString::fromUtf8(task.params.to_string());
+                    const int task_status = instance()->post_task(task_entry, task.params)->wait().sync_wait();
                     if (task_status != MaaStatus_Success) {
                         status = task_status;
                         break;

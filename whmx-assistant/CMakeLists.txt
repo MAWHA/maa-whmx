@@ -99,6 +99,7 @@ PRIVATE
     magic_enum::magic_enum
     desktop-app::Qt6
     desktop-app::qt-material-widgets
+    FileLocksmith::LibInterop
 )
 
 # Output directory

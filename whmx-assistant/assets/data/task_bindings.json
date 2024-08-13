@@ -1,10 +1,6 @@
 {
     "bindings": [
         {
-            "major_task": "DailySignin",
-            "entry": "StartUp"
-        },
-        {
             "major_task": "GetFreeGiftPack",
             "entry": "business_kiosk"
         },
@@ -34,15 +30,19 @@
         },
         {
             "major_task": "GetOrderedProduct",
-            "entry": "dispatch_company_one"
+            "entry": "entry_resources"
         },
         {
             "major_task": "GetFavorability",
-            "entry": "dispatch_company_tow"
+            "entry": "entry_induction"
         },
         {
             "major_task": "GetAccumulatedVitality",
-            "entry": "dispatch_company_three"
+            "entry": "vitality"
+        },
+        {
+            "major_task": "ChatOverTea",
+            "entry": "tea"
         }
     ],
     "router": {
@@ -56,8 +56,17 @@
                 "pipeline": [
                     {
                         "entry": "dispath_company_collect",
+                        "fold_params": false,
                         "param": {
-                            "next": "dispatch_social_one"
+                            "dispath_company_collect": {
+                                "next": [
+                                    "entry_dispath_three",
+                                    "dispatch_social_one"
+                                ]
+                            },
+                            "entry_dispath_three": {
+                                "next": "dispatch_social_one"
+                            }
                         }
                     }
                 ]
@@ -71,8 +80,17 @@
                 "pipeline": [
                     {
                         "entry": "dispath_company_collect",
+                        "fold_params": false,
                         "param": {
-                            "next": "dispatch_social_tow"
+                            "dispath_company_collect": {
+                                "next": [
+                                    "entry_dispath_three",
+                                    "dispatch_social_one"
+                                ]
+                            },
+                            "entry_dispath_three": {
+                                "next": "dispatch_social_two"
+                            }
                         }
                     }
                 ]
@@ -86,8 +104,17 @@
                 "pipeline": [
                     {
                         "entry": "dispath_company_collect",
+                        "fold_params": false,
                         "param": {
-                            "next": "dispatch_social_three"
+                            "dispath_company_collect": {
+                                "next": [
+                                    "entry_dispath_three",
+                                    "dispatch_social_three"
+                                ]
+                            },
+                            "entry_dispath_three": {
+                                "next": "dispatch_social_three"
+                            }
                         }
                     }
                 ]
@@ -101,8 +128,17 @@
                 "pipeline": [
                     {
                         "entry": "dispath_company_collect",
+                        "fold_params": false,
                         "param": {
-                            "next": "dispatch_social_four"
+                            "dispath_company_collect": {
+                                "next": [
+                                    "entry_dispath_three",
+                                    "dispatch_social_four"
+                                ]
+                            },
+                            "entry_dispath_three": {
+                                "next": "dispatch_social_four"
+                            }
                         }
                     }
                 ]
@@ -117,9 +153,16 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
+                        "fold_params": false,
                         "param": {
-                            "next": "fabricate_one"
+                            "entry_dispath_four": {
+                                "post_wait_freezes": 0,
+                                "next": "fabricate_all"
+                            },
+                            "fabricate_all": {
+                                "next": "fabricate_one"
+                            }
                         }
                     }
                 ]
@@ -132,9 +175,16 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
+                        "fold_params": false,
                         "param": {
-                            "next": "fabricate_tow"
+                            "entry_dispath_four": {
+                                "post_wait_freezes": 0,
+                                "next": "fabricate_all"
+                            },
+                            "fabricate_all": {
+                                "next": "fabricate_two"
+                            }
                         }
                     }
                 ]
@@ -147,9 +197,16 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
+                        "fold_params": false,
                         "param": {
-                            "next": "fabricate_three"
+                            "entry_dispath_four": {
+                                "post_wait_freezes": 0,
+                                "next": "fabricate_all"
+                            },
+                            "fabricate_all": {
+                                "next": "fabricate_three"
+                            }
                         }
                     }
                 ]
@@ -162,9 +219,16 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
+                        "fold_params": false,
                         "param": {
-                            "next": "fabricate_four"
+                            "entry_dispath_four": {
+                                "post_wait_freezes": 0,
+                                "next": "fabricate_all"
+                            },
+                            "fabricate_all": {
+                                "next": "fabricate_four"
+                            }
                         }
                     }
                 ]
@@ -177,9 +241,16 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
+                        "fold_params": false,
                         "param": {
-                            "next": "fabricate_five_Swipe"
+                            "entry_dispath_four": {
+                                "post_wait_freezes": 0,
+                                "next": "fabricate_all"
+                            },
+                            "fabricate_all": {
+                                "next": "fabricate_five_Swipe"
+                            }
                         }
                     }
                 ]
@@ -192,9 +263,16 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
+                        "fold_params": false,
                         "param": {
-                            "next": "fabricate_nine_Swipe"
+                            "entry_dispath_four": {
+                                "post_wait_freezes": 0,
+                                "next": "fabricate_all"
+                            },
+                            "fabricate_all": {
+                                "next": "fabricate_nine_Swipe"
+                            }
                         }
                     }
                 ]
@@ -207,9 +285,16 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
+                        "fold_params": false,
                         "param": {
-                            "next": "fabricate_six_Swipe"
+                            "entry_dispath_four": {
+                                "post_wait_freezes": 0,
+                                "next": "fabricate_all"
+                            },
+                            "fabricate_all": {
+                                "next": "fabricate_six_Swipe"
+                            }
                         }
                     }
                 ]
@@ -222,9 +307,16 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
+                        "fold_params": false,
                         "param": {
-                            "next": "fabricate_seven_Swipe"
+                            "entry_dispath_four": {
+                                "post_wait_freezes": 0,
+                                "next": "fabricate_all"
+                            },
+                            "fabricate_all": {
+                                "next": "fabricate_seven_Swipe"
+                            }
                         }
                     }
                 ]
@@ -237,9 +329,16 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
+                        "fold_params": false,
                         "param": {
-                            "next": "fabricate_ten_Swipe"
+                            "entry_dispath_four": {
+                                "post_wait_freezes": 0,
+                                "next": "fabricate_all"
+                            },
+                            "fabricate_all": {
+                                "next": "fabricate_ten_Swipe"
+                            }
                         }
                     }
                 ]
@@ -252,9 +351,16 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
+                        "fold_params": false,
                         "param": {
-                            "next": "fabricate_eight_Swipe"
+                            "entry_dispath_four": {
+                                "post_wait_freezes": 0,
+                                "next": "fabricate_all"
+                            },
+                            "fabricate_all": {
+                                "next": "fabricate_eight_Swipe"
+                            }
                         }
                     }
                 ]
@@ -269,9 +375,62 @@
                     {
                         "entry": "Research.EnterDoResearch"
                     },
-                    {
-                        "entry": "Research.SelectMapOrPass"
-                    },
+                    [
+                        {
+                            "on": {
+                                "key": "category",
+                                "op": "eq",
+                                "operand": "雪景寒林图"
+                            },
+                            "entry": "Research.SelectMapOrPass",
+                            "fold_params": false,
+                            "param": {
+                                "Research.SelectMapOrPass.CheckAndSelect": {
+                                    "next": [
+                                        "Research.SelectMapOrPass.XueJingHanLinTu",
+                                        "Utils.Failure"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "category",
+                                "op": "eq",
+                                "operand": "千里江山图"
+                            },
+                            "entry": "Research.SelectMapOrPass",
+                            "fold_params": false,
+                            "param": {
+                                "Research.SelectMapOrPass.CheckAndSelect": {
+                                    "next": [
+                                        "Research.SelectMapOrPass.QianLiJiangShanTu",
+                                        "Utils.Failure"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "category",
+                                "op": "eq",
+                                "operand": "溪山行旅图"
+                            },
+                            "entry": "Research.SelectMapOrPass",
+                            "fold_params": false,
+                            "param": {
+                                "Research.SelectMapOrPass.CheckAndSelect": {
+                                    "next": [
+                                        "Research.SelectMapOrPass.XiShanXingLvTu",
+                                        "Utils.Failure"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "action": "break"
+                        }
+                    ],
                     {
                         "entry": "Research.GainBuff"
                     },
@@ -282,7 +441,7 @@
                         "entry": "Research.ResolveEncounterEvent"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.FirstTriRoute"
@@ -291,11 +450,46 @@
                         "entry": "Research.ResolveEncounterEvent"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
-                    {
-                        "entry": "Research.SelectFightRoute"
-                    },
+                    [
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 60
+                            },
+                            "entry": "Research.SelectFightRoute",
+                            "param": {
+                                "next": "Research.SelectFightRoute.Fight60"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 70
+                            },
+                            "entry": "Research.SelectFightRoute",
+                            "param": {
+                                "next": "Research.SelectFightRoute.Fight70"
+                            }
+                        },
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 80
+                            },
+                            "entry": "Research.SelectFightRoute",
+                            "param": {
+                                "next": "Research.SelectFightRoute.Fight80"
+                            }
+                        },
+                        {
+                            "action": "break"
+                        }
+                    ],
                     {
                         "entry": "Research.FightAssess"
                     },
@@ -330,16 +524,42 @@
                         "entry": "Combat.WaitFightToComplete"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
-                    {
-                        "entry": "Research.SecondSingleRoute"
-                    },
+                    [
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 60
+                            },
+                            "entry": "Research.SecondSingleRouteFromFight60"
+                        },
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 70
+                            },
+                            "entry": "Research.SecondSingleRouteFromFight70"
+                        },
+                        {
+                            "on": {
+                                "key": "combat_level",
+                                "op": "eq",
+                                "operand": 80
+                            },
+                            "entry": "Research.SecondSingleRouteFromFight80"
+                        },
+                        {
+                            "action": "break"
+                        }
+                    ],
                     {
                         "entry": "Research.ResolveEncounterEvent"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.SecondTriRoute"
@@ -348,7 +568,7 @@
                         "entry": "Research.ResolveAnyGame"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.SelectFightRoute"
@@ -381,7 +601,7 @@
                         "entry": "Combat.WaitFightToComplete"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.ThirdSingleRoute"
@@ -390,7 +610,7 @@
                         "entry": "Research.ResolveEncounterEvent"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.ForthSingleRoute"
@@ -423,7 +643,7 @@
                         "entry": "Combat.WaitFightToComplete"
                     },
                     {
-                        "entry": "Research.ResolveGradeChange"
+                        "entry": "Research.WaitAndResolveGradeChangeOrSkip"
                     },
                     {
                         "entry": "Research.FifthSingleRoute"
@@ -431,62 +651,6 @@
                     {
                         "entry": "Research.CompleteAndQuit"
                     }
-                ]
-            },
-            {
-                "on": {
-                    "key": "category",
-                    "op": "eq",
-                    "operand": "雪景寒林图"
-                },
-                "pipeline": [
-                    {
-                        "entry": "Research",
-                        "param": {
-                            "next": []
-                        }
-                    },
-                    [
-                        {
-                            "on": {
-                                "key": "buff_preference",
-                                "op": "contains",
-                                "operand": "炽刀"
-                            },
-                            "entry": "snowscape",
-                            "param": {
-                                "next": "Blazing_Knife"
-                            }
-                        },
-                        {
-                            "on": {
-                                "key": "buff_preference",
-                                "op": "contains",
-                                "operand": "神射"
-                            },
-                            "entry": "snowscape",
-                            "param": {
-                                "next": "Marksmanship"
-                            }
-                        },
-                        {
-                            "on": {
-                                "key": "buff_preference",
-                                "op": "contains",
-                                "operand": "术法精通"
-                            },
-                            "entry": "snowscape",
-                            "param": {
-                                "next": "Spells"
-                            }
-                        },
-                        {
-                            "entry": "snowscape",
-                            "param": {
-                                "next": "Blazing_Knife"
-                            }
-                        }
-                    ]
                 ]
             }
         ],

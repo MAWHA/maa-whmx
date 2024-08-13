@@ -9,6 +9,15 @@ COMPONENTS
     StateMachine
 )
 
+add_library(deps_qt6-core INTERFACE)
+
+target_link_libraries(deps_qt6-core
+INTERFACE
+    Qt${QT_VERSION_MAJOR}::Core
+)
+
+add_library(desktop-app::Qt6Core ALIAS deps_qt6-core)
+
 add_library(deps_qt6 INTERFACE)
 
 target_link_libraries(deps_qt6

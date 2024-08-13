@@ -232,12 +232,7 @@ bool ParseAnecdote::parse_params(ParseAnecdoteParam &param_out, MaaStringView ra
 
     const auto &params = opt_params.value().as_object();
 
-    if (params.contains("category")) {
-        param_out.category = params.at("category").as_string();
-    } else {
-        return false;
-    }
-
+    param_out.category            = params.get("category", "");
     param_out.enable_fuzzy_search = params.get("enable_fuzzy_search", false);
     param_out.start_stage         = params.get("start_stage", -1);
 
@@ -257,10 +252,12 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
         co_return resp;
     }
 
-    //! TODO: support fuzzy search
-    const auto opt_category = Ref::ResearchAnecdoteSet::instance()->entry(opt.category);
-    if (!opt_category.has_value()) { co_return resp; }
-    const auto &category = opt_category.value().get();
+    const auto anecdote_set = Ref::ResearchAnecdoteSet::instance();
+
+    const bool should_match_category = opt.category.empty();
+    if (!should_match_category && !anecdote_set->contains(opt.category)) { co_return resp; }
+
+    // const auto &category = opt_category.value().get();
 
     const MaaRect roi_title{600, 120, 460, 32};
     const MaaRect roi_content{600, 170, 490, 196};
@@ -279,22 +276,57 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
     timer.restart();
     const auto title_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi_title));
     const auto opt_title  = parse_and_get_best_ocr_record(json::parse(title_resp.rec_detail).value());
-    qDebug().noquote()
-        << QString("%1: %2: cost time %3ms").arg(QString::fromUtf8(task_name)).arg("title recognition").arg(timer.elapsed());
-    if (!opt_title.has_value()) { co_return resp; }
+    if (!opt_title.has_value()) {
+        qDebug().noquote() << QString("%1: failed to recognize anecdote title");
+        co_return resp;
+    }
 
     const auto title = opt_title.value();
+    qDebug().noquote() << QString("%1: %2: cost time %3ms, content: \"%4\"")
+                              .arg(QString::fromUtf8(task_name))
+                              .arg("title recognition")
+                              .arg(timer.elapsed())
+                              .arg(QString::fromUtf8(title.text));
+
+    auto current_category = opt.category;
+    if (should_match_category) {
+        qInfo().noquote() << "no category specified, trying to match category for title:" << QString::fromUtf8(title.text);
+        for (const auto category : anecdote_set->categories()) {
+            if (anecdote_set->entry(category)->get().entry(title.text).has_value()) {
+                qInfo().noquote() << "matched category:" << QString::fromUtf8(category);
+                current_category = category;
+                break;
+            }
+        }
+    }
+
+    const auto opt_category = anecdote_set->entry(current_category);
+    if (!opt_category.has_value()) {
+        qCritical() << "caught unknown category:" << QString::fromUtf8(current_category);
+        co_return resp;
+    }
+    const auto &category = opt_category.value().get();
 
     timer.restart();
     const auto content_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi_content));
     const auto opt_content  = parse_and_get_full_text_ocr_result(json::parse(content_resp.rec_detail).value());
-    qDebug().noquote()
-        << QString("%1: %2: cost time %3ms").arg(QString::fromUtf8(task_name)).arg("content recognition").arg(timer.elapsed());
-    if (!opt_content.has_value()) { co_return resp; }
+    if (!opt_content.has_value()) {
+        qDebug().noquote() << QString("%1: failed to recognize anecdote content");
+        co_return resp;
+    }
 
-    const auto content   = opt_content.value();
+    const auto content = opt_content.value();
+    qDebug().noquote() << QString("%1: %2: cost time %3ms, content: \"%4\"")
+                              .arg(QString::fromUtf8(task_name))
+                              .arg("content recognition")
+                              .arg(timer.elapsed())
+                              .arg(QString::fromUtf8(content.text));
+
     const auto opt_entry = category.entry(title.text);
-    if (!opt_entry.has_value()) { co_return resp; }
+    if (!opt_entry.has_value()) {
+        qDebug().noquote() << "failed to find anecdote entry for title: " << title.text;
+        co_return resp;
+    }
     const auto &entry = opt_entry.value().get();
 
     //! NOTE: 0.0 is the best score to indicate a mannually specified start-stage, see the following code for more details
@@ -317,16 +349,19 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
                 stage          = i;
             }
         }
-        if (stage == -1) { co_return resp; }
+        if (stage == -1) {
+            qCritical() << "no stage matched";
+            co_return resp;
+        }
         opt.start_stage = stage;
         option_score    = max_score;
     }
 
     json::object resp_data{
-        {"category", opt.category   },
-        {"name",     entry.name()   },
-        {"stage",    opt.start_stage},
-        {"score",    option_score   },
+        {"category", current_category},
+        {"name",     entry.name()    },
+        {"stage",    opt.start_stage },
+        {"score",    option_score    },
     };
 
     resp.result     = true;
