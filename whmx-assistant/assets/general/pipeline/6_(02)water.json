@@ -2,7 +2,11 @@
     "drink": {
         "next": [
             "huipo",
-            "water"
+            "water",
+            "max_water",
+            "Swipe_drink",
+            "drink",
+            "drink_a_2day_water"
         ]
     },
     "huipo": {
@@ -39,9 +43,15 @@
         ]
     },
     "sub_2daywater": {
-        "recognition": "TemplateMatch",
-        "template": "dst/2day.png",
+        "recognition": "OCR",
+        "expected": "2天",
         "threshold": 0.85,
+        "roi": [
+            390,
+            120,
+            160,
+            140
+        ],
         "action": "Click",
         "target_offset": [
             -10,
@@ -51,17 +61,44 @@
         ],
         "next": [
             "sub_drink",
-            "quit_fork"
+            "quit_fork",
+            "max_water",
+            "click_water"
         ]
     },
     "sub_drink": {
         "recognition": "TemplateMatch",
         "template": "Collect/04.png",
-        "action": "Click"
+        "action": "Click",
+        "post_delay": 3000,
+        "next": [
+            "drink_a_2day_water",
+            "quit_fork"
+        ]
     },
     "quit_fork": {
         "recognition": "TemplateMatch",
         "template": "dst/fork.png",
         "action": "Click"
+    },
+    "max_water": {
+        "recognition": "OCR",
+        "expected": "上限",
+        "action": "Click",
+        "target": [
+            170,
+            400,
+            0,
+            0
+        ]
+    },
+    "click_water": {
+        "action": "Click",
+        "target": [
+            170,
+            400,
+            0,
+            0
+        ]
     }
 }
