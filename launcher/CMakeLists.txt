@@ -19,3 +19,10 @@ PRIVATE
     desktop-app::Qt6Core
     FileLocksmith::LibInterop
 )
+
+# Output directory
+set_target_properties(launcher PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIR}")
+if(${CMAKE_GENERATOR} MATCHES "Visual Studio*")
+    set_target_properties(launcher PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_DIR}")
+    set_target_properties(launcher PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_DIR}")
+endif()

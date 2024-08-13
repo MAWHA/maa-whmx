@@ -1,12 +1,4 @@
-set(CV_SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/OpenCV)
-
-find_package(OpenCV GLOBAL QUIET
-HINTS ${CV_SOURCE_DIR}/x64/vc16/lib
-)
-
-if(NOT OpenCV_FOUND)
-    message(FATAL_ERROR "OpenCV not found, install it to ${CV_SOURCE_DIR} first.")
-endif()
+find_package(OpenCV REQUIRED)
 
 add_library(OpenCV INTERFACE IMPORTED)
 
