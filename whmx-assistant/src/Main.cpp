@@ -66,9 +66,6 @@ int main(int argc, char *argv[]) {
     QApplication::setApplicationDisplayName("物华弥新小助手");
     QApplication::setApplicationVersion(QString::fromUtf8(Consts::VERSION));
 
-    //! ATTENTION: To avoid Qt following system's dark theme.
-    app.setPalette(app.style()->standardPalette());
-
     auto client = std::make_shared<UI::Client>();
     client->show();
 
