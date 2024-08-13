@@ -71,8 +71,9 @@ jobs:
       working-directory: ${{github.workspace}}
       shell: pwsh
       run: |
-        $result = ./scripts/ci/find-binary.ps1 -DirectoryPath "./${{matrix.build-path}}/bin"
-        echo "exec_files=$result" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8
+        $result = (./scripts/ci/find-binary.ps1 -DirectoryPath "./${{matrix.build-path}}/bin") | Out-String
+        $outputString = "exec_files=$result"
+        $outputString | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         Write-Host "Found executable and dynamic library files: $result"
 
     - name: Generate Artifact Attestation

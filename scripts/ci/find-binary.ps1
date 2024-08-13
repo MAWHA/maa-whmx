@@ -19,4 +19,4 @@ $output = $files | ForEach-Object {
 $joinedOutput = $output -join ","
 
 # Print the output
-Write-Host $joinedOutput
+Write-Output $joinedOutput
