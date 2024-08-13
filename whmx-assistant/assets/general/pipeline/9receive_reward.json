@@ -158,7 +158,7 @@
             "reward1",
             "Quit"
         ]
-    }
+    },
     "transition_1": {
         "recognition": "OCR",
         "expected": "本周",

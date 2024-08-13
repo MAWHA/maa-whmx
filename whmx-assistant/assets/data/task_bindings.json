@@ -72,7 +72,7 @@
                     {
                         "entry": "dispath_company_collect",
                         "param": {
-                            "next": "dispatch_social_tow"
+                            "next": "dispatch_social_two"
                         }
                     }
                 ]
@@ -134,7 +134,7 @@
                     {
                         "entry": "fabricate_all",
                         "param": {
-                            "next": "fabricate_tow"
+                            "next": "fabricate_two"
                         }
                     }
                 ]
