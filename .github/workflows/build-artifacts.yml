@@ -1,0 +1,106 @@
+﻿name: Build Artifacts
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_call:
+
+jobs:
+  build-package:
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type: [Debug, Release]
+        include:
+          - build-type: Debug
+            build-preset: "Ninja Debug"
+            build-path: "build/ninja-debug"
+          - build-type: Release
+            build-preset: "Ninja Release"
+            build-path: "build/ninja-release"
+
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Export GitHub Actions Cache Environment Variables
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: Setup Ninja
+      uses: ashutoshvarma/setup-ninja@master
+      with:
+        version: 1.11.0
+
+    - name: Initialize MSVC Environment
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{runner.arch}}
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}
+      env:
+        VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+      run: cmake --preset ${{matrix.build-preset}}
+
+    - name: Build
+      working-directory: ${{github.workspace}}
+      run: cmake --build ${{matrix.build-path}} --target all
+
+    - name: Pre Packing
+      working-directory: ${{github.workspace}}
+      shell: pwsh
+      run: ./scripts/ci/pre-packing.ps1 -DirectoryPath ./${{matrix.build-path}}/bin
+
+    - name: Find Binary Files
+      id: find-binary
+      working-directory: ${{github.workspace}}
+      shell: pwsh
+      run: |
+        $result = & ./scripts/ci/find-binary.ps1 -DirectoryPath ./${{matrix.build-path}}/bin
+        echo "exec_files=$result" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8
+        Write-Host "Found executable and dynamic library files:" + $result
+
+    - name: Generate Artifact Attestation
+      if: github.event_name != 'pull_request'
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: '${{steps.find-binary.outputs.exec_files}}'
+
+    - name: Get Short SHA
+      uses: benjlevesque/short-sha@v3.0
+      id: short-sha
+      with:
+        length: 7
+
+    - name: Archive Artifacts
+      if: github.event_name != 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}
+        path: |
+          ${{matrix.build-path}}/bin/**
+        compression-level: 9
+
+    - name: Archive Artifacts (Not Signed)
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}-Unsafe
+        path: |
+          ${{matrix.build-path}}/bin/**
+        compression-level: 9
