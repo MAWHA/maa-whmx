@@ -30,6 +30,7 @@ set(MAGIC_ENUM_OPT_BUILD_TESTS OFF)
 set(MAGIC_ENUM_OPT_INSTALL OFF)
 add_subdirectory(deps/magic_enum)
 
+add_subdirectory(deps/FileLocksmithLibInterop)
 add_subdirectory(deps/Qt6)
 add_subdirectory(deps/qt-material-widgets)
 add_subdirectory(whmx-assistant)

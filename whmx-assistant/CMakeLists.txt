@@ -30,6 +30,8 @@ PRIVATE
     Logger.cpp
     Logger.h
     MacroHelper.h
+    Platform.cpp
+    Platform.h
     Task/TaskGraph.cpp
     Task/TaskGraph.h
     Task/MajorTask.cpp
@@ -97,6 +99,7 @@ PRIVATE
     magic_enum::magic_enum
     desktop-app::Qt6
     desktop-app::qt-material-widgets
+    FileLocksmith::LibInterop
 )
 
 install(TARGETS whmx-assistant

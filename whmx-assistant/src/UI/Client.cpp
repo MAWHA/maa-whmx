@@ -22,6 +22,7 @@
 #include "../CustomAction/Combat.h"
 #include "../Consts.h"
 #include "../ReferenceDataSet.h"
+#include "../Platform.h"
 
 #include <MaaPP/MaaPP.hpp>
 #include <QtCore/QDir>
@@ -337,6 +338,9 @@ Client::~Client() {
 
     //! ATTENTION: do not use logger->flush() here, the client is already destroyed here
     handle_on_logging_flush(ui_workbench_->logger()->take());
+
+    //! kill occupied processes of maa.log
+    Platform::kill_occupied_process((log_dir() + "/maa.log").toLocal8Bit().toStdString(), R"(^adb\.exe$)");
 }
 
 void Client::setup() {
