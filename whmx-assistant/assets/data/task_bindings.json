@@ -1,10 +1,6 @@
 {
     "bindings": [
         {
-            "major_task": "DailySignin",
-            "entry": "StartUp"
-        },
-        {
             "major_task": "GetFreeGiftPack",
             "entry": "business_kiosk"
         },
@@ -34,15 +30,19 @@
         },
         {
             "major_task": "GetOrderedProduct",
-            "entry": "dispatch_company_one"
+            "entry": "entry_resources"
         },
         {
             "major_task": "GetFavorability",
-            "entry": "dispatch_company_tow"
+            "entry": "entry_induction"
         },
         {
             "major_task": "GetAccumulatedVitality",
-            "entry": "dispatch_company_three"
+            "entry": "vitality"
+        },
+        {
+            "major_task": "ChatOverTea",
+            "entry": "tea"
         }
     ],
     "router": {
