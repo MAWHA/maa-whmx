@@ -1,4 +1,4 @@
-/* Copyright 2024 周上行Ryer
+﻿/* Copyright 2024 周上行Ryer
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -65,6 +65,9 @@ int main(int argc, char *argv[]) {
     QApplication::setApplicationName("whmx-assistant");
     QApplication::setApplicationDisplayName("物华弥新小助手");
     QApplication::setApplicationVersion(QString::fromUtf8(Consts::VERSION));
+
+    //! ATTENTION: To avoid Qt following system's dark theme.
+    app.setPalette(app.style()->standardPalette());
 
     auto client = std::make_shared<UI::Client>();
     client->show();
