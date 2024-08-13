@@ -153,7 +153,7 @@
                 },
                 "pipeline": [
                     {
-                        "entry": "fabricate_all",
+                        "entry": "entry_dispath_four",
                         "fold_params": false,
                         "param": {
                             "entry_dispath_four": {
