@@ -86,6 +86,7 @@
             0,
             0
         ],
+        "post_wait_freezes": 500,
         "next": [
             "fabricate_five"
         ]
@@ -94,6 +95,12 @@
         "recognition": "TemplateMatch",
         "template": "Company/15.png",
         "action": "Click",
+        "target_offset": [
+            200,
+            0,
+            0,
+            0
+        ],
         "next": [
             "fabricate_max_2"
         ]
@@ -112,6 +119,7 @@
             0,
             0
         ],
+        "post_wait_freezes": 500,
         "next": [
             "fabricate_six"
         ]
@@ -120,6 +128,12 @@
         "recognition": "TemplateMatch",
         "template": "Company/16.png",
         "action": "Click",
+        "target_offset": [
+            200,
+            0,
+            0,
+            0
+        ],
         "next": [
             "fabricate_max_2"
         ]
@@ -128,16 +142,17 @@
         "action": "Swipe",
         "begin": [
             265,
-            305,
+            325,
             0,
             0
         ],
         "end": [
             265,
-            160,
+            130,
             0,
             0
         ],
+        "post_wait_freezes": 500,
         "next": [
             "fabricate_seven"
         ]
@@ -146,6 +161,12 @@
         "recognition": "TemplateMatch",
         "template": "Company/17.png",
         "action": "Click",
+        "target_offset": [
+            200,
+            0,
+            0,
+            0
+        ],
         "next": [
             "fabricate_max_2"
         ]
@@ -182,6 +203,7 @@
             0,
             0
         ],
+        "post_wait_freezes": 500,
         "next": [
             "fabricate_eight"
         ]
@@ -208,24 +230,7 @@
             0,
             0
         ],
-        "next": [
-            "fabricate_nine_Swipe_2"
-        ]
-    },
-    "fabricate_nine_Swipe_2": {
-        "action": "Swipe",
-        "begin": [
-            265,
-            305,
-            0,
-            0
-        ],
-        "end": [
-            265,
-            160,
-            0,
-            0
-        ],
+        "post_wait_freezes": 500,
         "next": [
             "fabricate_nine"
         ]
@@ -234,6 +239,12 @@
         "recognition": "TemplateMatch",
         "template": "Company/19.png",
         "action": "Click",
+        "target_offset": [
+            200,
+            0,
+            0,
+            0
+        ],
         "next": [
             "fabricate_max_2"
         ]
@@ -270,6 +281,7 @@
             0,
             0
         ],
+        "post_wait_freezes": 500,
         "next": [
             "fabricate_ten"
         ]
@@ -278,6 +290,12 @@
         "recognition": "TemplateMatch",
         "template": "Company/20.png",
         "action": "Click",
+        "target_offset": [
+            200,
+            0,
+            0,
+            0
+        ],
         "next": [
             "fabricate_max_2"
         ]
