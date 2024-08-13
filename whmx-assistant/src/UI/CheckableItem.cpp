@@ -16,6 +16,7 @@
 #include "CheckableItem.h"
 
 #include <QtWidgets/QHBoxLayout>
+#include <QtGui/QMouseEvent>
 
 namespace UI {
 
@@ -44,7 +45,26 @@ void CheckableItem::setup() {
     layout->addWidget(ui_name_);
     layout->addStretch();
 
+    ui_name_->installEventFilter(this);
+
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+}
+
+bool CheckableItem::eventFilter(QObject *watched, QEvent *event) {
+    Q_ASSERT(watched == ui_name_);
+    if (event->type() == QEvent::MouseButtonRelease) {
+        if (const auto e = static_cast<QMouseEvent *>(event);
+            e->button() == Qt::LeftButton && contentsRect().contains(mapFromGlobal(e->globalPosition().toPoint()))) {
+            ui_select_->toggle();
+        }
+    }
+    return false;
+}
+
+void CheckableItem::mouseReleaseEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton && contentsRect().contains(mapFromGlobal(event->globalPosition().toPoint()))) {
+        ui_select_->toggle();
+    }
 }
 
 } // namespace UI
