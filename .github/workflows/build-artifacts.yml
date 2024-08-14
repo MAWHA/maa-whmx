@@ -66,6 +66,11 @@ jobs:
       shell: pwsh
       run: ./scripts/ci/pre-packing.ps1 -DirectoryPath "./${{matrix.build-path}}/bin"
 
+    - name: Copy License to Artifacts Path
+      working-directory: ${{github.workspace}}
+      shell: pwsh
+      run: Copy-Item "./LICENSE" -Destination "./${{matrix.build-path}}/bin/"
+
     - name: Find Binary Files
       id: find-binary
       working-directory: ${{github.workspace}}
