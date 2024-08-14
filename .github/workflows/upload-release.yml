@@ -57,9 +57,6 @@ jobs:
 
     permissions:
       contents: write
-    
-    env:
-      asset_name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build_type}}-${{github.ref_name}}.zip
 
     steps:
       - name: Get Short SHA
@@ -72,7 +69,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}
-          
+
       - name: Package
         shell: pwsh
         working-directory: ${{github.workspace}}
@@ -88,6 +85,16 @@ jobs:
           $md5 | Out-File -FilePath $md5FilePath -Encoding utf8
           Write-Host "MD5 $md5 saved to $md5FilePath"
 
+      - name: Set Package Name
+        id: package-name
+        working-directory: ${{github.workspace}}
+        shell: pwsh
+        run: |
+          $result = "whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build_type}}-${{github.ref_name}}.zip"
+          $outputString = "asset_name=$result"
+          $outputString | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          Write-Host "Package asset name: $result"
+
       - name: Upload
         uses: actions/upload-release-asset@v1
         env:
@@ -95,7 +102,7 @@ jobs:
         with:
           upload_url: ${{needs.create-release.outputs.upload_url}}
           asset_path: ./package.zip
-          asset_name: ${{env.asset_name}}
+          asset_name: ${{steps.package-name.outputs.asset_name}}
           asset_content_type: application/zip
 
       - name: Upload MD5
@@ -105,5 +112,5 @@ jobs:
         with:
           upload_url: ${{needs.create-release.outputs.upload_url}}
           asset_path: ./package.zip.md5
-          asset_name: ${{env.asset_name}}.md5
+          asset_name: ${{steps.package-name.outputs.asset_name}}.md5
           asset_content_type: text/plain
