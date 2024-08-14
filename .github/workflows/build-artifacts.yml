@@ -95,6 +95,10 @@ jobs:
       with:
         length: 7
 
+    - name: Set Working Directory
+      shell: pwsh
+      run: Set-Location -Path "${{github.workspace}}" -PassThru
+
     - name: Archive Artifacts
       if: github.event_name != 'pull_request'
       uses: actions/upload-artifact@v4
