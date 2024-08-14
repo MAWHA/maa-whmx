@@ -82,6 +82,13 @@ jobs:
       with:
         subject-path: '${{steps.find-binary.outputs.exec_files}}'
 
+    - name: List Files
+      working-directory: ${{github.workspace}}
+      shell: pwsh
+      run: |
+        $directoryPath = "${{matrix.build-path}}/bin/"
+        Get-ChildItem -Path $directoryPath -Recurse | Select-Object Name, FullName, Length, CreationTime, LastWriteTime | Write-Host
+
     - name: Get Short SHA
       uses: benjlevesque/short-sha@v3.0
       id: short-sha
@@ -94,7 +101,7 @@ jobs:
       with:
         name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}
         path: |
-          "${{matrix.build-path}}/bin/"
+          "${{matrix.build-path}}/bin/*"
         compression-level: 9
         if-no-files-found: error
 
@@ -104,6 +111,6 @@ jobs:
       with:
         name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}-Unsafe
         path: |
-          "${{matrix.build-path}}/bin/"
+          "${{matrix.build-path}}/bin/*"
         compression-level: 9
         if-no-files-found: error
