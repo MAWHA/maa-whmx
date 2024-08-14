@@ -1,15 +1,15 @@
 find_package(OpenCV REQUIRED)
 
-add_library(OpenCV INTERFACE IMPORTED)
+add_library(OpenCV INTERFACE)
 
-target_link_directories(OpenCV
+target_include_directories(OpenCV
 INTERFACE
     ${OpenCV_INCLUDE_DIRS}
 )
 
 target_link_libraries(OpenCV
 INTERFACE
-    ${OpenCV_LIBS}
+    ${CMAKE_SOURCE_DIR}/deps/MaaFramework/lib/opencv_world4_maa.lib
 )
 
 add_library(OpenCV::OpenCV ALIAS OpenCV)
