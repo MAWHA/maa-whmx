@@ -31,11 +31,11 @@ changelog:
     - title: Deprecated ⚠️
       labels:
         - deprecated
-    - title: Localization and translation 🌐
+    - title: Localization and Translation 🌐
       labels:
         - localization
         - translation
-    - title: Documentation updates 📝
+    - title: Documentation Updates 📝
       labels:
         - documentation
         - docs
@@ -44,7 +44,7 @@ changelog:
       labels:
         - test
         - tests
-    - title: 📦 Dependency updates
+    - title: Dependency Updates 📦
       labels:
         - dependencies
         - dependency
