@@ -1,0 +1,50 @@
+﻿# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - no-changelog
+      - skip-changelog
+  categories:
+    - title: Breaking Changes 🔥
+      labels:
+        - breaking-change
+        - breaking
+    - title: Exciting New Features 🎉
+      labels:
+        - enhancement
+        - features
+        - feature
+    - title: Bug Fixes 🐛
+      labels:
+        - bug
+        - bugs
+        - fix
+        - bugfix
+    - title: Removed 🚨
+      labels:
+        - removed
+    - title: Deprecated ⚠️
+      labels:
+        - deprecated
+    - title: Localization and translation 🌐
+      labels:
+        - localization
+        - translation
+    - title: Documentation updates 📝
+      labels:
+        - documentation
+        - docs
+        - doc
+    - title: Tests 🚦
+      labels:
+        - test
+        - tests
+    - title: 📦 Dependency updates
+      labels:
+        - dependencies
+        - dependency
+    - title: Other Changes ✍
+      labels:
+        - "*"
