@@ -6,6 +6,9 @@ changelog:
       - ignore-for-release
       - no-changelog
       - skip-changelog
+      - invalid
+      - reverted
+      - duplicate
   categories:
     - title: Breaking Changes 🔥
       labels:
