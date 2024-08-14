@@ -42,7 +42,7 @@ jobs:
           tag_name: ${{github.ref}}
           release_name: whmx-assistant ${{github.ref}}
           body: ${{steps.notes.outputs.release-notes}}
-          draft: true
+          draft: false
           prerelease: ${{endsWith(github.ref, 'beta')}}
     
   release:
