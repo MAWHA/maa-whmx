@@ -101,7 +101,7 @@ jobs:
       with:
         name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}
         path: |
-          "${{matrix.build-path}}/bin"
+          ${{matrix.build-path}}/bin/**
         compression-level: 9
         if-no-files-found: error
 
@@ -111,6 +111,6 @@ jobs:
       with:
         name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}-Unsafe
         path: |
-          "${{matrix.build-path}}/bin"
+          ${{matrix.build-path}}/bin/**
         compression-level: 9
         if-no-files-found: error
