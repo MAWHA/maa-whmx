@@ -17,10 +17,10 @@ jobs:
   create-release:
     name: Create Release
     runs-on: windows-latest
-    
+
     outputs:
       upload_url: ${{steps.create_release.outputs.upload_url}}
-    
+
     permissions:
       contents: write
 
@@ -31,7 +31,7 @@ jobs:
         with:
           tag-name: ${{github.ref}}
           token: ${{secrets.GITHUB_TOKEN}}
-          branch: 'main'
+          branch: 'ci/release'
 
       - name: Create Release
         id: create_release
@@ -44,16 +44,16 @@ jobs:
           body: ${{steps.notes.outputs.release-notes}}
           draft: false
           prerelease: ${{endsWith(github.ref, 'beta')}}
-    
+
   release:
     name: Upload Release
     needs: [call-build, create-release]
     runs-on: windows-latest
-    
+
     strategy:
       fail-fast: false
       matrix:
-        build-type: [Debug, Release]
+        build-type: [Release]
 
     permissions:
       contents: write
@@ -74,7 +74,7 @@ jobs:
         shell: pwsh
         working-directory: ${{github.workspace}}
         run: Compress-Archive -Path .\* -DestinationPath package.zip
-      
+
       - name: Calculate MD5
         shell: pwsh
         working-directory: ${{github.workspace}}

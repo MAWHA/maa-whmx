@@ -14,11 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build-type: [Debug, Release]
+        build-type: [Release]
         include:
-          - build-type: Debug
-            build-preset: "Ninja Debug"
-            build-path: "build/ninja-debug"
           - build-type: Release
             build-preset: "Ninja Release"
             build-path: "build/ninja-release"
