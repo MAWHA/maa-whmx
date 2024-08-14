@@ -83,7 +83,7 @@ _✨本项目的流水线资源由 [MWA](https://github.com/MAWHA/MWA) 协同提
 感谢以下开发者对物华弥新小助手作出的贡献：
 
 <a href="https://github.com/MAWHA/maa-whmx/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=MAWHA/maa-whmx&max=1000" />
+  <img src="https://contrib.rocks/image?repo=MAWHA/maa-whmx" />
 </a>
 
 # 讨论
