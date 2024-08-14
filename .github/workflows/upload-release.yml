@@ -90,7 +90,7 @@ jobs:
         working-directory: ${{github.workspace}}
         shell: pwsh
         run: |
-          $result = "whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build_type}}-${{github.ref_name}}.zip"
+          $result = "whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{github.ref_name}}.zip"
           $outputString = "asset_name=$result"
           $outputString | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           Write-Host "Package asset name: $result"
