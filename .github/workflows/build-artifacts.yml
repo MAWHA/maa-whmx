@@ -66,12 +66,17 @@ jobs:
       shell: pwsh
       run: ./scripts/ci/pre-packing.ps1 -DirectoryPath "./${{matrix.build-path}}/bin"
 
+    - name: Copy Output Files
+      working-directory: ${{github.workspace}}
+      shell: pwsh
+      run: ./scripts/ci/copy-output.ps1 -SourceDirectory "./${{matrix.build-path}}/bin" -DestinationDirectory "./install"
+
     - name: Find Binary Files
       id: find-binary
       working-directory: ${{github.workspace}}
       shell: pwsh
       run: |
-        $result = (./scripts/ci/find-binary.ps1 -DirectoryPath "./${{matrix.build-path}}/bin") | Out-String
+        $result = (./scripts/ci/find-binary.ps1 -DirectoryPath "./install") | Out-String
         $outputString = "exec_files=$result"
         $outputString | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         Write-Host "Found executable and dynamic library files: $result"
@@ -86,7 +91,7 @@ jobs:
       working-directory: ${{github.workspace}}
       shell: pwsh
       run: |
-        $directoryPath = "${{matrix.build-path}}/bin/"
+        $directoryPath = "./install"
         Get-ChildItem -Path $directoryPath -Recurse | Select-Object Name, FullName, Length, CreationTime, LastWriteTime | Write-Host
 
     - name: Get Short SHA
@@ -101,7 +106,7 @@ jobs:
       with:
         name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}
         path: |
-          "${{matrix.build-path}}/bin/**"
+          "install/**"
         compression-level: 9
         if-no-files-found: error
 
@@ -111,6 +116,6 @@ jobs:
       with:
         name: whmx-assistant-${{runner.os}}-${{runner.arch}}-${{matrix.build-type}}-${{steps.short-sha.outputs.sha}}-Unsafe
         path: |
-          "${{matrix.build-path}}/bin/**"
+          "install/**"
         compression-level: 9
         if-no-files-found: error
