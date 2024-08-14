@@ -48,6 +48,9 @@ public:
 protected:
     void setup();
 
+    bool eventFilter(QObject *watched, QEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+
 private:
     const QString name_;
     QCheckBox    *ui_select_ = nullptr;

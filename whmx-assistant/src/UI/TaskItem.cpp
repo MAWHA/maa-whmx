@@ -16,6 +16,7 @@
 #include "TaskItem.h"
 
 #include <QtWidgets/QHBoxLayout>
+#include <QtGui/QMouseEvent>
 
 namespace UI {
 
@@ -55,7 +56,26 @@ void TaskItem::setup() {
 
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
 
+    ui_task_name_->installEventFilter(this);
+
     connect(ui_config_, &IconButton::clicked, this, &TaskItem::post_config_request);
+}
+
+bool TaskItem::eventFilter(QObject *watched, QEvent *event) {
+    Q_ASSERT(watched == ui_task_name_);
+    if (event->type() == QEvent::MouseButtonRelease) {
+        if (const auto e = static_cast<QMouseEvent *>(event);
+            e->button() == Qt::LeftButton && contentsRect().contains(mapFromGlobal(e->globalPosition().toPoint()))) {
+            ui_select_->toggle();
+        }
+    }
+    return false;
+}
+
+void TaskItem::mouseReleaseEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton && contentsRect().contains(mapFromGlobal(event->globalPosition().toPoint()))) {
+        ui_select_->toggle();
+    }
 }
 
 } // namespace UI
