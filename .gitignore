@@ -312,3 +312,6 @@ install
 .vs
 
 vcpkg_installed/**
+
+!.github/**
+/package/**

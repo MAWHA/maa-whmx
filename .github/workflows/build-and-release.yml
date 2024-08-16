@@ -1,0 +1,196 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build
+
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win
+            arch: x64
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      BUILD_PRESET: "Ninja Release"
+      BUILD_DIR: build/ninja-release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Cache Env
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Setup Ninja
+        uses: ashutoshvarma/setup-ninja@master
+        with:
+          version: 1.11.0
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ runner.arch }}
+
+      - name: Configure CMake
+        env:
+          VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+        run: |
+          cmake --preset "${{ env.BUILD_PRESET }}"
+
+      - name: Build
+        run: |
+          cmake --build "${{ env.BUILD_DIR }}" --target all
+
+      - name: Copy Release Files
+        shell: pwsh
+        run: |
+          $target = "${{ matrix.platform }}-${{ matrix.arch }}"
+          New-Item -Force -Type Directory "package/$target"
+          Copy-Item -Path "${{ env.BUILD_DIR }}/bin/**" -Destination "package/$target" -Recurse -Force
+
+      - name: Archive Package
+        id: package
+        shell: pwsh
+        run: |
+          $target = "${{ matrix.platform }}-${{ matrix.arch }}"
+          $packageName = "whmx-assistant-$target-${{ github.ref_name }}"
+          Set-Location -Path package/$target
+          Get-ChildItem -Exclude *.manifest | Compress-Archive -DestinationPath "$packageName.zip" -Force
+          $archiveFiles = Get-ChildItem -Exclude *.manifest -Recurse -File
+          $archiveFiles = $archiveFiles | ForEach-Object -Process { (Resolve-Path -Path $_.FullName -Relative) -replace "\\", "/" -replace "\./", "" }
+          $sha256List = Get-FileHash $archiveFiles -Algorithm SHA256 | Select-Object Hash, Path
+          $sha256List = $sha256List | ForEach-Object -Process { $_.Hash + " " + (Resolve-Path -Path $_.Path -Relative) -replace "\\", "/" -replace "\./", "" }
+          $sha256List | Out-File -Encoding utf8 -FilePath "$packageName.sha256" -Force
+          "prefix=package/$target/$packageName" | Out-File -Encoding utf8 -FilePath $env:GITHUB_OUTPUT
+
+      - name: Get Short SHA
+        uses: benjlevesque/short-sha@v3.0
+        id: short-sha
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: whmx-assistant-${{ matrix.platform }}-${{ matrix.arch }}-${{ steps.short-sha.outputs.sha }}
+          path: |
+            ${{ steps.package.outputs.prefix }}.zip
+            ${{ steps.package.outputs.prefix }}.sha256
+          if-no-files-found: error
+
+  create-release:
+    name: Create Release
+
+    needs: build
+
+    permissions:
+      contents: write
+
+    runs-on: windows-latest
+
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Generate Fallback Relase Notes
+        id: fallback-notes
+        uses: RedCrafter07/release-notes-action@v1.0.0
+        with:
+          tag-name: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+      - name: Get Changelog
+        id: changelog
+        shell: pwsh
+        run: |
+          $changelogList = (Get-Content -Delimiter "`0" -Encoding UTF8 -Path whmx-assistant/build/CHANGELOG) -split "`r`n`r`n"
+          $changelog = @"
+          ${{ steps.fallback-notes.outputs.release-notes }}
+          "@
+          for ($i = 0; $i -lt $changelogList.Length; $i += 2) {
+            if (("v" + $changelogList[$i]).StartsWith("${{ github.ref_name }} ")) {
+              $title = $changelogList[$i]
+              $content = $changelogList[$i + 1]
+              $changelog = "## $title`n`n$content"
+              break
+            }
+          }
+          $changelog | Out-File -Encoding utf8 -FilePath "${{ github.ref_name }}.md"
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: ${{ github.ref_name }}.md
+          prerelease: ${{ endsWith(github.ref, 'beta') }}
+
+  upload-release:
+    name: Upload Release
+
+    needs: create-release
+
+    permissions:
+      contents: write
+
+    strategy:
+      matrix:
+        include:
+          - platform: win
+            arch: x64
+
+    runs-on: windows-latest
+
+    steps:
+      - name: Get Short SHA
+        uses: benjlevesque/short-sha@v3.0
+        id: short-sha
+        with:
+          length: 7
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: whmx-assistant-${{ matrix.platform }}-${{ matrix.arch }}-${{ steps.short-sha.outputs.sha }}
+
+      - name: Get Package
+        id: package
+        shell: pwsh
+        run: |
+          $packageName = "whmx-assistant-${{ matrix.platform }}-${{ matrix.arch }}-${{ github.ref_name }}"
+          "name=$packageName" | Out-File -Encoding utf8 -FilePath $env:GITHUB_OUTPUT
+
+      - name: Upload Package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ${{ steps.package.outputs.name }}.zip
+          asset_name: ${{ steps.package.outputs.name }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload SHA256
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ${{ steps.package.outputs.name }}.sha256
+          asset_name: ${{ steps.package.outputs.name }}.sha256
+          asset_content_type: text/plain
