@@ -15,13 +15,14 @@
 
 #include "DeviceConn.h"
 #include "Helper.h"
+#include "Notification.h"
 #include "../DeviceHelper.h"
 
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QMessageBox>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QFileDialog>
+#include <ElaContentDialog.h>
 #include <filesystem>
 #include <qtmaterialdialog.h>
 
@@ -79,7 +80,7 @@ QString DeviceConn::encode_device_type(int32_t type) {
 
 void DeviceConn::request_list_devices() {
     if (wait_connect_response_) {
-        QMessageBox::warning(this, "检测设备", "当前有未完成的连接请求，请等待请求结束后再试");
+        Notification::warning(this, "检测设备", "当前有未完成的连接请求，请等待请求结束后再试");
         return;
     }
     if (fut_list_devices_.state_->task_.has_value() && !fut_list_devices_.fulfilled()) { return; }
@@ -166,16 +167,16 @@ void DeviceConn::set_waiting_for_list_devices(bool on) {
 
 void DeviceConn::post_connect_request() {
     if (wait_connect_response_) {
-        QMessageBox::warning(this, "连接设备", "当前有未完成的连接请求，请稍后再试");
+        Notification::warning(this, "连接设备", "当前有未完成的连接请求，请稍后再试");
         return;
     }
     if (ui_devices_->currentIndex() == -1) {
-        QMessageBox::warning(this, "连接设备", "请选择设备");
+        Notification::warning(this, "连接设备", "请选择设备");
         return;
     }
     auto device_info = ui_devices_->currentData().value<MaaAdbDeviceInfo>();
     if (device_info.connect_state == AdbDeviceConnectState_Connected) {
-        QMessageBox::warning(this, "连接设备", "设备已经连接");
+        Notification::warning(this, "连接设备", "设备已经连接");
         return;
     }
 
@@ -247,19 +248,19 @@ void DeviceConn::handle_on_add_local_device() {
 
     if (path.empty()) {
         qWarning() << "failed to add local device: empty path";
-        QMessageBox::warning(this, "添加设备", "adb 路径为空");
+        Notification::warning(this, "添加设备", "adb 路径为空");
         return;
     }
     if (fs::is_directory(path)) {
         qWarning() << "failed to add local device: specified path is a directory";
-        QMessageBox::warning(this, "添加设备", "目标路径不合法");
+        Notification::warning(this, "添加设备", "目标路径不合法");
         return;
     }
     if (!fs::exists(path)) {
         qWarning() << "failed to add local device: specified file not exists";
-        const auto option = QMessageBox::warning(
-            this, "添加设备", "目标文件不存在，是否确认添加？", QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-        if (option == QMessageBox::No) { return; }
+        const int option =
+            ElaContentDialog::showMessageBox(this, "添加设备", "目标文件不存在，是否确认添加？", ElaContentDialog::Confirm);
+        if (option != ElaContentDialog::Yes) { return; }
     }
 
     const auto opt_device_name = ui_device_name_->text().trimmed();
@@ -324,7 +325,7 @@ DeviceConn::~DeviceConn() {
 void DeviceConn::setup() {
     ui_detect_devices_          = new FlatButton;
     ui_connect_                 = new FlatButton;
-    ui_devices_                 = new QComboBox;
+    ui_devices_                 = new ElaComboBox;
     ui_device_list_state_       = new QLabel;
     ui_add_device_              = new FlatButton;
     ui_select_device_           = new FlatButton;
@@ -345,7 +346,7 @@ void DeviceConn::setup() {
     config_flat_button(ui_connect_, "连接");
     config_flat_button(ui_add_device_, "添加设备");
     config_flat_button(ui_select_device_, "选择设备");
-    config_combo_box(ui_devices_, "<请选择需要连接的 adb 设备>");
+    ui_devices_->setPlaceholderText("<请选择需要连接的 adb 设备>");
 
     auto device_list_container   = new QWidget;
     auto add_device_container    = new QWidget;

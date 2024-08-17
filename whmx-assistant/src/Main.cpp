@@ -21,6 +21,7 @@
 #include <MaaPP/MaaPP.hpp>
 #include <QtWidgets/QApplication>
 #include <QtCore/QThread>
+#include <ElaApplication.h>
 
 class MaaWorker : public QThread {
 public:
@@ -42,6 +43,9 @@ public:
         : QApplication(argc, argv)
         , default_maa_event_loop_(std::make_shared<maa::coro::EventLoop>())
         , maa_worker_(new MaaWorker(default_maa_event_loop_, this)) {
+        setPalette(style()->standardPalette());
+
+        ElaApplication::getInstance()->init();
         GlobalLoggerProxy::setup();
         Task::Router::setup();
 
@@ -65,9 +69,6 @@ int main(int argc, char *argv[]) {
     QApplication::setApplicationName("whmx-assistant");
     QApplication::setApplicationDisplayName("物华弥新小助手");
     QApplication::setApplicationVersion(QString::fromUtf8(Consts::VERSION));
-
-    //! ATTENTION: To avoid Qt following system's dark theme.
-    app.setPalette(app.style()->standardPalette());
 
     auto client = std::make_shared<UI::Client>();
     client->show();

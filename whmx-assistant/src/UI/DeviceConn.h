@@ -20,9 +20,9 @@
 #include <MaaPP/MaaPP.hpp>
 #include <QtCore/QTimer>
 #include <QtWidgets/QWidget>
-#include <QtWidgets/QComboBox>
 #include <QtWidgets/QLabel>
 #include <qtmaterialtextfield.h>
+#include <ElaComboBox.h>
 #include <stdint.h>
 
 struct MaaAdbDevice {
@@ -98,7 +98,7 @@ private:
     bool                     wait_connect_response_;
     FlatButton              *ui_detect_devices_          = nullptr;
     FlatButton              *ui_connect_                 = nullptr;
-    QComboBox               *ui_devices_                 = nullptr;
+    ElaComboBox             *ui_devices_                 = nullptr;
     QLabel                  *ui_device_list_state_       = nullptr;
     FlatButton              *ui_add_device_              = nullptr;
     FlatButton              *ui_select_device_           = nullptr;

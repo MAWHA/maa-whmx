@@ -71,6 +71,8 @@ PRIVATE
     UI/TaskConfigPanel.h
     UI/Client.cpp
     UI/Client.h
+    UI/Notification.cpp
+    UI/Notification.h
     Action/Research.cpp
     Action/Research.h
     Action/FourInRow.cpp
@@ -95,6 +97,7 @@ PRIVATE
     MaaFramework::MaaPP
     OpenCV::OpenCV
     magic_enum::magic_enum
+    ElaWidgetTools::ElaWidgetTools
     desktop-app::Qt6
     desktop-app::qt-material-widgets
 )

@@ -19,10 +19,12 @@
 #include "../Task/TaskParam.h"
 
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QMessageBox>
 #include <QtWidgets/QScrollArea>
-#include <qtmaterialtoggle.h>
 #include <qtmaterialtextfield.h>
+#include <ElaComboBox.h>
+#include <ElaSpinBox.h>
+#include <ElaToggleSwitch.h>
+#include <ElaLineEdit.h>
 
 namespace UI {
 
@@ -31,17 +33,16 @@ using namespace Task;
 void setup(TaskConfigPanel *panel, GetFreeGiftPackParam &param) {
     using Strategy = GetFreeGiftPackParam::Strategy;
 
-    auto strategy = new QComboBox;
+    auto strategy = new ElaComboBox;
     {
         strategy->addItem("仅购买“冬谷每日补贴”", QVariant::fromValue(Strategy::DailyAllowanceOnly));
         strategy->addItem("获取所有免费礼包", QVariant::fromValue(Strategy::FindAll));
-        config_combo_box(strategy);
         combo_set_current_item(strategy, param.strategy);
     }
 
     panel->append_config_item("领取策略", "指定礼包的领取策略", strategy);
 
-    QObject::connect(strategy, &QComboBox::currentIndexChanged, strategy, [=, &param](int index) {
+    QObject::connect(strategy, &ElaComboBox::currentIndexChanged, strategy, [=, &param](int index) {
         param.strategy = strategy->itemData(index).value<Strategy>();
         panel->notify_config_changed();
     });
@@ -50,59 +51,45 @@ void setup(TaskConfigPanel *panel, GetFreeGiftPackParam &param) {
 void setup(TaskConfigPanel *panel, ConsumeExpiringVitalityPotionParam &param) {
     using Strategy = ConsumeExpiringVitalityPotionParam::Strategy;
 
-    auto strategy = new QComboBox;
+    auto strategy = new ElaComboBox;
     {
         strategy->addItem("仅“冬谷畅饮水”", QVariant::fromValue(Strategy::LowVitalityPotionOnly));
         strategy->addItem("仅“冬谷神秘水”", QVariant::fromValue(Strategy::HighVitalityPotionOnly));
         strategy->addItem("全部类型", QVariant::fromValue(Strategy::All));
-        config_combo_box(strategy);
         combo_set_current_item(strategy, param.strategy);
     }
 
-    auto number = new QSpinBox;
+    auto number = new ElaSpinBox;
     {
         number->setMinimum(-1);
         number->setMaximum(65536);
         number->setSingleStep(1);
-        if (param.number != -1) {
-            number->setPrefix("×");
-            number->setSuffix("瓶");
-        }
-        config_spin(number, param.number);
+        number->setValue(param.number);
     }
 
-    auto expire_threshold = new QSpinBox;
+    auto expire_threshold = new ElaSpinBox;
     {
         expire_threshold->setMinimum(1);
         expire_threshold->setMaximum(14);
         expire_threshold->setSingleStep(1);
-        expire_threshold->setPrefix("≤");
-        expire_threshold->setSuffix("天");
-        config_spin(expire_threshold, param.expire_threshold);
+        expire_threshold->setValue(param.expire_threshold);
     }
 
     panel->append_config_item("目标药水", "指定需要使用的体力药水", strategy);
     panel->append_config_item("使用数量", "需要使用的药水最大数量\n-1 表示使用至药水耗尽或达到体力上限", number);
     panel->append_config_item("临期天数", "需要使用的药水的天数阈值\n仅当小于等于该值时使用药水", expire_threshold);
 
-    QObject::connect(strategy, &QComboBox::currentIndexChanged, strategy, [=, &param](int index) {
+    QObject::connect(strategy, &ElaComboBox::currentIndexChanged, strategy, [=, &param](int index) {
         param.strategy = strategy->itemData(index).value<Strategy>();
         panel->notify_config_changed();
     });
 
-    QObject::connect(number, &QSpinBox::valueChanged, number, [=, &param](int value) {
-        if (value == -1) {
-            number->setPrefix("");
-            number->setSuffix("");
-        } else {
-            number->setPrefix("×");
-            number->setSuffix("瓶");
-        }
+    QObject::connect(number, &ElaSpinBox::valueChanged, number, [=, &param](int value) {
         param.number = value;
         panel->notify_config_changed();
     });
 
-    QObject::connect(expire_threshold, &QSpinBox::valueChanged, expire_threshold, [=, &param](int value) {
+    QObject::connect(expire_threshold, &ElaSpinBox::valueChanged, expire_threshold, [=, &param](int value) {
         param.expire_threshold = value;
         panel->notify_config_changed();
     });
@@ -111,31 +98,28 @@ void setup(TaskConfigPanel *panel, ConsumeExpiringVitalityPotionParam &param) {
 void setup(TaskConfigPanel *panel, PurchaseVitalityParam &param) {
     using Strategy = PurchaseVitalityParam::Strategy;
 
-    auto strategy = new QComboBox;
+    auto strategy = new ElaComboBox;
     {
         strategy->addItem("固定数量", QVariant::fromValue(Strategy::Fixed));
         strategy->addItem("最大值", QVariant::fromValue(Strategy::Maximum));
         strategy->addItem("自动", QVariant::fromValue(Strategy::Auto));
-        config_combo_box(strategy);
         combo_set_current_item(strategy, param.strategy);
     }
 
-    auto number = new QSpinBox;
+    auto number = new ElaSpinBox;
     {
         number->setMinimum(1);
         number->setMaximum(5);
         number->setSingleStep(1);
-        number->setPrefix("×");
-        number->setSuffix("次");
-        config_spin(number, param.number);
+        number->setValue(param.number);
     }
 
-    auto coin_threshold = new QSpinBox;
+    auto coin_threshold = new ElaSpinBox;
     {
         coin_threshold->setMinimum(0);
         coin_threshold->setMaximum(std::numeric_limits<int>::max());
         coin_threshold->setSingleStep(50);
-        config_spin(coin_threshold, param.coin_threshold);
+        coin_threshold->setValue(param.coin_threshold);
     }
 
     panel->append_config_item(
@@ -144,17 +128,17 @@ void setup(TaskConfigPanel *panel, PurchaseVitalityParam &param) {
     panel->append_config_item(
         "灰珀阈值", "购买体力的灰珀阈值，仅当剩余灰珀不小于该值时进行购买\n该配置仅在“自动”策略下有效", coin_threshold);
 
-    QObject::connect(strategy, &QComboBox::currentIndexChanged, strategy, [=, &param](int index) {
+    QObject::connect(strategy, &ElaComboBox::currentIndexChanged, strategy, [=, &param](int index) {
         param.strategy = strategy->itemData(index).value<Strategy>();
         panel->notify_config_changed();
     });
 
-    QObject::connect(number, &QSpinBox::valueChanged, number, [=, &param](int value) {
+    QObject::connect(number, &ElaSpinBox::valueChanged, number, [=, &param](int value) {
         param.number = value;
         panel->notify_config_changed();
     });
 
-    QObject::connect(coin_threshold, &QSpinBox::valueChanged, coin_threshold, [=, &param](int value) {
+    QObject::connect(coin_threshold, &ElaSpinBox::valueChanged, coin_threshold, [=, &param](int value) {
         param.coin_threshold = value;
         panel->notify_config_changed();
     });
@@ -184,54 +168,53 @@ void setup(TaskConfigPanel *panel, MopupResourceLevelParam &param) {
         {"常安-资源", Category::Resource},
     };
 
-    auto level_name = new QComboBox;
+    auto level_name = new ElaComboBox;
     {
         level_name->addItems(LEVEL_TABLE.keys());
-        config_combo_box(level_name);
         level_name->setCurrentText(param.level_name);
     }
 
-    auto level_index = new QSpinBox;
+    auto level_index = new ElaSpinBox;
     {
         level_index->setMinimum(1);
         level_index->setMaximum(5);
         level_index->setSingleStep(1);
-        config_spin(level_index, param.level_index);
+        level_index->setValue(param.level_index);
     }
 
-    auto repeat_times = new QSpinBox;
+    auto repeat_times = new ElaSpinBox;
     {
         repeat_times->setMinimum(1);
         repeat_times->setMaximum(10);
         repeat_times->setSingleStep(1);
-        config_spin(repeat_times, param.repeat_times);
+        repeat_times->setValue(param.repeat_times);
     }
 
-    auto mopup = new QtMaterialToggle;
-    { mopup->setChecked(param.mopup); }
+    auto mopup = new ElaToggleSwitch;
+    { mopup->setIsToggled(param.mopup); }
 
     panel->append_config_item("关卡名称", "指定目标关卡名称/系列", level_name);
     panel->append_config_item("关卡序号", "指定需要挑战的关卡在目标系列中的序号", level_index);
     panel->append_config_item("挑战次数", "指定挑战次数\n体力不足时将自动截断", repeat_times);
     panel->append_config_item("扫荡", "指定是否扫荡\n未解锁速通时可使用非扫荡模式", mopup);
 
-    QObject::connect(level_name, &QComboBox::currentIndexChanged, level_name, [=, &param](int index) {
+    QObject::connect(level_name, &ElaComboBox::currentIndexChanged, level_name, [=, &param](int index) {
         param.level_name = level_name->itemText(index);
         param.category   = LEVEL_TABLE.value(param.level_name, Category::Unknown);
         panel->notify_config_changed();
     });
 
-    QObject::connect(level_index, &QSpinBox::valueChanged, level_index, [=, &param](int value) {
+    QObject::connect(level_index, &ElaSpinBox::valueChanged, level_index, [=, &param](int value) {
         param.level_index = value;
         panel->notify_config_changed();
     });
 
-    QObject::connect(repeat_times, &QSpinBox::valueChanged, repeat_times, [=, &param](int value) {
+    QObject::connect(repeat_times, &ElaSpinBox::valueChanged, repeat_times, [=, &param](int value) {
         param.repeat_times = value;
         panel->notify_config_changed();
     });
 
-    QObject::connect(mopup, &QtMaterialToggle::toggled, mopup, [=, &param](bool checked) {
+    QObject::connect(mopup, &ElaToggleSwitch::toggled, mopup, [=, &param](bool checked) {
         param.mopup = checked;
         panel->notify_config_changed();
     });
@@ -250,7 +233,7 @@ void setup(TaskConfigPanel *panel, RecruitCharacterParam &param) {
 void setup(TaskConfigPanel *panel, AssignOfficeProductParam &param) {
     using Strategy = ProductionStrategy;
 
-    auto product_name = new QComboBox;
+    auto product_name = new ElaComboBox;
     {
         product_name->addItems({
             "初级社会指南",
@@ -258,37 +241,35 @@ void setup(TaskConfigPanel *panel, AssignOfficeProductParam &param) {
             "高级社会指南",
             "进阶社会学",
         });
-        config_combo_box(product_name);
         product_name->setCurrentText(param.product_name);
     }
 
-    auto strategy = new QComboBox;
+    auto strategy = new ElaComboBox;
     {
         strategy->addItem("立即重制", QVariant::fromValue(Strategy::AlwaysReassign));
         strategy->addItem("仅不同产品", QVariant::fromValue(Strategy::ReassignOnDiff));
         strategy->addItem("仅空闲", QVariant::fromValue(Strategy::AssignOnIdle));
-        config_combo_box(strategy);
         combo_set_current_item(strategy, param.strategy);
     }
 
-    auto auto_assign = new QtMaterialToggle;
-    { auto_assign->setChecked(param.auto_assign); }
+    auto auto_assign = new ElaToggleSwitch;
+    { auto_assign->setIsToggled(param.auto_assign); }
 
     panel->append_config_item("目标产品", "指定需要制造的产品\n默认制造最大值", product_name);
     panel->append_config_item("制造策略", "指定分配制造任务的策略", strategy);
     panel->append_config_item("自动添加新订单", "指定是否自动添加新订单", auto_assign);
 
-    QObject::connect(product_name, &QComboBox::currentIndexChanged, product_name, [=, &param](int index) {
+    QObject::connect(product_name, &ElaComboBox::currentIndexChanged, product_name, [=, &param](int index) {
         param.product_name = product_name->itemText(index);
         panel->notify_config_changed();
     });
 
-    QObject::connect(strategy, &QComboBox::currentIndexChanged, strategy, [=, &param](int index) {
+    QObject::connect(strategy, &ElaComboBox::currentIndexChanged, strategy, [=, &param](int index) {
         param.strategy = strategy->itemData(index).value<Strategy>();
         panel->notify_config_changed();
     });
 
-    QObject::connect(auto_assign, &QtMaterialToggle::toggled, auto_assign, [=, &param](int checked) {
+    QObject::connect(auto_assign, &ElaToggleSwitch::toggled, auto_assign, [=, &param](int checked) {
         param.auto_assign = checked;
         panel->notify_config_changed();
     });
@@ -297,7 +278,7 @@ void setup(TaskConfigPanel *panel, AssignOfficeProductParam &param) {
 void setup(TaskConfigPanel *panel, AssignWorkshopProductParam &param) {
     using Strategy = ProductionStrategy;
 
-    auto product_name = new QComboBox;
+    auto product_name = new ElaComboBox;
     {
         product_name->addItems({
             "随机凌级装备",
@@ -311,37 +292,35 @@ void setup(TaskConfigPanel *panel, AssignWorkshopProductParam &param) {
             "资质证明III",
             "高级制造申请",
         });
-        config_combo_box(product_name);
         product_name->setCurrentText(param.product_name);
     }
 
-    auto strategy = new QComboBox;
+    auto strategy = new ElaComboBox;
     {
         strategy->addItem("立即重制", QVariant::fromValue(Strategy::AlwaysReassign));
         strategy->addItem("仅不同产品", QVariant::fromValue(Strategy::ReassignOnDiff));
         strategy->addItem("仅空闲", QVariant::fromValue(Strategy::AssignOnIdle));
-        config_combo_box(strategy);
         combo_set_current_item(strategy, param.strategy);
     }
 
-    auto auto_assign = new QtMaterialToggle;
-    { auto_assign->setChecked(param.auto_assign); }
+    auto auto_assign = new ElaToggleSwitch;
+    { auto_assign->setIsToggled(param.auto_assign); }
 
     panel->append_config_item("目标产品", "指定需要制造的产品\n默认制造最大值", product_name);
     panel->append_config_item("制造策略", "指定分配制造任务的策略", strategy);
     panel->append_config_item("自动添加新订单", "指定是否自动添加新订单", auto_assign);
 
-    QObject::connect(product_name, &QComboBox::currentIndexChanged, product_name, [=, &param](int index) {
+    QObject::connect(product_name, &ElaComboBox::currentIndexChanged, product_name, [=, &param](int index) {
         param.product_name = product_name->itemText(index);
         panel->notify_config_changed();
     });
 
-    QObject::connect(strategy, &QComboBox::currentIndexChanged, strategy, [=, &param](int index) {
+    QObject::connect(strategy, &ElaComboBox::currentIndexChanged, strategy, [=, &param](int index) {
         param.strategy = strategy->itemData(index).value<Strategy>();
         panel->notify_config_changed();
     });
 
-    QObject::connect(auto_assign, &QtMaterialToggle::toggled, auto_assign, [=, &param](int checked) {
+    QObject::connect(auto_assign, &ElaToggleSwitch::toggled, auto_assign, [=, &param](int checked) {
         param.auto_assign = checked;
         panel->notify_config_changed();
     });
@@ -371,46 +350,44 @@ void setup(TaskConfigPanel *panel, PlayFourInRowParam &param) {
     using Role = PlayFourInRowParam::Role;
     using Mode = PlayFourInRowParam::Mode;
 
-    auto role = new QComboBox;
+    auto role = new ElaComboBox;
     {
         role->addItem("黑棋（先手）", QVariant::fromValue(Role::Black));
         role->addItem("白棋（后手）", QVariant::fromValue(Role::White));
         role->addItem("随机", QVariant::fromValue(Role::Random));
-        config_combo_box(role);
         combo_set_current_item(role, param.role);
     }
 
-    auto mode = new QComboBox;
+    auto mode = new ElaComboBox;
     {
         mode->addItem("普通", QVariant::fromValue(Mode::Normal));
         mode->addItem("困难", QVariant::fromValue(Mode::Difficult));
-        config_combo_box(mode);
         combo_set_current_item(mode, param.mode);
     }
 
-    auto rounds = new QSpinBox;
+    auto rounds = new ElaSpinBox;
     {
         rounds->setMinimum(1);
         rounds->setMaximum(std::numeric_limits<int>::max());
         rounds->setSingleStep(1);
-        config_spin(rounds, param.rounds);
+        rounds->setValue(param.rounds);
     }
 
     panel->append_config_item("棋手角色", "指定玩家先后手", role);
     panel->append_config_item("模式", "指定棋局难度", mode);
     panel->append_config_item("期望胜场", "指定需要取得的胜局局数", rounds);
 
-    QObject::connect(role, &QComboBox::currentIndexChanged, role, [=, &param](int index) {
+    QObject::connect(role, &ElaComboBox::currentIndexChanged, role, [=, &param](int index) {
         param.role = role->itemData(index).value<Role>();
         panel->notify_config_changed();
     });
 
-    QObject::connect(mode, &QComboBox::currentIndexChanged, mode, [=, &param](int index) {
+    QObject::connect(mode, &ElaComboBox::currentIndexChanged, mode, [=, &param](int index) {
         param.mode = mode->itemData(index).value<Mode>();
         panel->notify_config_changed();
     });
 
-    QObject::connect(rounds, &QSpinBox::valueChanged, rounds, [=, &param](int value) {
+    QObject::connect(rounds, &ElaSpinBox::valueChanged, rounds, [=, &param](int value) {
         param.rounds = value;
         panel->notify_config_changed();
     });
@@ -427,28 +404,27 @@ void setup(TaskConfigPanel *panel, SwitchFurnitureLayoutParam &param) {
 }
 
 void setup(TaskConfigPanel *panel, DoResearchParam &param) {
-    auto category = new QComboBox;
+    auto category = new ElaComboBox;
     {
         category->addItems({
             "雪景寒林图",
             "千里江山图",
             "溪山行旅图",
         });
-        config_combo_box(category);
         category->setCurrentText(param.category);
     }
 
-    auto combat_level = new QComboBox;
+    auto combat_level = new ElaComboBox;
     {
         combat_level->addItem("推荐等级：60", DoResearchParam::Level60);
         combat_level->addItem("推荐等级：70", DoResearchParam::Level70);
         combat_level->addItem("推荐等级：80", DoResearchParam::Level80);
-        config_combo_box(combat_level);
         combo_set_current_item(combat_level, param.combat_level);
     }
 
-    auto buff_preference = new QtMaterialTextField;
+    auto buff_preference = new ElaLineEdit;
     {
+        buff_preference->setFixedHeight(35);
         buff_preference->setFont(panel->font());
         buff_preference->setPlaceholderText("请按优先级输入偏好的增益列表");
         buff_preference->setText(param.buff_preference.join(";"));
@@ -460,17 +436,17 @@ void setup(TaskConfigPanel *panel, DoResearchParam &param) {
     panel->append_config_item(
         "增益偏好", "偏好的增益列表，按分号划分\n选择增益时按给定顺序优先选取对应增幅，不存在时则随机选取", buff_preference);
 
-    QObject::connect(category, &QComboBox::currentIndexChanged, category, [=, &param](int index) {
+    QObject::connect(category, &ElaComboBox::currentIndexChanged, category, [=, &param](int index) {
         param.category = category->itemText(index);
         panel->notify_config_changed();
     });
 
-    QObject::connect(combat_level, &QComboBox::currentIndexChanged, combat_level, [=, &param](int index) {
+    QObject::connect(combat_level, &ElaComboBox::currentIndexChanged, combat_level, [=, &param](int index) {
         param.combat_level = combat_level->itemData(index).toInt();
         panel->notify_config_changed();
     });
 
-    QObject::connect(buff_preference, &QtMaterialTextField::textChanged, buff_preference, [=, &param](const QString &text) {
+    QObject::connect(buff_preference, &ElaLineEdit::textChanged, buff_preference, [=, &param](const QString &text) {
         QStringList buff_preference;
         for (const auto &buff : QString(text).replace(QChar(U'；'), ';').split(';')) {
             const auto buff_name = buff.trimmed();

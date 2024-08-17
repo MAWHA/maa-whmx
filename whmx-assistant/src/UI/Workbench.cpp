@@ -17,17 +17,18 @@
 #include "TaskItem.h"
 #include "CheckableItem.h"
 #include "Helper.h"
+#include "Notification.h"
 #include "../Task/MajorTask.h"
 
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QGridLayout>
-#include <QtWidgets/QMessageBox>
 #include <QtCore/QUuid>
 #include <QtCore/QTimer>
 #include <QtCore/QElapsedTimer>
 #include <magic_enum.hpp>
 #include <qtmaterialscrollbar.h>
+#include <ElaContentDialog.h>
 
 using namespace maa;
 
@@ -88,16 +89,12 @@ void Workbench::reload_pipeline_tasks(const QStringList &custom_tasks) {
 
     if (const auto state = pipeline_state(); state.is_running()) {
         qWarning() << "reject reload tasks due to pipeline is running";
-        QMessageBox::warning(this, "重载任务", "流水线运行中，请先中止流水线运行。");
+        Notification::warning(this, "重载任务", "流水线运行中，请先中止流水线运行。");
         return;
     } else if (state.is_paused()) {
-        const auto option = QMessageBox::information(
-            this,
-            "重载任务",
-            "流水线暂停中，是否中止流水线并清空任务队列以进行任务重载？",
-            QMessageBox::Yes | QMessageBox::No,
-            QMessageBox::No);
-        if (option == QMessageBox::No) { return; }
+        const int option = ElaContentDialog::showMessageBox(
+            this, "重载任务", "流水线暂停中，是否中止流水线并清空任务队列以进行任务重载？", ElaContentDialog::Confirm);
+        if (option != ElaContentDialog::Yes) { return; }
         stop_pipeline();
         clear_queued_tasks();
     }
@@ -132,7 +129,7 @@ void Workbench::push_selected_tasks_to_queue() {
 
     if (pipeline_state().is_running()) {
         qWarning() << "reject push selected tasks due to pipeline is running";
-        QMessageBox::warning(this, "推送任务", "流水线运行中，请先暂停或中止流水线运行。");
+        Notification::warning(this, "推送任务", "流水线运行中，请先暂停或中止流水线运行。");
         return;
     }
 
@@ -185,7 +182,7 @@ void Workbench::notify_queued_task_finished(const QString &task_id, MaaStatus st
 void Workbench::start_pipeline() {
     if (!instance_ || !instance_->inited()) {
         qWarning() << "workbench: failed to start pipeline: no valid maa instance accepted";
-        QMessageBox::critical(this, "启动流水线", "缺少有效 MAA 实例，请检查本地资源完整性并确保已连接至设备");
+        Notification::error(this, "启动流水线", "缺少有效 MAA 实例，请检查本地资源完整性并确保已连接至设备");
         return;
     }
     if (pipeline_state().is_running()) {
@@ -322,7 +319,7 @@ void Workbench::handle_on_toggle_task_list_select_all(QListWidget *list, bool on
 void Workbench::handle_on_execute_queued_task_action(QListWidgetItem *item, QueuedTaskItem::ActionType action) {
     if (const auto state = pipeline_state(); !(state.is_paused() || state.is_idle())) {
         qWarning() << "reject execute queued task action: pipeline is running";
-        QMessageBox::warning(this, "任务调整", "请先暂停或中止流水线运行。");
+        Notification::warning(this, "任务调整", "请先暂停或中止流水线运行。");
         return;
     }
 

@@ -47,6 +47,10 @@ set(MAGIC_ENUM_OPT_BUILD_TESTS OFF)
 set(MAGIC_ENUM_OPT_INSTALL OFF)
 add_subdirectory(deps/magic_enum)
 
+set(ELAWIDGETTOOLS_BUILD_EXAMPLE OFF)
+set(ELAWIDGETTOOLS_BUILD_STATIC_LIB OFF)
+add_subdirectory(deps/ElaWidgetTools)
+
 add_subdirectory(deps/FileLocksmithLibInterop)
 add_subdirectory(deps/qt-material-widgets)
 add_subdirectory(whmx-assistant)
