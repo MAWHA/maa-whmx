@@ -43,6 +43,18 @@
         {
             "major_task": "ChatOverTea",
             "entry": "tea"
+        },
+        {
+            "major_task": "PlayMergeGame",
+            "entry": "combine-all"
+        },
+        {
+            "major_task": "GetFurnitureBlueprint",
+            "entry": "blueprint-all"
+        },
+        {
+            "major_task": "AssignEquipmentOrder",
+            "entry": "weapons-fabricate"
         }
     ],
     "router": {
