@@ -91,15 +91,23 @@
     },
     "Combat.EnsureAutoFightEnabled.Entry": {
         "next": [
-            "Combat.EnsureAutoFightEnabled.DetectAndSwitch",
-            "Utils.LeafTask"
+            "Combat.EnsureAutoFightEnabled.Check",
+            "Combat.EnsureAutoFightEnabled.DetectAndSwitch"
         ]
+    },
+    "Combat.EnsureAutoFightEnabled.Check": {
+        "recognition": "TemplateMatch",
+        "template": "Combat/MaskedAutoFightEnabled.png",
+        "green_mask": true,
+        "threshold": 0.9
     },
     "Combat.EnsureAutoFightEnabled.DetectAndSwitch": {
         "recognition": "TemplateMatch",
         "template": "Combat/MaskedAutoFightDisabled.png",
-        "threshold": 0.95,
+        "green_mask": true,
+        "threshold": 0.9,
         "action": "Click",
+        "post_delay": 500,
         "next": "Combat.EnsureAutoFightEnabled.Entry"
     },
     "Combat.StartFight": {

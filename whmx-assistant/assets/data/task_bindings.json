@@ -513,8 +513,11 @@
                     },
                     {
                         "entry": "Combat.EnsureAutoFightEnabled",
+                        "fold_params": false,
                         "param": {
-                            "timeout_next": "Combat.EnsureAutoFightEnabled"
+                            "Combat.EnsureAutoFightEnabled.Entry": {
+                                "timeout_next": "Combat.EnsureAutoFightEnabled.Entry"
+                            }
                         }
                     },
                     {
@@ -595,6 +598,15 @@
                         "entry": "Combat.BypassRiskyAlertOrSkip"
                     },
                     {
+                        "entry": "Combat.EnsureAutoFightEnabled",
+                        "fold_params": false,
+                        "param": {
+                            "Combat.EnsureAutoFightEnabled.Entry": {
+                                "timeout_next": "Combat.EnsureAutoFightEnabled.Entry"
+                            }
+                        }
+                    },
+                    {
                         "entry": "Combat.StartFight"
                     },
                     {
@@ -635,6 +647,15 @@
                     },
                     {
                         "entry": "Combat.BypassRiskyAlertOrSkip"
+                    },
+                    {
+                        "entry": "Combat.EnsureAutoFightEnabled",
+                        "fold_params": false,
+                        "param": {
+                            "Combat.EnsureAutoFightEnabled.Entry": {
+                                "timeout_next": "Combat.EnsureAutoFightEnabled.Entry"
+                            }
+                        }
                     },
                     {
                         "entry": "Combat.StartFight"
