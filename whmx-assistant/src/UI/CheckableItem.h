@@ -48,7 +48,6 @@ public:
 protected:
     void setup();
 
-    bool eventFilter(QObject *watched, QEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
