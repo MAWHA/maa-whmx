@@ -71,16 +71,16 @@ PRIVATE
     UI/TaskConfigPanel.h
     UI/Client.cpp
     UI/Client.h
-    CustomAction/Research.cpp
-    CustomAction/Research.h
-    CustomAction/FourInRow.cpp
-    CustomAction/FourInRow.h
-    CustomAction/Combat.cpp
-    CustomAction/Combat.h
-    CustomRecognizer/Utils.cpp
-    CustomRecognizer/Utils.h
-    CustomRecognizer/Research.cpp
-    CustomRecognizer/Research.h
+    Action/Research.cpp
+    Action/Research.h
+    Action/FourInRow.cpp
+    Action/FourInRow.h
+    Action/Combat.cpp
+    Action/Combat.h
+    Rec/Utils.cpp
+    Rec/Utils.h
+    Rec/Research.cpp
+    Rec/Research.h
 )
 
 get_filename_component(RESOURCE_DIR res REALPATH)

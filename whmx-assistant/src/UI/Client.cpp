@@ -15,11 +15,11 @@
 
 #include "Client.h"
 #include "TaskConfigPanel.h"
-#include "../CustomRecognizer/Research.h"
-#include "../CustomRecognizer/Utils.h"
-#include "../CustomAction/Research.h"
-#include "../CustomAction/FourInRow.h"
-#include "../CustomAction/Combat.h"
+#include "../Rec/Research.h"
+#include "../Rec/Utils.h"
+#include "../Action/Research.h"
+#include "../Action/FourInRow.h"
+#include "../Action/Combat.h"
 #include "../Consts.h"
 #include "../ReferenceDataSet.h"
 
