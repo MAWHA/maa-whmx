@@ -121,6 +121,7 @@ public:
 
     bool                start();
     void                stop();
+    int                 total_stages() const;
     bool                has_next() const;
     std::optional<Task> next();
 

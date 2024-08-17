@@ -18,6 +18,7 @@
 #include <filesystem>
 #include <fstream>
 #include <QtCore/QDebug>
+#include <QtCore/QCryptographicHash>
 
 namespace fs = std::filesystem;
 
@@ -146,11 +147,17 @@ bool ResearchAnecdoteSet::load(const std::string &path) {
     if (!fs::exists(path)) { return false; }
     std::ifstream fin(path);
     std::string   raw((std::istreambuf_iterator<char>(fin)), std::istreambuf_iterator<char>());
+
+    const auto new_hash = QCryptographicHash::hash(raw, QCryptographicHash::Md5).toHex().toStdString();
+    if (new_hash == hash_) { return true; }
+
     if (auto opt = ResearchAnecdoteSet::parse(raw)) {
         *this = std::move(opt.value());
     } else {
         return false;
     }
+
+    hash_ = new_hash;
     return true;
 }
 

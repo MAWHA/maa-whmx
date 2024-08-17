@@ -14,6 +14,7 @@
 */
 
 #include "Utils.h"
+#include "../Logger.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QUuid>
@@ -47,7 +48,7 @@ coro::Promise<AnalyzeResult> TwoStageTest::utils__two_stage_test(
 
     TwoStageTestParam opt;
     if (!parse_params(opt, param.data())) {
-        qDebug("%s: invalid arguments", task_name.data());
+        LOG_TRACE().noquote().nospace() << QString::fromUtf8(task_name) << ": invalid arguments";
         co_return resp;
     }
 

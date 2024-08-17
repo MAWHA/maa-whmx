@@ -14,6 +14,7 @@
 */
 
 #include "FourInRow.h"
+#include "../Logger.h"
 #include "../Algorithm.h"
 
 #include <QtCore/QList>
@@ -416,11 +417,11 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
     MaaStringView                cur_rec_detail) {
     SolveFourInRowParam opt;
     if (!parse_params(opt, param)) {
-        qCritical().noquote().nospace() << task_name << ": invalid arguments";
+        LOG_ERROR().noquote().nospace() << task_name << ": invalid arguments";
         co_return false;
     }
     if (opt.mode == SolveFourInRowParam::Mode::Random) {
-        qCritical().nospace().noquote() << task_name << ": random mode is not supported yet";
+        LOG_ERROR().nospace().noquote() << task_name << ": random mode is not supported yet";
         co_return true;
     }
 
@@ -474,9 +475,9 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
         bool terminated = false;
 
         if (reenter) {
-            qInfo() << "restart to solve four-in-a-row";
+            LOG_INFO() << "restart to solve four-in-a-row";
         } else {
-            qInfo() << "start to solve four-in-a-row";
+            LOG_INFO() << "start to solve four-in-a-row";
         }
 
         std::optional<Game::Board> opt_last_board;
@@ -501,7 +502,7 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
                         if (stone != last_stone) {
                             if (const int prev_player = game.get_previous_player(); stone == prev_player) {
                                 const Game::Move prev_move{row, col};
-                                qInfo() << "[detect] player" << prev_player << "drop" << prev_move;
+                                LOG_INFO() << "[detect] player" << prev_player << "drop" << prev_move;
                                 const auto evolve_result = game.evolve(prev_move, true);
                                 done                     = evolve_result.done;
                                 winner                   = evolve_result.winner;
@@ -520,7 +521,7 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
 
             if (done) { break; }
 
-            qInfo().nospace() << "current board state\n" << game;
+            LOG_INFO().nospace() << "current board state\n" << game;
 
             auto root = std::make_shared<MctsNode>(nullptr, 1.0);
             for (int i = 0; i < opt.mcts_iters; ++i) { run_mcts_once(game, root); }
@@ -541,7 +542,7 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
 
             Game::EvalResult evolve_result;
             if (move != mcts_best_move) {
-                qInfo() << "cancel mcts best drop" << mcts_best_move << "to avoid being beaten";
+                LOG_INFO() << "cancel mcts best drop" << mcts_best_move << "to avoid being beaten";
                 evolve_result = game.evolve(move);
             } else {
                 const auto saved_board = game.board();
@@ -551,7 +552,7 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
                     const Game::Move prob_oppo_move{mcts_best_move.row + 1, mcts_best_move.col};
                     const auto       test_evolve_result = game.test_evolve(prob_oppo_move, ai_stone);
                     if (test_evolve_result.done && test_evolve_result.winner == ai_stone) {
-                        qInfo() << "predict ai drop with greedy policy, cancel mcts best drop";
+                        LOG_INFO() << "predict ai drop with greedy policy, cancel mcts best drop";
                         game.update(saved_board);
                         game.add_player(ai_stone);
                         move          = valid_moves_before_drop[choice(0, valid_moves_before_drop.size() - 1)];
@@ -565,7 +566,7 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
 
             opt_last_board = game.board();
 
-            qInfo() << "player" << game.get_current_player() << "drop" << move;
+            LOG_INFO() << "player" << game.get_current_player() << "drop" << move;
 
             const int click_pos_x = roi.x + move.col * cell_width + cell_width / 2;
             const int click_pos_y = roi.y + (Game::ROW - 1 - move.row) * cell_height + cell_height / 2;
@@ -578,11 +579,11 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
 
         if (terminated) {
             //! NOTE: generally it indicates the failure of the game
-            qWarning() << "game is terminated unexpectedly";
+            LOG_WARN() << "game is terminated unexpectedly";
         } else if (winner == Game::NON_PLAYER) {
-            qInfo() << "game ends in a tie";
+            LOG_INFO() << "game ends in a tie";
         } else {
-            qInfo() << "player" << winner << "wins";
+            LOG_INFO() << "player" << winner << "wins";
         }
 
         //! NOTE: maybe fail when terminated, but it doesn't matter
@@ -590,7 +591,7 @@ coro::Promise<bool> SolveFourInRow::solve_four_in_row(
         co_await context->run_task("Company.QuitFourInRowFinishedStage");
 
         if ((terminated || winner != my_stone) && opt.retry) {
-            qInfo() << "retry after termination";
+            LOG_INFO() << "retry after termination";
             reenter = true;
             //! NOTE: let it fallthrough if not at the start page
             co_await context->run_task("Company.StartFourInRow");

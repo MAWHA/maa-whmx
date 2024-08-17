@@ -14,6 +14,7 @@
 */
 
 #include "Research.h"
+#include "../Logger.h"
 #include "../Decode.h"
 #include "../ReferenceDataSet.h"
 #include "../Algorithm.h"
@@ -248,7 +249,7 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
 
     ParseAnecdoteParam opt;
     if (!parse_params(opt, param.data())) {
-        qDebug("%s: invalid arguments", task_name.data());
+        LOG_TRACE().noquote().nospace() << QString::fromUtf8(task_name) << ": invalid arguments";
         co_return resp;
     }
 
@@ -277,23 +278,23 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
     const auto title_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi_title));
     const auto opt_title  = parse_and_get_best_ocr_record(json::parse(title_resp.rec_detail).value());
     if (!opt_title.has_value()) {
-        qDebug().noquote() << QString("%1: failed to recognize anecdote title");
+        LOG_TRACE().noquote() << QString("%1: failed to recognize anecdote title");
         co_return resp;
     }
 
     const auto title = opt_title.value();
-    qDebug().noquote() << QString("%1: %2: cost time %3ms, content: \"%4\"")
-                              .arg(QString::fromUtf8(task_name))
-                              .arg("title recognition")
-                              .arg(timer.elapsed())
-                              .arg(QString::fromUtf8(title.text));
+    LOG_TRACE().noquote() << QString("%1: %2: cost time %3ms, content: \"%4\"")
+                                 .arg(QString::fromUtf8(task_name))
+                                 .arg("title recognition")
+                                 .arg(timer.elapsed())
+                                 .arg(QString::fromUtf8(title.text));
 
     auto current_category = opt.category;
     if (should_match_category) {
-        qInfo().noquote() << "no category specified, trying to match category for title:" << QString::fromUtf8(title.text);
+        LOG_INFO().noquote() << "no category specified, trying to match category for title:" << QString::fromUtf8(title.text);
         for (const auto category : anecdote_set->categories()) {
             if (anecdote_set->entry(category)->get().entry(title.text).has_value()) {
-                qInfo().noquote() << "matched category:" << QString::fromUtf8(category);
+                LOG_INFO().noquote() << "matched category:" << QString::fromUtf8(category);
                 current_category = category;
                 break;
             }
@@ -302,7 +303,7 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
 
     const auto opt_category = anecdote_set->entry(current_category);
     if (!opt_category.has_value()) {
-        qCritical() << "caught unknown category:" << QString::fromUtf8(current_category);
+        LOG_ERROR() << "caught unknown category:" << QString::fromUtf8(current_category);
         co_return resp;
     }
     const auto &category = opt_category.value().get();
@@ -311,20 +312,20 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
     const auto content_resp = co_await context->run_recognition(image, "OCR", make_ocr_params(roi_content));
     const auto opt_content  = parse_and_get_full_text_ocr_result(json::parse(content_resp.rec_detail).value());
     if (!opt_content.has_value()) {
-        qDebug().noquote() << QString("%1: failed to recognize anecdote content");
+        LOG_TRACE().noquote() << QString("%1: failed to recognize anecdote content");
         co_return resp;
     }
 
     const auto content = opt_content.value();
-    qDebug().noquote() << QString("%1: %2: cost time %3ms, content: \"%4\"")
-                              .arg(QString::fromUtf8(task_name))
-                              .arg("content recognition")
-                              .arg(timer.elapsed())
-                              .arg(QString::fromUtf8(content.text));
+    LOG_TRACE().noquote() << QString("%1: %2: cost time %3ms, content: \"%4\"")
+                                 .arg(QString::fromUtf8(task_name))
+                                 .arg("content recognition")
+                                 .arg(timer.elapsed())
+                                 .arg(QString::fromUtf8(content.text));
 
     const auto opt_entry = category.entry(title.text);
     if (!opt_entry.has_value()) {
-        qDebug().noquote() << "failed to find anecdote entry for title: " << title.text;
+        LOG_TRACE().noquote() << "failed to find anecdote entry for title: " << title.text;
         co_return resp;
     }
     const auto &entry = opt_entry.value().get();
@@ -350,7 +351,7 @@ coro::Promise<AnalyzeResult> ParseAnecdote::research__parse_anecdote(
             }
         }
         if (stage == -1) {
-            qCritical() << "no stage matched";
+            LOG_ERROR() << "no stage matched";
             co_return resp;
         }
         opt.start_stage = stage;
@@ -422,7 +423,7 @@ coro::Promise<AnalyzeResult> AnalyzeItemPairs::research__analyze_item_pairs(
     resp.result     = true;
     resp.rec_detail = resp_data.to_string();
 
-    qDebug().noquote() << "matched pairs:" << resp.rec_detail;
+    LOG_TRACE().noquote() << "matched pairs:" << resp.rec_detail;
 
     co_return resp;
 }
@@ -472,7 +473,7 @@ coro::Promise<AnalyzeResult> GetCandidateBuffs::research__get_candidate_buffs(
     }
 
     if (total_buff == -1) {
-        qCritical() << "failed to recognize buff type";
+        LOG_ERROR() << "failed to recognize buff type";
         co_return resp;
     }
 
@@ -496,7 +497,7 @@ coro::Promise<AnalyzeResult> GetCandidateBuffs::research__get_candidate_buffs(
     resp.result     = true;
     resp.rec_detail = resp_data.to_string();
 
-    qInfo().noquote() << "found candidate buffs:" << QString::fromUtf8(resp.rec_detail);
+    LOG_INFO().noquote() << "found candidate buffs:" << QString::fromUtf8(resp.rec_detail);
 
     co_return resp;
 }

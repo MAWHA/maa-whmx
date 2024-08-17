@@ -26,6 +26,7 @@ class LogPanel : public QWidget {
 
 public:
     static QList<LogPanel *> global_logger_panels();
+    static void              log(LogPanel *panel, const QString &message);
 
     void attach_to_global_logger();
     void detach_from_global_logger() const;

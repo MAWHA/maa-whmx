@@ -98,6 +98,7 @@ PRIVATE
     OpenCV::OpenCV
     magic_enum::magic_enum
     ElaWidgetTools::ElaWidgetTools
+    spdlog::spdlog
     desktop-app::Qt6
     desktop-app::qt-material-widgets
 )

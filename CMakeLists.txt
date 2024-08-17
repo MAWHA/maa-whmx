@@ -51,6 +51,7 @@ set(ELAWIDGETTOOLS_BUILD_EXAMPLE OFF)
 set(ELAWIDGETTOOLS_BUILD_STATIC_LIB OFF)
 add_subdirectory(deps/ElaWidgetTools)
 
+add_subdirectory(deps/spdlog)
 add_subdirectory(deps/FileLocksmithLibInterop)
 add_subdirectory(deps/qt-material-widgets)
 add_subdirectory(whmx-assistant)

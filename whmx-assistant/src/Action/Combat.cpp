@@ -14,6 +14,7 @@
 */
 
 #include "Combat.h"
+#include "../Logger.h"
 #include "../Decode.h"
 
 #include <QtCore/QDebug>
@@ -85,9 +86,9 @@ coro::Promise<bool> FillSquad::combat__fill_squad(
         co_await context->run_task("Combat.WaitSquadLoaded");
     }
 
-    qInfo().noquote() << QString("Combat.FillSquad: found %1 locked slots, %2 roles joined")
-                             .arg(total_slots - locked_place)
-                             .arg(joined_slots);
+    LOG_INFO().noquote() << QString("Combat.FillSquad: found %1 locked slots, %2 roles joined")
+                                .arg(total_slots - locked_place)
+                                .arg(joined_slots);
     co_return true;
 }
 

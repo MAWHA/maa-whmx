@@ -15,6 +15,7 @@
 
 #include "Router.h"
 #include "TaskParam.h"
+#include "../Logger.h"
 
 #include <QtCore/QRegularExpression>
 #include <QtCore/QFile>
@@ -25,7 +26,7 @@ namespace Task {
 QMap<QString, Router::OperatorMethod> GLOBAL_ROUTER_OPERATORS;
 
 static bool operator_eq(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test eq: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test eq: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() == operand.toInt(); }
     if (prop.type_id() == QMetaType::QString) { return prop.as<QString>() == operand.toString(); }
@@ -33,7 +34,7 @@ static bool operator_eq(const Prop &prop, const QVariant &operand) {
 }
 
 static bool operator_ne(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test ne: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test ne: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() != operand.toInt(); }
     if (prop.type_id() == QMetaType::QString) { return prop.as<QString>() != operand.toString(); }
@@ -41,56 +42,56 @@ static bool operator_ne(const Prop &prop, const QVariant &operand) {
 }
 
 static bool operator_lt(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test lt: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test lt: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() < operand.toInt(); }
     return false;
 }
 
 static bool operator_le(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test le: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test le: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() <= operand.toInt(); }
     return false;
 }
 
 static bool operator_gt(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test gt: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test gt: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() > operand.toInt(); }
     return false;
 }
 
 static bool operator_ge(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test ge: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test ge: " << prop.get() << " and " << operand;
     if (prop.type_id() != operand.typeId()) { return false; }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() >= operand.toInt(); }
     return false;
 }
 
 static bool operator_empty(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test empty: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test empty: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::QStringList) { return prop.as<QStringList>().empty(); }
     if (prop.type_id() == QMetaType::QVariantList) { return prop.as<QVariantList>().empty(); }
     return false;
 }
 
 static bool operator_true(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test true: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test true: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::Bool) { return prop.to_bool(); }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() != 0; }
     return false;
 }
 
 static bool operator_false(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test false: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test false: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::Bool) { return !prop.to_bool(); }
     if (prop.type_id() == QMetaType::Int) { return prop.to_int() == 0; }
     return false;
 }
 
 static bool operator_between(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test between: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test between: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::Int && operand.typeId() == QMetaType::QString) {
         const auto bounds = operand.toString().split(',');
         if (bounds.size() != 2) { return false; }
@@ -102,7 +103,7 @@ static bool operator_between(const Prop &prop, const QVariant &operand) {
 }
 
 static bool operator_contains(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test contains: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test contains: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::QString && operand.typeId() == QMetaType::QStringList) {
         return prop.as<QStringList>().contains(operand.toString());
     }
@@ -110,7 +111,7 @@ static bool operator_contains(const Prop &prop, const QVariant &operand) {
 }
 
 static bool operator_match(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test match: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test match: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::QString && operand.typeId() == QMetaType::QString) {
         QRegularExpression regex(operand.toString());
         if (!regex.isValid()) { return false; }
@@ -120,7 +121,7 @@ static bool operator_match(const Prop &prop, const QVariant &operand) {
 }
 
 static bool operator_in(const Prop &prop, const QVariant &operand) {
-    qDebug().nospace() << "test in: " << prop.get() << " and " << operand;
+    LOG_TRACE().nospace() << "test in: " << prop.get() << " and " << operand;
     if (prop.type_id() == QMetaType::QString && operand.typeId() == QMetaType::QStringList) {
         return operand.toStringList().contains(prop.as<QString>());
     }
@@ -285,8 +286,8 @@ RouteContext::RouteContext(std::shared_ptr<Router> router, MajorTask major_task)
 bool RouteContext::test_condition(const Condition &condition) {
     const auto props = router_->major_task_config(major_task_);
     Prop       prop;
-    qDebug().nospace() << "test condition: { key: " << condition.key << ", op: " << condition.op
-                       << ", operand: " << condition.operand << " }";
+    LOG_TRACE().nospace() << "test condition: { key: " << condition.key << ", op: " << condition.op
+                          << ", operand: " << condition.operand << " }";
     if (props->contains(condition.key)) {
         prop = props->value(condition.key);
     } else if (const auto opt_var = var(condition.key)) {
@@ -331,10 +332,14 @@ void RouteContext::stop() {
     state_ = State::Stop;
 }
 
+int RouteContext::total_stages() const {
+    Q_ASSERT(selected_pipeline_index_ != -1);
+    return router_->pipelines(major_task_).get()[selected_pipeline_index_].tasks.size();
+}
+
 bool RouteContext::has_next() const {
     if (selected_pipeline_index_ == -1) { return false; }
-    const int total_stages = router_->pipelines(major_task_).get()[selected_pipeline_index_].tasks.size();
-    return pipeline_stage_ < total_stages;
+    return pipeline_stage_ < total_stages();
 }
 
 std::optional<RouteContext::Task> RouteContext::next() {
@@ -417,10 +422,10 @@ void RouteContext::execute_internal_action(const QString &action, const QStringL
         if (args.size() == 2) {
             update_var(args[0], args[1]);
         } else {
-            qWarning() << "RouteContext: set-var action with invalid args";
+            LOG_WARN() << "RouteContext: set-var action with invalid args";
         }
     } else {
-        qWarning().noquote() << "RouteContext: unknown internal action" << action;
+        LOG_WARN().noquote() << "RouteContext: unknown internal action" << action;
     }
 }
 

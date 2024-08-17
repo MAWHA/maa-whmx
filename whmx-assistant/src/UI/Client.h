@@ -84,7 +84,8 @@ public:
     void build_task_graph();
 
 protected:
-    void config_maa(const QString &user_path);
+    void setup_runtime_log();
+    void config_maa();
 
 public slots:
     void open_task_config_panel(Task::MajorTask task);
@@ -108,7 +109,6 @@ protected slots:
     void handle_on_sync_res_dir_done(int maa_status);
     void handle_on_request_connect_device(MaaAdbDevice device);
     void handle_on_create_and_init_instance();
-    void handle_on_logging_flush(QString loggings);
     void handle_on_leave_task_config_panel();
     void handle_on_switch_tab(int index);
 
@@ -124,8 +124,7 @@ protected:
     void setup();
 
 private:
-    const QDateTime                  startup_time_;
-    bool                             first_time_to_flush_log_;
+    QString                          latest_runtime_log_file_;
     QString                          user_path_;
     std::shared_ptr<Task::Config>    task_config_;
     std::shared_ptr<Task::TaskGraph> task_graph_;

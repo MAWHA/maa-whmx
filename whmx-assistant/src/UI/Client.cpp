@@ -16,6 +16,7 @@
 #include "Client.h"
 #include "TaskConfigPanel.h"
 #include "Notification.h"
+#include "../Logger.h"
 #include "../Rec/Research.h"
 #include "../Rec/Utils.h"
 #include "../Action/Research.h"
@@ -29,6 +30,9 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtGui/QDesktopServices>
 #include <magic_enum.hpp>
+#include <chrono>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 using namespace maa;
 
@@ -37,34 +41,43 @@ namespace UI {
 void Client::reload_anecdotes() {
     const auto anecdotes_path = data_dir() + "/anecdotes.json";
     auto       anecdote_set   = Ref::ResearchAnecdoteSet::instance();
-    if (const bool loaded = anecdote_set->load(anecdotes_path.toStdString())) {
+    const auto old_hash       = anecdote_set->hash();
+    if (const bool reloaded = anecdote_set->load(anecdotes_path.toStdString()); !reloaded) {
+        LOG_WARN() << "failed to load anecdotes set";
+        LOG_WARN(Workstation) << "加载研学奇遇事件集失败 [assets/data/anecdotes.json]";
+    } else if (old_hash != anecdote_set->hash()) {
         QList<QString> categories;
         for (const auto &category : anecdote_set->categories()) { categories << QString::fromUtf8(category); }
-        qInfo().noquote() << "loaded anecdote categories: [" << categories.join(", ") << "]";
+        LOG_INFO().noquote() << "loaded anecdote categories: [" << categories.join(", ") << "]";
         for (const auto &category : anecdote_set->categories()) {
             QList<QString> entries;
             for (const auto &entry : anecdote_set->entry(category)->get().entry_names()) {
                 entries << QString::fromUtf8(entry);
             }
-            qInfo().noquote().nospace()
+            LOG_INFO().noquote().nospace()
                 << QString("loaded anecdote entries under %1: [ %2 ]").arg(QString::fromUtf8(category)).arg(entries.join(", "));
         }
-    } else {
-        qWarning() << "failed to load anecdotes set";
+        LOG_INFO(Workstation) << "加载研学奇遇事件集";
+        for (const auto &category : anecdote_set->categories()) {
+            LOG_INFO(Workstation).noquote() << QString("• %1 已加载，找到 %2 条事件")
+                                                   .arg(QString::fromUtf8(category))
+                                                   .arg(anecdote_set->entry(category).value().get().entry_names().size());
+        }
     }
 }
 
 void Client::reload_task_config() {
     const auto task_config_path = data_dir() + "/task_bindings.json";
     if (const bool loaded = Task::load_task_config(*task_config_, task_config_path, task_router_)) {
-        qInfo() << "task bindings reloaded";
+        LOG_INFO() << "task bindings reloaded";
     } else {
-        qInfo() << "failed to load task bindings";
+        LOG_ERROR() << "failed to load task bindings";
+        LOG_ERROR(Workstation) << "任务绑定加载失败 [assets/data/task_bindings.json]";
     }
 }
 
 void Client::build_task_graph() {
-    qInfo() << "build task graph";
+    LOG_INFO() << "build task graph";
 
     QList<QDir> pipeline_dirs;
     pipeline_dirs.append(QDir(assets_dir() + "/pipeline"));
@@ -86,13 +99,37 @@ void Client::build_task_graph() {
         if (const bool ok = task_graph_->merge_pipeline(file); !ok) { failed_pipelines << file; }
     }
 
-    qInfo() << "build task graph done: merge" << pipeline_files.size() << "pipelines in total," << failed_pipelines.size()
-            << "pipelines failed";
-    if (!failed_pipelines.empty()) { qInfo() << "failed to load pipelines:\n" << failed_pipelines.join("\n"); }
+    LOG_INFO() << "build task graph done: merge" << pipeline_files.size() << "pipelines in total," << failed_pipelines.size()
+               << "pipelines failed";
+    if (!failed_pipelines.empty()) { LOG_INFO() << "failed to load pipelines:\n" << failed_pipelines.join("\n"); }
 }
 
-void Client::config_maa(const QString &user_path) {
-    user_path_ = QDir::isAbsolutePath(user_path) ? user_path : app_dir() + "/" + user_path;
+void Client::setup_runtime_log() {
+    const auto datetime      = QDateTime::currentDateTime();
+    const auto log_path      = QString("%1/runtime.%2.log").arg(log_dir()).arg(datetime.toString("yyyyMMddHH"));
+    latest_runtime_log_file_ = log_path;
+
+    auto runtime_logger = spdlog::basic_logger_mt("whmx-assistant.default", log_path.toLocal8Bit().toStdString());
+    runtime_logger->set_pattern("%Y-%m-%d %H:%M:%S.%e [%l] %v");
+
+    //! TODO: enable level config
+    runtime_logger->set_level(spdlog::level::trace);
+
+    //! FIXME: has global effect
+    spdlog::set_default_logger(runtime_logger);
+    spdlog::flush_every(std::chrono::minutes(1));
+    spdlog::flush_on(spdlog::level::err);
+
+    //! hello message
+    LOG_INFO().noquote() << QString().fill('=', 16);
+    LOG_INFO().noquote() << "应用名称：" << QApplication::applicationDisplayName();
+    LOG_INFO().noquote() << "当前版本：" << QApplication::applicationVersion();
+    LOG_INFO().noquote() << "启动时间：" << datetime.toString("yyyy-MM-dd HH:mm:ss");
+    LOG_INFO().noquote() << QString().fill('=', 16);
+    runtime_logger->flush();
+}
+
+void Client::config_maa() {
     maa::init(user_dir().toLocal8Bit().toStdString());
     maa_res_ = Resource::make();
     handle_on_reload_assets();
@@ -101,7 +138,7 @@ void Client::config_maa(const QString &user_path) {
 void Client::open_task_config_panel(Task::MajorTask task) {
     const auto task_info = Task::get_task_info(task);
     if (!task_info.has_config) {
-        qCritical() << "try to open config panel for task" << magic_enum::enum_name(task) << "which has no config";
+        LOG_ERROR() << "try to open config panel for task" << magic_enum::enum_name(task) << "which has no config";
         return;
     }
 
@@ -125,16 +162,16 @@ void Client::handle_on_reload_assets() {
 
     if (maa_res_ && (!fut_res_req_path_.state_->task_.has_value() || fut_res_req_path_.fulfilled())) {
         fut_res_req_path_ = coro::EventLoop::current()->eval([this, assets_dir = assets_dir().toStdString()] {
-            qInfo().noquote() << "sync res dir:" << assets_dir;
+            LOG_INFO().noquote() << "sync res dir:" << assets_dir;
             emit on_sync_res_dir_done(maa_res_->post_path(assets_dir)->wait().sync_wait());
         });
     }
 }
 
 void Client::handle_on_open_log_file(LogFileType type) {
-    static QMap<LogFileType, QString> LOG_FILE_TABLE{
-        {LogFileType::MaaFramework, "maa.log"    },
-        {LogFileType::Application,  "runtime.log"},
+    QMap<LogFileType, QString> LOG_FILE_TABLE{
+        {LogFileType::MaaFramework, "maa.log"               },
+        {LogFileType::Application,  latest_runtime_log_file_},
     };
 
     const auto log_file = LOG_FILE_TABLE.value(type);
@@ -151,10 +188,11 @@ void Client::handle_on_open_log_file(LogFileType type) {
 
 void Client::handle_on_sync_res_dir_done(int maa_status) {
     if (maa_status != MaaStatus_Success) {
-        qWarning() << "failed to sync res dir";
+        LOG_ERROR() << "failed to sync res dir";
+        LOG_ERROR(Workstation) << "MAA 资源加载失败，请检查本地资源完整性 [assets/general]";
     } else {
-        qInfo() << "sync res dir successfully";
-        qInfo().noquote() << "found" << maa_res_->task_list()->size() << "tasks under" << assets_dir();
+        LOG_INFO() << "sync res dir successfully";
+        LOG_INFO().noquote() << "found" << maa_res_->task_list()->size() << "tasks under" << assets_dir();
         QStringList major_tasks_bindings(task_config_->task_entries.values());
         ui_workbench_->reload_pipeline_tasks(task_graph_->find_left_root_tasks(major_tasks_bindings));
     }
@@ -175,21 +213,36 @@ void Client::execute_pipeline_task(QString task_id, QVariant task) {
 }
 
 void Client::execute_major_task(const QString &task_id, Task::MajorTask task) {
+    const auto major_task_name = Task::get_task_info(task).name;
     if (task_config_->task_entries.contains(task)) {
         //! TODO: pass major task params
         const auto task_entry = task_config_->task_entries.value(task);
-        coro::EventLoop::current()->eval([this, task_id, task_entry] {
+        coro::EventLoop::current()->eval([this, task, task_id, task_entry, major_task_name] {
+            LOG_INFO(Workstation).noquote() << QString("启动核心任务 %1 | 目标任务 %2").arg(major_task_name).arg(task_entry);
+            auto flag = std::make_shared<std::atomic_bool>(false);
+            QTimer::singleShot(6e+4 * 5, [expected = flag->load(), flag] {
+                if (expected == *flag) { LOG_WARN(Workstation).noquote() << "超时预警，请检查任务是否进入死循环"; }
+            });
             const auto status = instance()->post_task(task_entry.toUtf8().toStdString())->wait().sync_wait();
+            flag->store(true);
             QMetaObject::invokeMethod(
                 ui_workbench_, "notify_queued_task_finished", Qt::AutoConnection, Q_ARG(QString, task_id), Q_ARG(int, status));
         });
     } else if (task_router_->contains_route_of(task)) {
-        coro::EventLoop::current()->eval([this, task_id, route = task_router_->route(task)] {
+        coro::EventLoop::current()->eval([this, task, task_id, route = task_router_->route(task), major_task_name] {
             int status = MaaStatus_Invalid;
             do {
                 const bool started = route->start();
-                if (!started) { break; }
-                qDebug().noquote() << "start route of" << task_id;
+                if (started) {
+                    LOG_INFO(Workstation).noquote()
+                        << QString("启动核心任务 %1 | 共 %2 步").arg(major_task_name).arg(route->total_stages());
+                } else {
+                    LOG_INFO(Workstation).noquote() << QString("启动核心任务 %1").arg(major_task_name);
+                    LOG_ERROR(Workstation) << "未找到命中路径";
+                    break;
+                }
+                LOG_TRACE().noquote() << "start route of" << task_id;
+                auto step_index = std::make_shared<int>(0);
                 while (route->has_next()) {
                     if (ui_workbench_->pipeline_state().is_idle()) {
                         status = MaaStatus_Success;
@@ -202,8 +255,15 @@ void Client::execute_major_task(const QString &task_id, Task::MajorTask task) {
                     }
                     const auto task       = opt_task.value();
                     const auto task_entry = task.task_entry.toUtf8().toStdString();
-                    qDebug().noquote() << "execute task" << task_entry << "with params"
-                                       << QString::fromUtf8(task.params.to_string());
+                    LOG_TRACE().noquote() << "execute task" << task_entry << "with params"
+                                          << QString::fromUtf8(task.params.to_string());
+                    LOG_INFO(Workstation).noquote()
+                        << QString("• 步骤 %1 - %2").arg(++*step_index).arg(QString::fromUtf8(task_entry));
+                    QTimer::singleShot(6e+4 * 5, [expected = *step_index, step_index] {
+                        if (expected == *step_index) {
+                            LOG_WARN(Workstation).noquote() << "超时预警，请检查任务是否进入死循环";
+                        }
+                    });
                     const int task_status = instance()->post_task(task_entry, task.params)->wait().sync_wait();
                     if (task_status != MaaStatus_Success) {
                         status = task_status;
@@ -216,15 +276,22 @@ void Client::execute_major_task(const QString &task_id, Task::MajorTask task) {
                 ui_workbench_, "notify_queued_task_finished", Qt::AutoConnection, Q_ARG(QString, task_id), Q_ARG(int, status));
         });
     } else {
-        qWarning().noquote() << "failed to execute task" << task_id << ": task entry not found for major task"
+        LOG_WARN().noquote() << "failed to execute task" << task_id << ": task entry not found for major task"
                              << magic_enum::enum_name(task);
+        LOG_WARN(Workstation).noquote() << QString("未找到 %1 的任务绑定，已跳过").arg(major_task_name);
         ui_workbench_->notify_queued_task_finished(task_id, MaaStatus_Invalid);
     }
 }
 
 void Client::execute_custom_task(const QString &task_id, const QString &task_name) {
     coro::EventLoop::current()->eval([this, task_id, task_entry = task_name] {
+        LOG_INFO(Workstation).noquote() << QString("执行任务 %1").arg(task_entry);
+        auto flag = std::make_shared<std::atomic_bool>(false);
+        QTimer::singleShot(6e+4 * 5, [expected = flag->load(), flag] {
+            if (expected == *flag) { LOG_WARN(Workstation).noquote() << "超时预警，请检查任务是否进入死循环"; }
+        });
         const auto status = instance()->post_task(task_entry.toUtf8().toStdString())->wait().sync_wait();
+        flag->store(true);
         QMetaObject::invokeMethod(
             ui_workbench_, "notify_queued_task_finished", Qt::AutoConnection, Q_ARG(QString, task_id), Q_ARG(int, status));
     });
@@ -235,7 +302,7 @@ void Client::handle_on_request_connect_device(MaaAdbDevice device) {
         Notification::warning(this, "设备连接", "不支持多设备连接，已取消该次连接请求");
         emit on_request_connect_device_done(MaaStatus_Failed);
     } else if (maa_ctrl_) {
-        qInfo() << "device alreay connected, retry init maa instance";
+        LOG_INFO() << "device alreay connected, retry init maa instance";
         QMetaObject::invokeMethod(this, "handle_on_create_and_init_instance", Qt::AutoConnection);
         emit on_request_connect_device_done(MaaStatus_Failed);
     } else {
@@ -269,7 +336,7 @@ void Client::handle_on_create_and_init_instance() {
     maa_instance_ = Instance::make()->bind(maa_res_)->bind(maa_ctrl_);
     if (!maa_instance_->inited()) {
         maa_instance_.reset();
-        qCritical() << "failed to init maa, view log file for details or check your assets integrity";
+        LOG_ERROR() << "failed to init maa, view log file for details or check your assets integrity";
         return;
     }
     maa_instance_->bind<Rec::Utils::TwoStageTest>();
@@ -283,28 +350,9 @@ void Client::handle_on_create_and_init_instance() {
     maa_instance_->bind<Action::Research::ResolveBuffSelection>();
     maa_instance_->bind<Action::SolveFourInRow>();
     maa_instance_->bind<Action::Combat::FillSquad>();
-    qInfo() << "maa instance created and initialized";
+    LOG_INFO() << "maa instance created and initialized";
     ui_workbench_->accept_maa_instance(maa_instance_);
-}
-
-void Client::handle_on_logging_flush(QString loggings) {
-    const auto log_file_path = log_dir() + "/runtime.log";
-
-    QFile file(log_file_path);
-    file.open(QIODevice::WriteOnly | QIODevice::Append);
-
-    if (first_time_to_flush_log_) {
-        const auto head = QString("%1\n应用名称: %2\n当前版本: %3\n启动时间: %4\n%5\n")
-                              .arg(QString().fill('=', 16))
-                              .arg(QApplication::applicationDisplayName())
-                              .arg(QApplication::applicationVersion())
-                              .arg(startup_time_.toString("yyyy-MM-dd HH:mm:ss"))
-                              .arg(QString().fill('=', 16));
-        file.write(head.toUtf8());
-        first_time_to_flush_log_ = false;
-    }
-
-    file.write(loggings.toUtf8());
+    LOG_INFO(Workstation) << "设备连接成功";
 }
 
 void Client::handle_on_leave_task_config_panel() {
@@ -322,25 +370,21 @@ void Client::handle_on_switch_tab(int index) {
 
 Client::Client(const QString &user_path, QWidget *parent)
     : QTabWidget(parent)
-    , startup_time_(QDateTime::currentDateTime())
-    , first_time_to_flush_log_(true)
+    , user_path_(QDir::isAbsolutePath(user_path) ? user_path : app_dir() + "/" + user_path)
     , task_config_(std::make_shared<Task::Config>())
     , task_graph_(std::make_shared<Task::TaskGraph>())
     , task_router_(std::make_shared<Task::Router>(task_config_, task_graph_)) {
     setup();
-    config_maa(user_path);
+    config_maa();
+    setup_runtime_log();
     Task::reset_shared_task_config(task_config_);
 }
 
 Client::~Client() {
     //! TODO: dump user config
-
-    //! ATTENTION: do not use logger->flush() here, the client is already destroyed here
-    handle_on_logging_flush(ui_workbench_->logger()->take());
 }
 
 void Client::setup() {
-    //! ATTENTION: ensure the logger panel ctor first to redirect all logging messages to it
     ui_workbench_   = new Workbench;
     ui_device_conn_ = new DeviceConn;
     ui_settings_    = new Settings;
@@ -365,7 +409,6 @@ void Client::setup() {
     connect(ui_workbench_, &Workbench::on_open_maa_log_file, this, &Client::handle_on_open_maa_log_file);
     connect(ui_workbench_, &Workbench::on_open_app_log_file, this, &Client::handle_on_open_app_log_file);
     connect(this, &Client::on_sync_res_dir_done, this, &Client::handle_on_sync_res_dir_done);
-    connect(ui_workbench_->logger(), &LogPanel::on_flush, this, &Client::handle_on_logging_flush);
     connect(ui_workbench_, &Workbench::on_post_queued_task, this, &Client::execute_pipeline_task);
     connect(ui_workbench_, &Workbench::on_request_open_task_config_panel, this, &Client::open_task_config_panel);
     connect(this, &Client::currentChanged, this, &Client::handle_on_switch_tab);

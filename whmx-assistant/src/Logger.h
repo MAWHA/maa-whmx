@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include "MacroHelper.h"
+
 #include <QtCore/QtLogging>
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QFile>
@@ -23,6 +25,22 @@
 #include <stdio.h>
 #include <memory>
 #include <array>
+#include <QtCore/QLoggingCategory>
+
+#define LOG_ON_LEVEL_IMPL0(level, ...)           MH_CONCAT(qC, level)(::LogCategory::AppRuntime)
+#define LOG_ON_LEVEL_IMPL1(level, category, ...) MH_CONCAT(qC, level)(::LogCategory::category)
+#define LOG_ON_LEVEL_IMPL(N, level, ...)         MH_EXPAND(MH_CONCAT(LOG_ON_LEVEL_IMPL, N)(level, __VA_ARGS__))
+#define LOG_ON_LEVEL(level, ...)                 MH_EXPAND(LOG_ON_LEVEL_IMPL(MH_EXPAND(MH_NARG(__VA_ARGS__)), level, __VA_ARGS__))
+
+#define LOG_TRACE(...) LOG_ON_LEVEL(Debug, __VA_ARGS__)
+#define LOG_INFO(...)  LOG_ON_LEVEL(Info, __VA_ARGS__)
+#define LOG_WARN(...)  LOG_ON_LEVEL(Warning, __VA_ARGS__)
+#define LOG_ERROR(...) LOG_ON_LEVEL(Critical, __VA_ARGS__)
+
+namespace LogCategory {
+Q_DECLARE_LOGGING_CATEGORY(AppRuntime)
+Q_DECLARE_LOGGING_CATEGORY(Workstation)
+} // namespace LogCategory
 
 class GlobalLoggerProxy final : public QObject {
     Q_OBJECT

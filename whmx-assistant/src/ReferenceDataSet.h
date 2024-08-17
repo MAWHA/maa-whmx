@@ -186,7 +186,12 @@ public:
         return entries_.contains(category);
     }
 
+    std::string hash() const {
+        return hash_;
+    }
+
 private:
+    std::string                                  hash_;
     std::map<std::string, ResearchAnecdoteEntry> entries_;
 };
 

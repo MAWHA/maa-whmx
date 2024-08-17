@@ -16,6 +16,7 @@
 #include "DeviceConn.h"
 #include "Helper.h"
 #include "Notification.h"
+#include "../Logger.h"
 #include "../DeviceHelper.h"
 
 #include <QtWidgets/QVBoxLayout>
@@ -120,7 +121,8 @@ void DeviceConn::add_device(const MaaAdbDevice &device) {
 }
 
 void DeviceConn::handle_on_list_devices_done(QList<maa::AdbDevice> devices) {
-    qInfo() << "list adb devices done: found" << devices.size() << "devices";
+    LOG_INFO() << "list adb devices done: found" << devices.size() << "devices";
+    if (!devices.empty()) { LOG_INFO(Workstation) << "检测到" << devices.size() << "个设备"; }
 
     QList<int> detected_devices;
     for (int i = 0; i < ui_devices_->count(); ++i) {
@@ -187,7 +189,8 @@ void DeviceConn::post_connect_request() {
     ui_devices_->setItemData(ui_devices_->currentIndex(), QVariant::fromValue(device_info));
     update_device_status();
 
-    qInfo().noquote() << "request to connect device:" << device_info.device.name;
+    LOG_INFO().noquote() << "request to connect device:" << device_info.device.name;
+    LOG_INFO(Workstation).noquote() << "正在连接设备" << device_info.device.name;
     emit on_request_connect_device(device_info.device);
 }
 
@@ -247,17 +250,17 @@ void DeviceConn::handle_on_add_local_device() {
     const auto path        = device_path.toLocal8Bit().toStdString();
 
     if (path.empty()) {
-        qWarning() << "failed to add local device: empty path";
+        LOG_WARN() << "failed to add local device: empty path";
         Notification::warning(this, "添加设备", "adb 路径为空");
         return;
     }
     if (fs::is_directory(path)) {
-        qWarning() << "failed to add local device: specified path is a directory";
+        LOG_WARN() << "failed to add local device: specified path is a directory";
         Notification::warning(this, "添加设备", "目标路径不合法");
         return;
     }
     if (!fs::exists(path)) {
-        qWarning() << "failed to add local device: specified file not exists";
+        LOG_WARN() << "failed to add local device: specified file not exists";
         const int option =
             ElaContentDialog::showMessageBox(this, "添加设备", "目标文件不存在，是否确认添加？", ElaContentDialog::Confirm);
         if (option != ElaContentDialog::Yes) { return; }
@@ -296,10 +299,10 @@ void DeviceConn::handle_on_request_connect_device_done(int maa_status) {
     Q_ASSERT(wait_connect_response_);
     auto device_info = ui_devices_->currentData().value<MaaAdbDeviceInfo>();
     if (maa_status != MaaStatus_Success) {
-        qCritical().noquote() << "failed to connect device:" << device_info.device.name;
+        LOG_ERROR().noquote() << "failed to connect device:" << device_info.device.name;
         device_info.connect_state = AdbDeviceConnectState_Available;
     } else {
-        qInfo().noquote() << "successfully connected to device:" << device_info.device.name;
+        LOG_INFO().noquote() << "successfully connected to device:" << device_info.device.name;
         device_info.connect_state = AdbDeviceConnectState_Connected;
     }
     ui_devices_->setItemData(ui_devices_->currentIndex(), QVariant::fromValue(device_info));

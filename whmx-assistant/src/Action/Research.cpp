@@ -14,6 +14,7 @@
 */
 
 #include "Research.h"
+#include "../Logger.h"
 #include "../Decode.h"
 #include "../Algorithm.h"
 #include "../ReferenceDataSet.h"
@@ -74,7 +75,7 @@ coro::Promise<bool> SelectGradeOption::research__select_grade_option(
     MaaStringView                cur_rec_detail) {
     SelectGradeOptionParam opt;
     if (!parse_params(opt, param)) {
-        qDebug("%s: invalid arguments", task_name);
+        LOG_TRACE().nospace() << task_name << ": invalid arguments";
         co_return false;
     }
 
@@ -208,7 +209,7 @@ coro::Promise<bool> ResolveAnecdote::research__resolve_anecdote(
     while (current_stage >= 0 && current_stage < anecdote_entry.total_stages()) {
         const auto &event_stage = anecdote_entry.stage(current_stage);
         if (event_stage.options.empty()) {
-            qCritical() << "no options for stage" << current_stage << "of anecdote" << category << name;
+            LOG_ERROR() << "no options for stage" << current_stage << "of anecdote" << category << name;
             co_return false;
         }
 
@@ -224,7 +225,7 @@ coro::Promise<bool> ResolveAnecdote::research__resolve_anecdote(
             }
         }
         if (best_choice == -1) {
-            qWarning() << "no positive option for stage" << current_stage << "of anecdote" << category << name
+            LOG_WARN() << "no positive option for stage" << current_stage << "of anecdote" << category << name
                        << ", make random choice";
             best_choice = choice(0, event_stage.options.size() - 1);
         }
@@ -268,18 +269,18 @@ coro::Promise<bool> PerformItemPairsMatch::research__perform_item_pairs_match(
         item_pairs.push_back({pair.at(0).as_integer(), pair.at(1).as_integer()});
     }
 
-    qDebug() << "wait matching game to start";
+    LOG_TRACE() << "wait matching game to start";
     co_await context->run_task("Research.WaitMatchingGameToStart");
 
-    qDebug() << "perform item pairs match";
+    LOG_TRACE() << "perform item pairs match";
     for (const auto &pair : item_pairs) {
-        qDebug().noquote() << QString("match pair (%1)[row=%2,col=%3], (%4)[row=%5,col=%6]")
-                                  .arg(pair.first)
-                                  .arg(pair.first / n_hori + 1)
-                                  .arg(pair.first % n_hori + 1)
-                                  .arg(pair.second)
-                                  .arg(pair.second / n_hori + 1)
-                                  .arg(pair.second % n_hori + 1);
+        LOG_TRACE().noquote() << QString("match pair (%1)[row=%2,col=%3], (%4)[row=%5,col=%6]")
+                                     .arg(pair.first)
+                                     .arg(pair.first / n_hori + 1)
+                                     .arg(pair.first % n_hori + 1)
+                                     .arg(pair.second)
+                                     .arg(pair.second / n_hori + 1)
+                                     .arg(pair.second % n_hori + 1);
         for (const int item : std::initializer_list<int>{pair.first, pair.second}) {
             const int row      = item / n_hori;
             const int col      = item % n_hori;
@@ -327,7 +328,7 @@ coro::Promise<bool> ResolveBuffSelection::research__resolve_buff_selection(
     } else if (total_buffs == 5) {
         choice_expected = 2;
     } else {
-        qCritical() << "invalid number of buffs" << total_buffs;
+        LOG_ERROR() << "invalid number of buffs" << total_buffs;
         co_return false;
     }
 
@@ -358,7 +359,7 @@ coro::Promise<bool> ResolveBuffSelection::research__resolve_buff_selection(
     {
         QStringList selected_buffs;
         for (const int choice_index : choices) { selected_buffs.append(QString("\"%1\"").arg(buff_names[choice_index])); }
-        qInfo().noquote() << "select buffs: [" << selected_buffs.join(", ") << "]";
+        LOG_INFO().noquote() << "select buffs: [" << selected_buffs.join(", ") << "]";
     }
 
     if (need_select) {

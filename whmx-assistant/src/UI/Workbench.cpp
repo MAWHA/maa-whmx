@@ -18,6 +18,7 @@
 #include "CheckableItem.h"
 #include "Helper.h"
 #include "Notification.h"
+#include "../Logger.h"
 #include "../Task/MajorTask.h"
 
 #include <QtWidgets/QHBoxLayout>
@@ -44,12 +45,12 @@ void Workbench::clear_queued_tasks() {
 
 void Workbench::accept_maa_instance(std::shared_ptr<maa::Instance> instance) {
     if (!instance || !instance->inited()) {
-        qCritical() << "accepted invalid maa instance";
+        LOG_ERROR() << "accepted invalid maa instance";
         return;
     }
-    if (instance_) { qInfo() << "override current exisiting maa instance"; }
+    if (instance_) { LOG_INFO() << "override current exisiting maa instance"; }
     instance_ = instance;
-    qInfo() << "workbench: accepted maa instance";
+    LOG_INFO() << "workbench: accepted maa instance";
 }
 
 void Workbench::set_list_item_widget_checked(QListWidgetItem *item, bool on) {
@@ -85,10 +86,10 @@ void Workbench::connect_queued_task_item_signal_slot(QListWidgetItem *item) {
 }
 
 void Workbench::reload_pipeline_tasks(const QStringList &custom_tasks) {
-    qInfo() << "reload pipeline tasks";
+    LOG_INFO() << "reload pipeline tasks";
 
     if (const auto state = pipeline_state(); state.is_running()) {
-        qWarning() << "reject reload tasks due to pipeline is running";
+        LOG_WARN() << "reject reload tasks due to pipeline is running";
         Notification::warning(this, "重载任务", "流水线运行中，请先中止流水线运行。");
         return;
     } else if (state.is_paused()) {
@@ -121,14 +122,19 @@ void Workbench::reload_pipeline_tasks(const QStringList &custom_tasks) {
     const int total_reloaded_task = tasks.size();
     for (const auto task : tasks) { append_list_widget_item(ui_custom_task_list_, new CheckableItem(task)); }
 
-    qInfo() << total_reloaded_task << "tasks reloaded";
+    LOG_INFO() << total_reloaded_task << "tasks reloaded";
+    if (total_reloaded_task > 0) {
+        LOG_INFO(Workstation) << "已重载" << total_reloaded_task << "个任务";
+    } else {
+        LOG_INFO(Workstation) << "最新任务已全部载入";
+    }
 }
 
 void Workbench::push_selected_tasks_to_queue() {
-    qInfo() << "push selected tasks to queue";
+    LOG_INFO() << "push selected tasks to queue";
 
     if (pipeline_state().is_running()) {
-        qWarning() << "reject push selected tasks due to pipeline is running";
+        LOG_WARN() << "reject push selected tasks due to pipeline is running";
         Notification::warning(this, "推送任务", "流水线运行中，请先暂停或中止流水线运行。");
         return;
     }
@@ -156,7 +162,8 @@ void Workbench::push_selected_tasks_to_queue() {
         ++total_pushed_custom_tasks;
     }
 
-    qInfo() << total_pushed_major_tasks << "major tasks," << total_pushed_custom_tasks << "custom tasks pushed to task queue";
+    LOG_INFO() << total_pushed_major_tasks << "major tasks," << total_pushed_custom_tasks
+               << "custom tasks pushed to task queue";
 }
 
 void Workbench::notify_queued_task_accepted(const QString &task_id) {
@@ -165,15 +172,16 @@ void Workbench::notify_queued_task_accepted(const QString &task_id) {
 
 void Workbench::notify_queued_task_finished(const QString &task_id, MaaStatus status) {
     if (!pending_task_accepted_.contains(task_id)) {
-        qCritical().noquote() << "accept finished notification to unknown queued task" << task_id;
+        LOG_ERROR().noquote() << "accept finished notification to unknown queued task" << task_id;
         return;
     }
     pending_task_accepted_.remove(task_id);
     if (status == MaaStatus_Success) {
-        qInfo().noquote() << "posted queued task" << task_id << "resolved successfully";
+        LOG_INFO().noquote() << "posted queued task" << task_id << "resolved successfully";
     } else {
-        qWarning().noquote() << "failed to resolve posted queued task" << task_id << "status:" << status;
-        qInfo().noquote() << "skip failed queued task" << task_id;
+        LOG_WARN().noquote() << "failed to resolve posted queued task" << task_id << "status:" << status;
+        LOG_INFO().noquote() << "skip failed queued task" << task_id;
+        LOG_WARN(Workstation) << "任务执行失败，已跳过";
     }
     pop_first_queued_task();
     post_next_queued_task();
@@ -181,23 +189,28 @@ void Workbench::notify_queued_task_finished(const QString &task_id, MaaStatus st
 
 void Workbench::start_pipeline() {
     if (!instance_ || !instance_->inited()) {
-        qWarning() << "workbench: failed to start pipeline: no valid maa instance accepted";
+        LOG_WARN() << "workbench: failed to start pipeline: no valid maa instance accepted";
         Notification::error(this, "启动流水线", "缺少有效 MAA 实例，请检查本地资源完整性并确保已连接至设备");
         return;
     }
     if (pipeline_state().is_running()) {
-        qWarning() << "pipeline is already running";
+        LOG_WARN() << "pipeline is already running";
         return;
     }
     if (pipeline_state().is_pending_pause()) {
-        qWarning() << "pipeline is pending pause, reject to start pipeline";
+        LOG_WARN() << "pipeline is pending pause, reject to start pipeline";
         return;
     }
     if (pipeline_state().is_paused()) {
         resume_pipeline();
         return;
     }
-    qInfo() << "start pipeline with" << ui_task_queue_->count() << "queued tasks";
+    if (ui_task_queue_->count() == 0) {
+        LOG_INFO() << "no queued tasks in pipeline";
+        return;
+    }
+    LOG_INFO() << "start pipeline with" << ui_task_queue_->count() << "queued tasks";
+    LOG_INFO(Workstation) << "启动流水线 | 共" << ui_task_queue_->count() << "个任务";
     pipeline_state_ = PipelineState_Running;
     post_next_queued_task();
 }
@@ -208,27 +221,28 @@ void Workbench::pause_pipeline() {
 
 void Workbench::stop_pipeline() {
     if (pipeline_state().is_idle()) {
-        qWarning() << "pipeline is already stopped";
+        LOG_WARN() << "pipeline is already stopped";
         return;
     }
     pause_pipeline([this] {
         pending_task_accepted_.clear();
         pipeline_state_ = PipelineState_Idle;
-        qInfo() << "pipeline stopped";
+        LOG_INFO() << "pipeline stopped";
+        LOG_INFO(Workstation) << "流水线已暂停";
     });
 }
 
 void Workbench::pause_pipeline(std::optional<std::function<void()>> opt_on_paused) {
     if (pipeline_state().is_pending_pause()) {
-        qInfo() << "pipeline is already pending pause";
+        LOG_INFO() << "pipeline is already pending pause";
         return;
     }
     if (!pipeline_state().is_running()) {
-        qWarning() << "reject pause pipeline: pipeline is not running";
+        LOG_WARN() << "reject pause pipeline: pipeline is not running";
         return;
     }
     if (fut_pending_pause_.state_->task_.has_value() && !fut_pending_pause_.fulfilled()) {
-        qCritical() << "failed to pause pipeline: unknown error";
+        LOG_ERROR() << "failed to pause pipeline: unknown error";
         return;
     }
     pipeline_state_    = PipelineState_PendingPause;
@@ -249,16 +263,16 @@ void Workbench::pause_pipeline(std::optional<std::function<void()>> opt_on_pause
         handle_on_pending_pipeline_pause_done();
         if (opt_on_paused.has_value()) { std::invoke(*opt_on_paused); }
     });
-    qInfo() << "wait the pipeline to be paused";
+    LOG_INFO() << "wait the pipeline to be paused";
 }
 
 void Workbench::resume_pipeline() {
     if (pipeline_state().is_pending_pause()) {
-        qWarning() << "failed to resume pipeline: pipeline is pending pause";
+        LOG_WARN() << "failed to resume pipeline: pipeline is pending pause";
         return;
     }
     if (!pipeline_state().is_paused()) {
-        qWarning() << "failed to resume pipeline: pipeline is not paused";
+        LOG_WARN() << "failed to resume pipeline: pipeline is not paused";
         return;
     }
     //! FIXME: resume under the guidance of pending_task_accepted_
@@ -267,7 +281,7 @@ void Workbench::resume_pipeline() {
 
 void Workbench::post_next_queued_task() {
     if (ui_task_queue_->count() == 0) {
-        qInfo() << "post queued task: no more tasks found in task queue";
+        LOG_INFO() << "post queued task: no more tasks found in task queue";
         stop_pipeline();
         return;
     }
@@ -277,7 +291,7 @@ void Workbench::post_next_queued_task() {
                                                                           : QVariant::fromValue(task_item->task_name());
     pending_task_accepted_[task_id] = false;
 
-    qInfo().noquote().nospace() << "post queued task " << task << " [task_id=" << task_id << "]";
+    LOG_INFO().noquote().nospace() << "post queued task " << task << " [task_id=" << task_id << "]";
 
     //! NOTE: if no handle to resolve the posted queued task, then simply cancel it
     QTimer::singleShot(3000, [this, task_id] {
@@ -288,12 +302,12 @@ void Workbench::post_next_queued_task() {
 
 void Workbench::handle_on_pending_pipeline_pause_done() {
     pipeline_state_ = PipelineState_Paused;
-    qInfo() << "pipeline paused";
+    LOG_INFO() << "pipeline paused";
 }
 
 void Workbench::handle_on_cancel_posted_queued_task(const QString &task_id) {
     if (!pending_task_accepted_.contains(task_id)) { return; }
-    qWarning().noquote() << "no resolver found, cancel posted queued task" << task_id;
+    LOG_WARN().noquote() << "no resolver found, cancel posted queued task" << task_id;
     pending_task_accepted_.remove(task_id);
     stop_pipeline();
 }
@@ -318,7 +332,7 @@ void Workbench::handle_on_toggle_task_list_select_all(QListWidget *list, bool on
 
 void Workbench::handle_on_execute_queued_task_action(QListWidgetItem *item, QueuedTaskItem::ActionType action) {
     if (const auto state = pipeline_state(); !(state.is_paused() || state.is_idle())) {
-        qWarning() << "reject execute queued task action: pipeline is running";
+        LOG_WARN() << "reject execute queued task action: pipeline is running";
         Notification::warning(this, "任务调整", "请先暂停或中止流水线运行。");
         return;
     }

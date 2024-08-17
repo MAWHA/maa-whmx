@@ -18,66 +18,45 @@
 
 #include <QtCore/QDateTime>
 #include <QtCore/QDir>
+#include <spdlog/spdlog.h>
 #include <mutex>
-#include <string_view>
 #include <array>
 #include <io.h>
 
 namespace fs = std::filesystem;
 
-std::mutex LOGGER_LOCK;
+namespace LogCategory {
+Q_LOGGING_CATEGORY(AppRuntime, "AppRuntime")
+Q_LOGGING_CATEGORY(Workstation, "Workstation")
+} // namespace LogCategory
 
 void global_logger_handler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
-    static QMap<QtMsgType, QString> LEVEL_TABLE{
-        {QtDebugMsg,    "DBG"},
-        {QtInfoMsg,     "INF"},
-        {QtWarningMsg,  "WRN"},
-        {QtCriticalMsg, "ERR"},
-        {QtFatalMsg,    "FTL"},
-    };
+    static std::mutex LOGGER_LOCK;
+    std::lock_guard   lock(LOGGER_LOCK);
 
-    std::lock_guard lock(LOGGER_LOCK);
+    const auto log_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
 
-    if (msg.isEmpty()) { return; }
-
-    QString log_text;
-
-    //! NOTE: QMessageLogContext is not available in release config
-
-#ifdef NDEBUG
-    {
-        log_text = QString("%1 [%2] %3\n")
-                       .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz"))
-                       .arg(LEVEL_TABLE.value(type, "UNK"))
-                       .arg(msg);
-    }
-#else
-    {
-        std::array<std::string_view, 2> repo_src_dirs{"/maa-whmx/whmx-assistant/src/", "\\maa-whmx\\whmx-assistant\\src\\"};
-        std::string_view                path(context.file);
-
-        auto file = QString::fromLocal8Bit(path);
-        for (const auto &dir : repo_src_dirs) {
-            const auto it = path.find(dir);
-            if (it == path.npos) { continue; }
-            file = QString::fromLocal8Bit(path.substr(it + dir.size()));
-            break;
+    if (false) {
+    } else if (strcmp(context.category, "AppRuntime") == 0) {
+        switch (type) {
+            case QtDebugMsg: {
+                spdlog::trace(msg.toUtf8().toStdString());
+            } break;
+            case QtInfoMsg: {
+                spdlog::info(msg.toUtf8().toStdString());
+            } break;
+            case QtWarningMsg: {
+                spdlog::warn(msg.toUtf8().toStdString());
+            } break;
+            case QtCriticalMsg:
+                [[fallthrough]];
+            case QtFatalMsg: {
+                spdlog::error(msg.toUtf8().toStdString());
+            } break;
         }
-
-        log_text = QString("%1 [%2][%3][L%4] %5\n")
-                       .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz"))
-                       .arg(LEVEL_TABLE.value(type, "UNK"))
-                       .arg(file)
-                       .arg(context.line)
-                       .arg(msg);
-    }
-#endif
-
-    if (const auto global_loggers = UI::LogPanel::global_logger_panels(); global_loggers.isEmpty()) {
-        //! ATTENTION: do not write to stdout or stderr, it will be redirected to the handler again
-    } else {
-        for (auto logger : global_loggers) {
-            QMetaObject::invokeMethod(logger, "log", Qt::AutoConnection, Q_ARG(QString, log_text));
+    } else if (strcmp(context.category, "Workstation") == 0) {
+        for (auto logger : UI::LogPanel::global_logger_panels()) {
+            UI::LogPanel::log(logger, QString("%1 %2\n").arg(log_time).arg(msg));
         }
     }
 }
@@ -168,5 +147,5 @@ void GlobalLoggerProxy::cleanup() {
 }
 
 void GlobalLoggerProxy::post_hooked_logger_message(QString message) {
-    qInfo().noquote() << message;
+    LOG_INFO().noquote() << message;
 }

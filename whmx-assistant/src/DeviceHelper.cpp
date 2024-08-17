@@ -14,6 +14,7 @@
 */
 
 #include "DeviceHelper.h"
+#include "Logger.h"
 
 #include <QtCore/QDebug>
 #include <regex>
@@ -30,14 +31,14 @@ coro::Promise<QList<AdbDevice>> list_adb_devices() {
 coro::Promise<std::optional<AdbDevice>> find_adb_device(const std::string &adb_hint) {
     const auto devices = co_await list_adb_devices();
     if (devices.empty()) {
-        qDebug() << "no adb devices found";
+        LOG_TRACE() << "no adb devices found";
         co_return std::nullopt;
     }
     const auto device_resp = std::find_if(devices.begin(), devices.end(), [pattern = std::regex(adb_hint)](const auto &device) {
         return std::regex_match(device.name, pattern);
     });
     if (device_resp == devices.end()) {
-        qDebug() << "no device matched regex hint" << adb_hint;
+        LOG_TRACE() << "no device matched regex hint" << adb_hint;
         co_return std::nullopt;
     }
     co_return std::make_optional(*device_resp);

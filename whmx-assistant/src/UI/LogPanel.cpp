@@ -31,6 +31,10 @@ QList<LogPanel *> LogPanel::global_logger_panels() {
     return std::move(resp);
 }
 
+void LogPanel::log(LogPanel *panel, const QString &message) {
+    QMetaObject::invokeMethod(panel, "log", Qt::AutoConnection, Q_ARG(QString, message));
+}
+
 void LogPanel::attach_to_global_logger() {
     std::unique_lock lock(GLOBAL_LOG_PANELS_LOCK);
     if (!GLOBAL_LOG_PANELS.contains(this)) { GLOBAL_LOG_PANELS.append(this); }
@@ -42,6 +46,8 @@ void LogPanel::detach_from_global_logger() const {
 }
 
 void LogPanel::log(QString message) {
+    if (max_log_len_ == 0) { return; }
+
     std::lock_guard lock(log_mutex_);
 
     auto      vert_scrollbar          = log_text_container_->verticalScrollBar();
@@ -51,7 +57,7 @@ void LogPanel::log(QString message) {
     bool      should_scroll           = last_scroll_vpos == vert_scrollbar->maximum();
     bool      should_keep_hori_scroll = !vert_scrollbar->isVisible() || !should_scroll;
 
-    if (log_text_container_->toPlainText().length() > max_log_len_) {
+    if (max_log_len_ > 0 && log_text_container_->toPlainText().length() > max_log_len_) {
         flush();
         should_scroll           = true;
         should_keep_hori_scroll = false;
@@ -88,7 +94,7 @@ void LogPanel::set_max_len(int max_len) {
 
 LogPanel::LogPanel(QWidget *parent)
     : QWidget(parent)
-    , max_log_len_(10000) {
+    , max_log_len_(-1) {
     setup();
 }
 
