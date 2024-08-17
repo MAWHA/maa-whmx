@@ -63,6 +63,9 @@ std::shared_ptr<PropGetter> dump_task_param_to_prop_getter(const QVariant& param
     } else if (param.typeName() == std::string_view("Task::PlayFourInRowParam")) {
         const auto value = param.value<Task::PlayFourInRowParam>();
         return std::shared_ptr<PropGetter>(new Task::PlayFourInRowParam(value));
+    } else if (param.typeName() == std::string_view("Task::GetFurnitureBlueprintParam")) {
+        const auto value = param.value<Task::GetFurnitureBlueprintParam>();
+        return std::shared_ptr<PropGetter>(new Task::GetFurnitureBlueprintParam(value));
     } else if (param.typeName() == std::string_view("Task::SwitchFurnitureLayoutParam")) {
         const auto value = param.value<Task::SwitchFurnitureLayoutParam>();
         return std::shared_ptr<PropGetter>(new Task::SwitchFurnitureLayoutParam(value));

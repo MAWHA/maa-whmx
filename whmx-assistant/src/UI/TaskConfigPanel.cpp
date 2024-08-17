@@ -416,6 +416,11 @@ void setup(TaskConfigPanel *panel, PlayFourInRowParam &param) {
     });
 }
 
+void setup(TaskConfigPanel *panel, GetFurnitureBlueprintParam &param) {
+    Q_UNIMPLEMENTED();
+    panel->put_notice("暂未开放此项核心任务的配置面板，敬请期待之后的更新~");
+}
+
 void setup(TaskConfigPanel *panel, SwitchFurnitureLayoutParam &param) {
     Q_UNIMPLEMENTED();
     panel->put_notice("暂未开放此项核心任务的配置面板，敬请期待之后的更新~");
@@ -528,6 +533,8 @@ static void setup(TaskConfigPanel *panel) {
         setup(panel, std::ref(panel->config<PlayMiZongPanParam>()));
     } else if constexpr (T == MajorTask::PlayFourInRow) {
         setup(panel, std::ref(panel->config<PlayFourInRowParam>()));
+    } else if constexpr (T == MajorTask::GetFurnitureBlueprint) {
+        setup(panel, std::ref(panel->config<GetFurnitureBlueprintParam>()));
     } else if constexpr (T == MajorTask::SwitchFurnitureLayout) {
         setup(panel, std::ref(panel->config<SwitchFurnitureLayoutParam>()));
     } else if constexpr (T == MajorTask::DoResearch) {
@@ -589,6 +596,9 @@ TaskConfigPanel *TaskConfigPanel::build(Task::MajorTask task, QVariant config) {
         } break;
         case MajorTask::PlayFourInRow: {
             UI::setup<MajorTask::PlayFourInRow>(panel);
+        } break;
+        case MajorTask::GetFurnitureBlueprint: {
+            UI::setup<MajorTask::GetFurnitureBlueprint>(panel);
         } break;
         case MajorTask::SwitchFurnitureLayout: {
             UI::setup<MajorTask::SwitchFurnitureLayout>(panel);

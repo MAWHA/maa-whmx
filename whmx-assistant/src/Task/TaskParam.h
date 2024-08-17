@@ -199,6 +199,12 @@ struct PlayFourInRowParam : public PropGetter {
     DECLARE_PROPS(PlayFourInRowParam, role, mode, rounds)
 };
 
+struct GetFurnitureBlueprintParam : public PropGetter {
+    //! TODO: impl GetFurnitureBlueprint
+
+    DECLARE_PROPS(GetFurnitureBlueprintParam)
+};
+
 struct SwitchFurnitureLayoutParam : public PropGetter {
     //! TODO: impl SwitchFurnitureLayout
 
@@ -286,6 +292,7 @@ Q_DECLARE_METATYPE(Task::PlayMiZongPanParam);
 Q_DECLARE_METATYPE(Task::PlayFourInRowParam);
 Q_DECLARE_METATYPE(Task::PlayFourInRowParam::Role);
 Q_DECLARE_METATYPE(Task::PlayFourInRowParam::Mode);
+Q_DECLARE_METATYPE(Task::GetFurnitureBlueprintParam);
 Q_DECLARE_METATYPE(Task::SwitchFurnitureLayoutParam);
 Q_DECLARE_METATYPE(Task::DoResearchParam);
 Q_DECLARE_METATYPE(Task::PurchasePiecesOfPaintingParam);

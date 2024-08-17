@@ -113,6 +113,9 @@ QVariant get_default_task_param(MajorTask task) {
         case MajorTask::PlayFourInRow: {
             return QVariant::fromValue(Task::PlayFourInRowParam{});
         } break;
+        case MajorTask::GetFurnitureBlueprint: {
+            return QVariant::fromValue(Task::GetFurnitureBlueprintParam{});
+        } break;
         case MajorTask::SwitchFurnitureLayout: {
             return QVariant::fromValue(Task::SwitchFurnitureLayoutParam{});
         } break;
