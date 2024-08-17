@@ -492,6 +492,11 @@ void setup(TaskConfigPanel *panel, PurchaseDongguProductParam &param) {
     panel->put_notice("暂未开放此项核心任务的配置面板，敬请期待之后的更新~");
 }
 
+void setup(TaskConfigPanel *panel, GetDongguRewardParam &param) {
+    Q_UNIMPLEMENTED();
+    panel->put_notice("暂未开放此项核心任务的配置面板，敬请期待之后的更新~");
+}
+
 template <MajorTask T>
 static void setup(TaskConfigPanel *panel) {
     if constexpr (false) {
@@ -533,6 +538,8 @@ static void setup(TaskConfigPanel *panel) {
         setup(panel, std::ref(panel->config<PlayDongguCompetitionParam>()));
     } else if constexpr (T == MajorTask::PurchaseDongguProduct) {
         setup(panel, std::ref(panel->config<PurchaseDongguProductParam>()));
+    } else if constexpr (T == MajorTask::GetDongguReward) {
+        setup(panel, std::ref(panel->config<GetDongguRewardParam>()));
     } else {
         std::unreachable();
     }
@@ -597,6 +604,9 @@ TaskConfigPanel *TaskConfigPanel::build(Task::MajorTask task, QVariant config) {
         } break;
         case MajorTask::PurchaseDongguProduct: {
             UI::setup<MajorTask::PurchaseDongguProduct>(panel);
+        } break;
+        case MajorTask::GetDongguReward: {
+            UI::setup<MajorTask::GetDongguReward>(panel);
         } break;
         default: {
             std::unreachable();

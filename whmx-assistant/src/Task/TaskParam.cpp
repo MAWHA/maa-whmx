@@ -78,6 +78,9 @@ std::shared_ptr<PropGetter> dump_task_param_to_prop_getter(const QVariant& param
     } else if (param.typeName() == std::string_view("Task::PurchaseDongguProductParam")) {
         const auto value = param.value<Task::PurchaseDongguProductParam>();
         return std::shared_ptr<PropGetter>(new Task::PurchaseDongguProductParam(value));
+    } else if (param.typeName() == std::string_view("Task::GetDongguRewardParam")) {
+        const auto value = param.value<Task::GetDongguRewardParam>();
+        return std::shared_ptr<PropGetter>(new Task::GetDongguRewardParam(value));
     } else {
         std::unreachable();
     }

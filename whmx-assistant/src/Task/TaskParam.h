@@ -255,6 +255,12 @@ struct PurchaseDongguProductParam : public PropGetter {
     DECLARE_PROPS(PurchaseDongguProductParam, order_plan)
 };
 
+struct GetDongguRewardParam : public PropGetter {
+    //! TODO: impl GetDongguReward
+
+    DECLARE_PROPS(GetDongguRewardParam)
+};
+
 [[nodiscard]] std::shared_ptr<PropGetter> dump_task_param_to_prop_getter(const QVariant& param);
 
 } // namespace Task
@@ -287,3 +293,4 @@ Q_DECLARE_METATYPE(Task::PlayDongguCompetitionParam);
 Q_DECLARE_METATYPE(Task::PurchaseDongguProductParam);
 Q_DECLARE_METATYPE(Task::PurchaseDongguProductParam::Order);
 Q_DECLARE_METATYPE(Task::PurchaseDongguProductParam::Order::Strategy);
+Q_DECLARE_METATYPE(Task::GetDongguRewardParam);

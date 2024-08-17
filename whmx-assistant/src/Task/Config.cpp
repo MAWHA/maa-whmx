@@ -128,6 +128,9 @@ QVariant get_default_task_param(MajorTask task) {
         case MajorTask::PurchaseDongguProduct: {
             return QVariant::fromValue(Task::PurchaseDongguProductParam{});
         } break;
+        case MajorTask::GetDongguReward: {
+            return QVariant::fromValue(Task::GetDongguRewardParam{});
+        } break;
         default: {
             std::unreachable();
         } break;
