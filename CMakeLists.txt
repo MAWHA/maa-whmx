@@ -51,6 +51,11 @@ set(ELAWIDGETTOOLS_BUILD_EXAMPLE OFF)
 set(ELAWIDGETTOOLS_BUILD_STATIC_LIB OFF)
 add_subdirectory(deps/ElaWidgetTools)
 
+set(QWINDOWKIT_INSTALL OFF)
+set(QWINDOWKIT_BUILD_STATIC ON)
+set(QWINDOWKIT_BUILD_EXAMPLES OFF)
+add_subdirectory(deps/qwindowkit)
+
 add_subdirectory(deps/spdlog)
 add_subdirectory(deps/FileLocksmithLibInterop)
 add_subdirectory(deps/qt-material-widgets)

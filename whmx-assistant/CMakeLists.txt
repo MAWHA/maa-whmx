@@ -30,6 +30,8 @@ PRIVATE
     Logger.cpp
     Logger.h
     MacroHelper.h
+    Platform.h
+    Platform/windows.cpp
     Task/TaskGraph.cpp
     Task/TaskGraph.h
     Task/MajorTask.cpp
@@ -73,6 +75,12 @@ PRIVATE
     UI/Client.h
     UI/Notification.cpp
     UI/Notification.h
+    UI/PropertyHelper.h
+    UI/TitleBar.cpp
+    UI/TitleBar.h
+    App.cpp
+    App.h
+    AppEvent.h
     Action/Research.cpp
     Action/Research.h
     Action/FourInRow.cpp
@@ -99,6 +107,7 @@ PRIVATE
     magic_enum::magic_enum
     ElaWidgetTools::ElaWidgetTools
     spdlog::spdlog
+    QWindowKit::Widgets
     desktop-app::Qt6
     desktop-app::qt-material-widgets
 )

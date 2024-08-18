@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>logo.png</file>
         <file>icons/settings.png</file>
         <file>icons/settings-hover.png</file>
         <file>icons/arrow-down.png</file>

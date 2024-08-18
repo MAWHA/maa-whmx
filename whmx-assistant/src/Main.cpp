@@ -14,52 +14,7 @@
 */
 
 #include "Consts.h"
-#include "Logger.h"
-#include "Task/Router.h"
-#include "UI/Client.h"
-
-#include <MaaPP/MaaPP.hpp>
-#include <QtWidgets/QApplication>
-#include <QtCore/QThread>
-#include <ElaApplication.h>
-
-class MaaWorker : public QThread {
-public:
-    MaaWorker(std::shared_ptr<maa::coro::EventLoop> ev, QObject *parent)
-        : QThread(parent)
-        , ev_(ev) {}
-
-    void run() override {
-        ev_->exec();
-    }
-
-private:
-    std::shared_ptr<maa::coro::EventLoop> ev_;
-};
-
-class WhmxAssistant : public QApplication {
-public:
-    WhmxAssistant(int &argc, char **argv)
-        : QApplication(argc, argv)
-        , default_maa_event_loop_(std::make_shared<maa::coro::EventLoop>())
-        , maa_worker_(new MaaWorker(default_maa_event_loop_, this)) {
-        setPalette(style()->standardPalette());
-
-        ElaApplication::getInstance()->init();
-        GlobalLoggerProxy::setup();
-        Task::Router::setup();
-
-        connect(this, &QApplication::aboutToQuit, this, [this] {
-            default_maa_event_loop_->stop();
-        });
-
-        maa_worker_->start();
-    }
-
-private:
-    std::shared_ptr<maa::coro::EventLoop> default_maa_event_loop_;
-    QThread                              *maa_worker_;
-};
+#include "App.h"
 
 int main(int argc, char *argv[]) {
     WhmxAssistant app(argc, argv);
@@ -69,9 +24,9 @@ int main(int argc, char *argv[]) {
     QApplication::setApplicationName("whmx-assistant");
     QApplication::setApplicationDisplayName("物华弥新小助手");
     QApplication::setApplicationVersion(QString::fromUtf8(Consts::VERSION));
+    QApplication::setWindowIcon(QIcon(":/logo.png"));
 
-    auto client = std::make_shared<UI::Client>();
-    client->show();
+    app.create_or_wakeup_client();
 
     return app.exec();
 }
