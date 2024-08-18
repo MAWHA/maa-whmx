@@ -26,6 +26,18 @@ void ElidedLabel::set_elide_mode(Qt::TextElideMode elide_mode) {
     update();
 }
 
+void ElidedLabel::set_font_pixel_size(int pixel_size) {
+    auto font = this->font();
+    font.setPixelSize(pixel_size);
+    setFont(font);
+}
+
+void ElidedLabel::set_font_point_size(int point_size) {
+    auto font = this->font();
+    font.setPointSize(point_size);
+    setFont(font);
+}
+
 void ElidedLabel::refresh_elided_text() {
     const auto raw_text = text();
     if (cached_text_ == raw_text) { return; }
@@ -58,6 +70,27 @@ void ElidedLabel::paintEvent(QPaintEvent *event) {
 void ElidedLabel::resizeEvent(QResizeEvent *event) {
     QLabel::resizeEvent(event);
     cached_text_.clear();
+}
+
+bool ElidedLabel::event(QEvent *event) {
+    if (!parent()) { return QWidget::event(event); }
+    switch (event->type()) {
+        case QEvent::ParentChange: {
+            parent()->installEventFilter(this);
+            refresh_elided_text();
+        } break;
+        case QEvent::ParentAboutToChange: {
+            parent()->removeEventFilter(this);
+        } break;
+        default: {
+        } break;
+    }
+    return QWidget::event(event);
+}
+
+bool ElidedLabel::eventFilter(QObject *watched, QEvent *event) {
+    if (watched == parent() && event->type() == QEvent::Resize) { refresh_elided_text(); }
+    return QWidget::eventFilter(watched, event);
 }
 
 } // namespace UI

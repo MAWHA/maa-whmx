@@ -24,6 +24,8 @@ class ElidedLabel : public QLabel {
 
 public:
     void set_elide_mode(Qt::TextElideMode elide_mode);
+    void set_font_pixel_size(int pixel_size);
+    void set_font_point_size(int point_size);
 
 protected:
     void refresh_elided_text();
@@ -35,6 +37,8 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    bool event(QEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     Qt::TextElideMode elide_mode_;

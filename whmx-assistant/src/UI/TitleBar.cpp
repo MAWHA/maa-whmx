@@ -14,6 +14,7 @@
 */
 
 #include "TitleBar.h"
+#include "ElidedLabel.h"
 
 #include <QtWidgets/QApplication>
 
@@ -28,7 +29,7 @@ TitleBar::TitleBar(QWidget *parent)
 }
 
 void TitleBar::setup() {
-    auto ui_title_                 = new ElaText;
+    auto ui_title_                 = new ElidedLabel;
     auto ui_icon_                  = new QLabel;
     ui_minimize_                   = new ElaIconButton(ElaIconType::Dash, 12, 50, 30);
     ui_maximize_                   = new ElaIconButton(ElaIconType::Square, 13, 50, 30);
@@ -36,7 +37,7 @@ void TitleBar::setup() {
     auto ui_tool_button_container_ = new QWidget;
     ui_tool_button_layout_         = new QHBoxLayout(ui_tool_button_container_);
 
-    ui_title_->setTextPixelSize(13);
+    ui_title_->set_font_pixel_size(13);
     ui_minimize_->setLightHoverColor("#e9e9f0");
     ui_maximize_->setLightHoverColor("#e9e9f0");
     ui_close_->setLightHoverColor("#c42b1c");
