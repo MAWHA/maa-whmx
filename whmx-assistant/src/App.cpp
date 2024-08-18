@@ -108,13 +108,11 @@ void WhmxAssistant::create_or_wakeup_client() {
     connect(gApp->app_event(), &AppEvent::on_minimize, client, &QWidget::showMinimized);
     connect(gApp->app_event(), &AppEvent::on_maximize, client, &QWidget::showMaximized);
     connect(gApp->app_event(), &AppEvent::on_restore, client, &QWidget::showNormal);
-    connect(gApp->app_event(), &AppEvent::on_close, gApp, [=] {
-        client->close();
-        emit gApp->app_event()->on_exit();
-    });
+    connect(gApp->app_event(), &AppEvent::on_close, client, &QWidget::close);
     connect(gApp->app_event(), &AppEvent::on_set_window_top, this, [=](bool on) {
         Platform::set_window_top_most(reinterpret_cast<void *>(client->window()->winId()), on);
     });
+    connect(gApp, &QApplication::lastWindowClosed, gApp->app_event(), &AppEvent::on_exit);
     connect(gApp->app_event(), &AppEvent::on_exit, gApp, &QApplication::quit);
 
     client->show();
