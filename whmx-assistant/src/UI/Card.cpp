@@ -156,6 +156,11 @@ void Card::paintEvent(QPaintEvent* event) {
         const int   max_brief_bottom = pix_bb.bottom();
         const int   spacing          = fm.lineSpacing();
         QTextLayout text_layout(brief_text, p.font());
+        {
+            auto opt = text_layout.textOption();
+            opt.setWrapMode(QTextOption::WrapAnywhere);
+            text_layout.setTextOption(opt);
+        }
         text_layout.beginLayout();
         while (true) {
             auto line = text_layout.createLine();
