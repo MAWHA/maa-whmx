@@ -19,7 +19,6 @@
 
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QHBoxLayout>
-#include <ElaText.h>
 #include <ElaIconButton.h>
 
 namespace UI {

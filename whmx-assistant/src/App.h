@@ -33,8 +33,13 @@ public:
         return app_event_;
     }
 
+    QWidget *window() const {
+        return client_;
+    }
+
 private:
     std::shared_ptr<maa::coro::EventLoop> default_maa_event_loop_;
     QThread                              *maa_worker_ = nullptr;
     AppEvent                             *app_event_  = nullptr;
+    QWidget                              *client_     = nullptr;
 };

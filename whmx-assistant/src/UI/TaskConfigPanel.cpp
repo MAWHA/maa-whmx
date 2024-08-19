@@ -644,16 +644,16 @@ void TaskConfigPanel::append_config_item(const QString &name, const QString &des
     layout->addWidget(desc_container);
     layout->addWidget(widget);
     {
-        if (ui_layout_->count() > 2) {
-            auto sep = new QFrame;
-            sep->setFrameShape(QFrame::HLine);
-            {
-                auto pal = sep->palette();
-                pal.setColor(QPalette::WindowText, QColor(230, 230, 230));
-                sep->setPalette(pal);
-            }
-            ui_layout_->insertWidget(ui_layout_->count() - 1, sep);
-        }
+        // if (ui_layout_->count() > 2) {
+        //     auto sep = new QFrame;
+        //     sep->setFrameShape(QFrame::HLine);
+        //     {
+        //         auto pal = sep->palette();
+        //         pal.setColor(QPalette::WindowText, QColor(230, 230, 230));
+        //         sep->setPalette(pal);
+        //     }
+        //     ui_layout_->insertWidget(ui_layout_->count() - 1, sep);
+        // }
         ui_layout_->insertWidget(ui_layout_->count() - 1, container);
     }
 }
@@ -684,7 +684,8 @@ TaskConfigPanel::TaskConfigPanel(Task::MajorTask task, QVariant config)
 void TaskConfigPanel::setup() {
     auto container = new QWidget;
     ui_layout_     = new QVBoxLayout(container);
-    ui_layout_->setContentsMargins(54, 0, 54, 0);
+    // ui_layout_->setContentsMargins(54, 0, 54, 0);
+    ui_layout_->setSpacing(12);
     ui_layout_->addSpacing(24);
     ui_layout_->addStretch();
 

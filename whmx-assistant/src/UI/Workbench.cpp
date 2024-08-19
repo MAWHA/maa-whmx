@@ -18,6 +18,7 @@
 #include "CheckableItem.h"
 #include "Helper.h"
 #include "Notification.h"
+#include "../App.h"
 #include "../Logger.h"
 #include "../Task/MajorTask.h"
 
@@ -51,6 +52,7 @@ void Workbench::accept_maa_instance(std::shared_ptr<maa::Instance> instance) {
     if (instance_) { LOG_INFO() << "override current exisiting maa instance"; }
     instance_ = instance;
     LOG_INFO() << "workbench: accepted maa instance";
+    LOG_INFO(Workstation) << "设备连接成功";
 }
 
 void Workbench::set_list_item_widget_checked(QListWidgetItem *item, bool on) {
@@ -560,6 +562,17 @@ void Workbench::setup() {
     connect(ui_major_tasks_select_all_, &QAbstractButton::toggled, this, &Workbench::handle_on_toggle_major_tasks_select_all);
     connect(ui_custom_tasks_select_all_, &QAbstractButton::toggled, this, &Workbench::handle_on_toggle_custom_tasks_select_all);
     connect(this, &Workbench::on_push_tasks, this, &Workbench::push_selected_tasks_to_queue);
+
+    const auto event = gApp->app_event();
+    connect(this, &Workbench::on_reload_assets, event, &AppEvent::workbench_on_reload_assets);
+    connect(this, &Workbench::on_open_maa_log_file, event, &AppEvent::workbench_on_open_maa_log_file);
+    connect(this, &Workbench::on_open_app_log_file, event, &AppEvent::workbench_on_open_app_log_file);
+    connect(this, &Workbench::on_post_queued_task, event, &AppEvent::workbench_on_post_queued_task);
+    connect(this, &Workbench::on_request_open_task_config_panel, event, &AppEvent::workbench_on_request_open_task_config_panel);
+    connect(event, &AppEvent::workbench_on_notify_queued_task_accepted, this, &Workbench::notify_queued_task_accepted);
+    connect(event, &AppEvent::workbench_on_notify_queued_task_finished, this, &Workbench::notify_queued_task_finished);
+    connect(event, &AppEvent::workbench_on_reload_pipeline_tasks, this, &Workbench::reload_pipeline_tasks);
+    connect(event, &AppEvent::workbench_on_accept_maa_instance, this, &Workbench::accept_maa_instance);
 }
 
 } // namespace UI

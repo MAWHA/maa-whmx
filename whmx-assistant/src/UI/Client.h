@@ -16,8 +16,6 @@
 #pragma once
 
 #include "DeviceConn.h"
-#include "Workbench.h"
-#include "Settings.h"
 #include "../Task/TaskGraph.h"
 #include "../Task/Config.h"
 #include "../Task/Router.h"
@@ -29,7 +27,7 @@
 
 namespace UI {
 
-class Client : public QTabWidget {
+class Client : public QObject {
     Q_OBJECT
 
 public:
@@ -88,7 +86,7 @@ protected:
     void config_maa();
 
 public slots:
-    void open_task_config_panel(Task::MajorTask task);
+    void create_task_config_panel(Task::MajorTask task);
 
     void handle_on_reload_assets();
     void handle_on_open_log_file(LogFileType type);
@@ -109,15 +107,13 @@ protected slots:
     void handle_on_sync_res_dir_done(int maa_status);
     void handle_on_request_connect_device(MaaAdbDevice device);
     void handle_on_create_and_init_instance();
-    void handle_on_leave_task_config_panel();
-    void handle_on_switch_tab(int index);
 
 signals:
     void on_sync_res_dir_done(int maa_status);
     void on_request_connect_device_done(int maa_status);
 
 public:
-    Client(const QString &user_path = ".", QWidget *parent = nullptr);
+    Client(const QString &user_path = ".", QObject *parent = nullptr);
     ~Client() override;
 
 protected:
@@ -134,9 +130,6 @@ private:
     std::shared_ptr<maa::Instance>   maa_instance_;
     maa::coro::Promise<void>         fut_res_req_path_;
     maa::coro::Promise<void>         fut_ctrl_req_conn_;
-    DeviceConn                      *ui_device_conn_ = nullptr;
-    Workbench                       *ui_workbench_   = nullptr;
-    Settings                        *ui_settings_    = nullptr;
 };
 
 } // namespace UI

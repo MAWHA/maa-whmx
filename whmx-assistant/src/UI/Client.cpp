@@ -14,8 +14,9 @@
 */
 
 #include "Client.h"
-#include "TaskConfigPanel.h"
 #include "Notification.h"
+#include "TaskConfigPanel.h"
+#include "../App.h"
 #include "../Logger.h"
 #include "../Rec/Research.h"
 #include "../Rec/Utils.h"
@@ -135,7 +136,7 @@ void Client::config_maa() {
     handle_on_reload_assets();
 }
 
-void Client::open_task_config_panel(Task::MajorTask task) {
+void Client::create_task_config_panel(Task::MajorTask task) {
     const auto task_info = Task::get_task_info(task);
     if (!task_info.has_config) {
         LOG_ERROR() << "try to open config panel for task" << magic_enum::enum_name(task) << "which has no config";
@@ -146,13 +147,14 @@ void Client::open_task_config_panel(Task::MajorTask task) {
         params.insert(task, Task::get_default_task_param(task));
     }
 
-    auto panel = TaskConfigPanel::build(task, task_config_->task_params.value(task));
-    addTab(panel, QString("核心任务配置·%1").arg(task_info.name));
-    setCurrentIndex(count() - 1);
+    auto       panel = TaskConfigPanel::build(task, task_config_->task_params.value(task));
+    const auto title = QString("核心任务配置·%1").arg(task_info.name);
 
     connect(panel, &TaskConfigPanel::on_config_change, [this](Task::MajorTask task, QVariant config) {
         task_config_->task_params[task] = config;
     });
+
+    emit gApp->app_event()->on_open_task_config_panel(title, panel);
 }
 
 void Client::handle_on_reload_assets() {
@@ -179,7 +181,7 @@ void Client::handle_on_open_log_file(LogFileType type) {
 
     const QDir log_dir(this->log_dir());
     if (!log_dir.exists(log_file)) {
-        Notification::info(this, "打开日志", "日志文件暂未建立，请稍后再试");
+        Notification::info(gApp->window(), "打开日志", "日志文件暂未建立，请稍后再试");
         return;
     }
 
@@ -194,14 +196,14 @@ void Client::handle_on_sync_res_dir_done(int maa_status) {
         LOG_INFO() << "sync res dir successfully";
         LOG_INFO().noquote() << "found" << maa_res_->task_list()->size() << "tasks under" << assets_dir();
         QStringList major_tasks_bindings(task_config_->task_entries.values());
-        ui_workbench_->reload_pipeline_tasks(task_graph_->find_left_root_tasks(major_tasks_bindings));
+        emit gApp->app_event()->workbench_on_reload_pipeline_tasks(task_graph_->find_left_root_tasks(major_tasks_bindings));
     }
 }
 
 void Client::execute_pipeline_task(QString task_id, QVariant task) {
     Q_ASSERT(maa_instance_ && maa_instance_->inited());
 
-    ui_workbench_->notify_queued_task_accepted(task_id);
+    emit gApp->app_event()->workbench_on_notify_queued_task_accepted(task_id);
 
     if (const QString type_name = task.typeName(); type_name == "Task::MajorTask") {
         execute_major_task(task_id, task.value<Task::MajorTask>());
@@ -225,8 +227,7 @@ void Client::execute_major_task(const QString &task_id, Task::MajorTask task) {
             });
             const auto status = instance()->post_task(task_entry.toUtf8().toStdString())->wait().sync_wait();
             flag->store(true);
-            QMetaObject::invokeMethod(
-                ui_workbench_, "notify_queued_task_finished", Qt::AutoConnection, Q_ARG(QString, task_id), Q_ARG(int, status));
+            emit gApp->app_event()->workbench_on_notify_queued_task_finished(task_id, status);
         });
     } else if (task_router_->contains_route_of(task)) {
         coro::EventLoop::current()->eval([this, task, task_id, route = task_router_->route(task), major_task_name] {
@@ -244,10 +245,10 @@ void Client::execute_major_task(const QString &task_id, Task::MajorTask task) {
                 LOG_TRACE().noquote() << "start route of" << task_id;
                 auto step_index = std::make_shared<int>(0);
                 while (route->has_next()) {
-                    if (ui_workbench_->pipeline_state().is_idle()) {
-                        status = MaaStatus_Success;
-                        break;
-                    }
+                    // if (ui_workbench_->pipeline_state().is_idle()) {
+                    //     status = MaaStatus_Success;
+                    //     break;
+                    // }
                     const auto opt_task = route->next();
                     if (!opt_task.has_value()) {
                         status = MaaStatus_Failed;
@@ -272,14 +273,13 @@ void Client::execute_major_task(const QString &task_id, Task::MajorTask task) {
                 }
             } while (0);
             if (status == MaaStatus_Invalid) { status = MaaStatus_Success; }
-            QMetaObject::invokeMethod(
-                ui_workbench_, "notify_queued_task_finished", Qt::AutoConnection, Q_ARG(QString, task_id), Q_ARG(int, status));
+            emit gApp->app_event()->workbench_on_notify_queued_task_finished(task_id, status);
         });
     } else {
         LOG_WARN().noquote() << "failed to execute task" << task_id << ": task entry not found for major task"
                              << magic_enum::enum_name(task);
         LOG_WARN(Workstation).noquote() << QString("未找到 %1 的任务绑定，已跳过").arg(major_task_name);
-        ui_workbench_->notify_queued_task_finished(task_id, MaaStatus_Invalid);
+        emit gApp->app_event()->workbench_on_notify_queued_task_finished(task_id, MaaStatus_Invalid);
     }
 }
 
@@ -292,14 +292,13 @@ void Client::execute_custom_task(const QString &task_id, const QString &task_nam
         });
         const auto status = instance()->post_task(task_entry.toUtf8().toStdString())->wait().sync_wait();
         flag->store(true);
-        QMetaObject::invokeMethod(
-            ui_workbench_, "notify_queued_task_finished", Qt::AutoConnection, Q_ARG(QString, task_id), Q_ARG(int, status));
+        emit gApp->app_event()->workbench_on_notify_queued_task_finished(task_id, status);
     });
 }
 
 void Client::handle_on_request_connect_device(MaaAdbDevice device) {
     if (maa_ctrl_ && maa_instance_ && maa_instance_->inited()) {
-        Notification::warning(this, "设备连接", "不支持多设备连接，已取消该次连接请求");
+        Notification::warning(gApp->window(), "设备连接", "不支持多设备连接，已取消该次连接请求");
         emit on_request_connect_device_done(MaaStatus_Failed);
     } else if (maa_ctrl_) {
         LOG_INFO() << "device alreay connected, retry init maa instance";
@@ -351,25 +350,11 @@ void Client::handle_on_create_and_init_instance() {
     maa_instance_->bind<Action::SolveFourInRow>();
     maa_instance_->bind<Action::Combat::FillSquad>();
     LOG_INFO() << "maa instance created and initialized";
-    ui_workbench_->accept_maa_instance(maa_instance_);
-    LOG_INFO(Workstation) << "设备连接成功";
+    emit gApp->app_event()->workbench_on_accept_maa_instance(maa_instance_);
 }
 
-void Client::handle_on_leave_task_config_panel() {
-    const int confg_panel_index = count() - 1;
-    Q_ASSERT(tabText(confg_panel_index).startsWith("核心任务配置"));
-    auto panel = widget(confg_panel_index);
-    removeTab(confg_panel_index);
-    panel->deleteLater();
-}
-
-void Client::handle_on_switch_tab(int index) {
-    const int last_tab = count() - 1;
-    if (index != last_tab && tabText(last_tab).startsWith("核心任务配置")) { handle_on_leave_task_config_panel(); }
-}
-
-Client::Client(const QString &user_path, QWidget *parent)
-    : QTabWidget(parent)
+Client::Client(const QString &user_path, QObject *parent)
+    : QObject(parent)
     , user_path_(QDir::isAbsolutePath(user_path) ? user_path : app_dir() + "/" + user_path)
     , task_config_(std::make_shared<Task::Config>())
     , task_graph_(std::make_shared<Task::TaskGraph>())
@@ -385,33 +370,16 @@ Client::~Client() {
 }
 
 void Client::setup() {
-    ui_workbench_   = new Workbench;
-    ui_device_conn_ = new DeviceConn;
-    ui_settings_    = new Settings;
+    const auto event = gApp->app_event();
 
-    addTab(ui_device_conn_, "设备连接");
-    addTab(ui_workbench_, "工作台");
-    addTab(ui_settings_, "设置");
-
-    setCurrentIndex(1);
-
-    setMinimumSize(600, 400);
-    setContentsMargins({});
-    {
-        auto pal = palette();
-        pal.setColor(backgroundRole(), Qt::white);
-        setPalette(pal);
-    }
-
-    connect(ui_device_conn_, &DeviceConn::on_request_connect_device, this, &Client::handle_on_request_connect_device);
-    connect(this, &Client::on_request_connect_device_done, ui_device_conn_, &DeviceConn::handle_on_request_connect_device_done);
-    connect(ui_workbench_, &Workbench::on_reload_assets, this, &Client::handle_on_reload_assets);
-    connect(ui_workbench_, &Workbench::on_open_maa_log_file, this, &Client::handle_on_open_maa_log_file);
-    connect(ui_workbench_, &Workbench::on_open_app_log_file, this, &Client::handle_on_open_app_log_file);
     connect(this, &Client::on_sync_res_dir_done, this, &Client::handle_on_sync_res_dir_done);
-    connect(ui_workbench_, &Workbench::on_post_queued_task, this, &Client::execute_pipeline_task);
-    connect(ui_workbench_, &Workbench::on_request_open_task_config_panel, this, &Client::open_task_config_panel);
-    connect(this, &Client::currentChanged, this, &Client::handle_on_switch_tab);
+    connect(this, &Client::on_request_connect_device_done, event, &AppEvent::device_conn_on_request_connect_device_done);
+    connect(event, &AppEvent::client_on_request_connect_device, this, &Client::handle_on_request_connect_device);
+    connect(event, &AppEvent::workbench_on_reload_assets, this, &Client::handle_on_reload_assets);
+    connect(event, &AppEvent::workbench_on_open_maa_log_file, this, &Client::handle_on_open_maa_log_file);
+    connect(event, &AppEvent::workbench_on_open_app_log_file, this, &Client::handle_on_open_app_log_file);
+    connect(event, &AppEvent::workbench_on_post_queued_task, this, &Client::execute_pipeline_task);
+    connect(event, &AppEvent::workbench_on_request_open_task_config_panel, this, &Client::create_task_config_panel);
 }
 
 } // namespace UI

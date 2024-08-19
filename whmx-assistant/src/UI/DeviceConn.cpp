@@ -16,6 +16,7 @@
 #include "DeviceConn.h"
 #include "Helper.h"
 #include "Notification.h"
+#include "../App.h"
 #include "../Logger.h"
 #include "../DeviceHelper.h"
 
@@ -434,6 +435,9 @@ void DeviceConn::setup() {
         layout->addWidget(make_titled_widget("当前设备", device_status_area));
     }
 
+    auto event = gApp->app_event();
+
+    connect(this, &DeviceConn::on_request_connect_device, event, &AppEvent::client_on_request_connect_device);
     connect(ui_detect_devices_, &FlatButton::pressed, this, &DeviceConn::request_list_devices);
     connect(ui_connect_, &FlatButton::pressed, this, &DeviceConn::post_connect_request);
     connect(this, &DeviceConn::on_list_devices_done, this, &DeviceConn::handle_on_list_devices_done);
@@ -441,6 +445,8 @@ void DeviceConn::setup() {
     connect(ui_add_device_, &FlatButton::pressed, this, &DeviceConn::handle_on_add_local_device);
     connect(ui_select_device_, &FlatButton::pressed, this, &DeviceConn::handle_on_select_local_device);
     connect(ui_devices_, &QComboBox::currentIndexChanged, this, &DeviceConn::handle_on_selected_device_changed);
+    connect(
+        event, &AppEvent::device_conn_on_request_connect_device_done, this, &DeviceConn::handle_on_request_connect_device_done);
 }
 
 } // namespace UI

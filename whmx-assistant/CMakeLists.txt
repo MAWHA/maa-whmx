@@ -43,6 +43,14 @@ PRIVATE
     Task/PropGetter.h
     Task/Router.cpp
     Task/Router.h
+    UI/NavBar.cpp
+    UI/NavBar.h
+    UI/NavItemDelegate.cpp
+    UI/NavItemDelegate.h
+    UI/NavModel.cpp
+    UI/NavModel.h
+    UI/NavNode.cpp
+    UI/NavNode.h
     UI/Helper.cpp
     UI/Helper.h
     UI/ClickableLabel.cpp
@@ -75,6 +83,8 @@ PRIVATE
     UI/Client.h
     UI/Notification.cpp
     UI/Notification.h
+    UI/Card.cpp
+    UI/Card.h
     UI/PropertyHelper.h
     UI/TitleBar.cpp
     UI/TitleBar.h
