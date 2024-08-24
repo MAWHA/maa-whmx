@@ -16,23 +16,32 @@
 #include "Notification.h"
 
 #include <ElaMessageBar.h>
+#include <QMetaObject>
 
 namespace UI {
 
 void Notification::info(QWidget *parent, const QString &title, const QString &msg) {
-    ElaMessageBar::information(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
+    QMetaObject::invokeMethod(parent->topLevelWidget(), [=] {
+        ElaMessageBar::information(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
+    });
 }
 
 void Notification::warning(QWidget *parent, const QString &title, const QString &msg) {
-    ElaMessageBar::warning(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
+    QMetaObject::invokeMethod(parent->topLevelWidget(), [=] {
+        ElaMessageBar::warning(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
+    });
 }
 
 void Notification::success(QWidget *parent, const QString &title, const QString &msg) {
-    ElaMessageBar::success(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
+    QMetaObject::invokeMethod(parent->topLevelWidget(), [=] {
+        ElaMessageBar::success(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
+    });
 }
 
 void Notification::error(QWidget *parent, const QString &title, const QString &msg) {
-    ElaMessageBar::error(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
+    QMetaObject::invokeMethod(parent->topLevelWidget(), [=] {
+        ElaMessageBar::error(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
+    });
 }
 
 } // namespace UI
