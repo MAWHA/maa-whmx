@@ -8,7 +8,7 @@ function(file_copy_target target_name)
         file(GLOB_RECURSE SRC_LIST CONFIGURE_DEPENDS "${ARG_SRC_DIR}/${ITEM}")
         list(APPEND FILE_INPUT_LIST ${SRC_LIST})
     endforeach()
-    
+
     set(FILE_OUTPUT_LIST "")
     foreach(ITEM ${FILE_INPUT_LIST})
         string(REPLACE "${ARG_SRC_DIR}" "${ARG_DST_DIR}" ITEM_TARGET ${ITEM})
@@ -18,15 +18,17 @@ function(file_copy_target target_name)
         cmake_path(CONVERT ${ITEM_TARGET} TO_NATIVE_PATH_LIST ITEM_OUTPUT)
 
         add_custom_command(
-            OUTPUT ${ITEM_TARGET}
-            COMMAND copy ${ITEM_INPUT} ${ITEM_OUTPUT}
-            DEPENDS ${ITEM}
-            COMMENT "Copying ${ARG_MSG_NAME}: ${ITEM}"
-            VERBATIM)
+        OUTPUT ${ITEM_TARGET}
+        COMMAND ${CMAKE_COMMAND} -E copy ${ITEM_INPUT} ${ITEM_OUTPUT}
+        DEPENDS ${ITEM}
+        COMMENT "Copying ${ARG_MSG_NAME}: ${ITEM}"
+        VERBATIM
+        )
     endforeach()
 
     add_custom_target(${target_name}
-        DEPENDS ${FILE_OUTPUT_LIST}
-        COMMENT "Copy ${ARG_MSG_NAME}"
-        VERBATIM)
+    DEPENDS ${FILE_OUTPUT_LIST}
+    COMMENT "Copy ${ARG_MSG_NAME}"
+    VERBATIM
+    )
 endfunction()
