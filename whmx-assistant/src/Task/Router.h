@@ -122,6 +122,10 @@ public:
         return state_;
     }
 
+    int next_stage() const {
+        return pipeline_stage_;
+    }
+
     bool                start();
     void                stop();
     int                 total_stages() const;

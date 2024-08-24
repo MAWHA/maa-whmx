@@ -254,12 +254,14 @@ void Client::execute_major_task(const QString &task_id, Task::MajorTask task) {
                         status = MaaStatus_Failed;
                         break;
                     }
+                    //! NOTE: not exactly correspoding to the real pipeline stage
+                    ++*step_index;
                     const auto task       = opt_task.value();
                     const auto task_entry = task.task_entry.toUtf8().toStdString();
                     LOG_TRACE().noquote() << "execute task" << task_entry << "with params"
                                           << QString::fromUtf8(task.params.to_string());
                     LOG_INFO(Workstation).noquote()
-                        << QString("• 步骤 %1 - %2").arg(++*step_index).arg(QString::fromUtf8(task_entry));
+                        << QString("• 步骤 %1 - %2").arg(route->next_stage()).arg(QString::fromUtf8(task_entry));
                     QTimer::singleShot(6e+4 * 5, [expected = *step_index, step_index] {
                         if (expected == *step_index) {
                             LOG_WARN(Workstation).noquote() << "超时预警，请检查任务是否进入死循环";
