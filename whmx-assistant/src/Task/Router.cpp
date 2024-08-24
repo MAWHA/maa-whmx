@@ -409,9 +409,9 @@ std::optional<QString> RouteContext::var(const QString &name) const {
     }
 }
 
-void RouteContext::update_var(const QString &name, const QString &value) const {
-    const auto var_id   = to_varid(name);
-    local_vars_[var_id] = value;
+void RouteContext::update_var(const QString &name, const QString &value) {
+    const auto var_id = to_varid(name);
+    local_vars_.insert(var_id, value);
 }
 
 void RouteContext::execute_internal_action(const QString &action, const QStringList &args) {

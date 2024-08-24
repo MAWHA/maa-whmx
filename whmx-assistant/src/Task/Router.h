@@ -126,7 +126,7 @@ public:
     std::optional<Task> next();
 
     std::optional<QString> var(const QString &name) const;
-    void                   update_var(const QString &name, const QString &value) const;
+    void                   update_var(const QString &name, const QString &value);
 
 protected:
     QString to_varid(const QString &name) const {
