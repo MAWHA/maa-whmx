@@ -112,6 +112,9 @@ public:
 public:
     RouteContext(std::shared_ptr<Router> router, MajorTask major_task);
 
+    Prop    prop(const QString &name) const;
+    QString merge_props(const QString &text);
+
     bool test_condition(const Condition &condition);
     bool test_condition(const QString &op, const Prop &prop, const QVariant &operand);
 

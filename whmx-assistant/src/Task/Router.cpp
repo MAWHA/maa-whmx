@@ -283,16 +283,53 @@ RouteContext::RouteContext(std::shared_ptr<Router> router, MajorTask major_task)
     , selected_pipeline_index_(-1)
     , pipeline_stage_(-1) {}
 
-bool RouteContext::test_condition(const Condition &condition) {
+Prop RouteContext::prop(const QString &name) const {
     const auto props = router_->major_task_config(major_task_);
     Prop       prop;
-    LOG_TRACE().nospace() << "test condition: { key: " << condition.key << ", op: " << condition.op
-                          << ", operand: " << condition.operand << " }";
-    if (props->contains(condition.key)) {
-        prop = props->value(condition.key);
-    } else if (const auto opt_var = var(condition.key)) {
+    if (props->contains(name)) {
+        prop = props->value(name);
+    } else if (const auto opt_var = var(name)) {
         prop = opt_var.value();
     }
+    return prop;
+}
+
+QString RouteContext::merge_props(const QString &text) {
+    const auto               pattern = R"(\$\{\{ *(\S+) *\}\})";
+    const QRegularExpression re(pattern);
+
+    QString merged;
+    int     last_pos = 0;
+    for (const auto match : re.globalMatch(text)) {
+        merged          += text.mid(last_pos, match.capturedStart() - last_pos);
+        const auto key   = match.captured(1);
+        const auto prop  = this->prop(key);
+        QString    replaced;
+        if (false) {
+        } else if (prop.type_id() == QMetaType::QString) {
+            replaced = prop.to_string();
+        } else if (prop.type_id() == QMetaType::Int) {
+            replaced = QString::number(prop.to_int());
+        } else if (prop.type_id() == QMetaType::Bool) {
+            replaced = prop.to_bool() ? "true" : "false";
+        } else if (prop.type_id() == QMetaType::Double) {
+            replaced = QString::number(prop.to_double());
+        } else {
+            replaced = match.captured();
+        }
+        merged   += replaced;
+        last_pos  = match.capturedEnd();
+    }
+    merged += text.mid(last_pos);
+
+    return merged;
+}
+
+bool RouteContext::test_condition(const Condition &condition) {
+    const auto props = router_->major_task_config(major_task_);
+    LOG_TRACE().nospace() << "test condition: { key: " << condition.key << ", op: " << condition.op
+                          << ", operand: " << condition.operand << " }";
+    const auto prop = this->prop(condition.key);
     if (prop.is_null()) { return false; }
     return test_condition(condition.op, prop, condition.operand);
 }
@@ -372,9 +409,15 @@ std::optional<RouteContext::Task> RouteContext::next() {
             }
             if (state_ != State::Running) { break; }
             if (target_task.task_entry.has_value()) {
-                const auto  &task_name           = target_task.task_entry.value();
-                const auto   origin_params       = router_->origin_task_params(task_name);
-                const auto  &opt_override_params = target_task.override_task_params;
+                const auto &task_name     = target_task.task_entry.value();
+                const auto  origin_params = router_->origin_task_params(task_name);
+
+                std::optional<json::object> opt_override_params = std::nullopt;
+                if (const auto opt = target_task.override_task_params) {
+                    const auto merged   = merge_props(QString::fromUtf8(opt.value().to_string()));
+                    opt_override_params = std::make_optional<json::object>(json::parse(merged.toStdString()).value_or(*opt));
+                }
+
                 json::object entry_task_params;
                 bool         has_unfolded_param_for_entry_task = false;
                 if (target_task.fold_params) {
@@ -385,6 +428,7 @@ std::optional<RouteContext::Task> RouteContext::next() {
                 } else {
                     entry_task_params = origin_params;
                 }
+
                 json::object task_params{
                     {task_name.toStdString(), entry_task_params},
                 };
