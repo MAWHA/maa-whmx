@@ -42,6 +42,8 @@ message(STATUS "Vcpkg debug library directory: ${VCPKG_DEBUG_LIBRARY_DIR}")
 
 set(OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin")
 
+find_package(spdlog CONFIG REQUIRED)
+
 set(MAGIC_ENUM_OPT_BUILD_EXAMPLES OFF)
 set(MAGIC_ENUM_OPT_BUILD_TESTS OFF)
 set(MAGIC_ENUM_OPT_INSTALL OFF)
@@ -56,7 +58,6 @@ set(QWINDOWKIT_BUILD_STATIC ON)
 set(QWINDOWKIT_BUILD_EXAMPLES OFF)
 add_subdirectory(deps/qwindowkit)
 
-add_subdirectory(deps/spdlog)
 add_subdirectory(deps/FileLocksmithLibInterop)
 add_subdirectory(deps/qt-material-widgets)
 add_subdirectory(whmx-assistant)

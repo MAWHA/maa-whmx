@@ -10,9 +10,6 @@
 [submodule "deps/ElaWidgetTools"]
 	path = deps/ElaWidgetTools
 	url = https://github.com/MAWHA/ElaWidgetTools.git
-[submodule "deps/spdlog"]
-	path = deps/spdlog
-	url = https://github.com/gabime/spdlog.git
 [submodule "deps/qwindowkit"]
 	path = deps/qwindowkit
 	url = https://github.com/stdware/qwindowkit.git

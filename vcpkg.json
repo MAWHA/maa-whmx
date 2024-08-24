@@ -1,14 +1,17 @@
 {
-    "dependencies": [
-      {
-        "name": "opencv4",
-        "features": [ "world" ]
-      },
-      "qtbase",
-      "qtimageformats",
-      "qttranslations",
-      "qttools",
-      "qtsvg",
-      "qtscxml"
-    ]
+  "dependencies": [
+    {
+      "name": "opencv4",
+      "features": [
+        "world"
+      ]
+    },
+    "qtbase",
+    "qtimageformats",
+    "qttranslations",
+    "qttools",
+    "qtsvg",
+    "qtscxml",
+    "spdlog"
+  ]
 }
