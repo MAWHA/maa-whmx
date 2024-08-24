@@ -30,6 +30,8 @@ PRIVATE
     Logger.cpp
     Logger.h
     MacroHelper.h
+    Process.cpp
+    Process.h
     Platform.h
     Platform/windows.cpp
     Task/TaskGraph.cpp
