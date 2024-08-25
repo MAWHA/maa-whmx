@@ -26,6 +26,8 @@ PRIVATE
     Property.h
     PropertyContext.cpp
     PropertyContext.h
+    TaskInterface.cpp
+    TaskInterface.h
     Decode.cpp
     Decode.h
     ReferenceDataSet.cpp
