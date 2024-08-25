@@ -38,13 +38,18 @@ std::shared_ptr<TaskInterface> TaskInterface::load(const QString& path) {
 
 std::shared_ptr<TaskInterface> TaskInterface::load(const json::value& interface) {
     //! load defined tasks
-    QMap<QString, QString> tasks;
+    QMap<QString, TaskMetaInfo> tasks;
 
     for (const auto& [task, config] : interface.get("tasks", json::object())) {
         Q_ASSERT(config.contains("name") && config.at("name").is_string());
-        const auto task_name    = QString::fromUtf8(task);
-        const auto display_name = QString::fromUtf8(config.at("name").as_string());
-        tasks.insert(task_name, display_name);
+        Q_ASSERT(!config.contains("category") || config.at("category").is_string());
+        Q_ASSERT(!config.contains("desc") || config.at("desc").is_string());
+        const auto   task_name = QString::fromUtf8(task);
+        TaskMetaInfo meta;
+        meta.name = QString::fromUtf8(config.at("name").as_string());
+        if (config.contains("category")) { meta.category = QString::fromUtf8(config.at("category").as_string()); }
+        if (config.contains("desc")) { meta.desc = QString::fromUtf8(config.at("desc").as_string()); }
+        tasks.insert(task_name, meta);
     }
 
     //! load property context

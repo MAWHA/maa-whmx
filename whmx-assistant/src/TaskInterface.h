@@ -23,8 +23,14 @@
 #include <meojson/json.hpp>
 #include <memory>
 
+struct TaskMetaInfo {
+    QString                name;
+    std::optional<QString> category;
+    std::optional<QString> desc;
+};
+
 struct TaskInterface : public std::enable_shared_from_this<TaskInterface> {
-    QMap<QString, QString>           tasks;
+    QMap<QString, TaskMetaInfo>      tasks;
     std::shared_ptr<PropertyContext> prop_context;
 
     static std::shared_ptr<TaskInterface> load(const char* utf8_path);
