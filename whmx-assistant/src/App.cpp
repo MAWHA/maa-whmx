@@ -112,7 +112,7 @@ void WhmxAssistant::create_or_wakeup_client() {
         auto card_scroll = new ElaScrollArea;
         card_scroll->setWidgetResizable(true);
         card_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        card_scroll->setIsGrabGesture(Qt::Vertical, true);
+        card_scroll->setIsGrabGesture(true);
         card_scroll->setWidget(card_container);
 
         auto page_layout = new QVBoxLayout(workstaion_page);
@@ -191,7 +191,7 @@ void WhmxAssistant::create_or_wakeup_client() {
     connect(event, &AppEvent::on_maximize, client_, &QWidget::showMaximized);
     connect(event, &AppEvent::on_restore, client_, &QWidget::showNormal);
     connect(event, &AppEvent::on_close, client_, &QWidget::close);
-    connect(event, &AppEvent::on_set_window_top, this, [=](bool on) {
+    connect(event, &AppEvent::on_set_window_top, this, [this](bool on) {
         Platform::set_window_top_most(reinterpret_cast<void *>(client_->window()->winId()), on);
     });
     connect(gApp, &QApplication::lastWindowClosed, event, &AppEvent::on_exit);
