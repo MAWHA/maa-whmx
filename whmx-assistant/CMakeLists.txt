@@ -21,6 +21,11 @@ PRIVATE
     Consts.h
     DeviceHelper.cpp
     DeviceHelper.h
+    PropertyType.h
+    Property.cpp
+    Property.h
+    PropertyContext.cpp
+    PropertyContext.h
     Decode.cpp
     Decode.h
     ReferenceDataSet.cpp
