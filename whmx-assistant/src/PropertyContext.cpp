@@ -38,6 +38,20 @@ bool PropertyContext::is_type_valid(PropertyType* type) {
     return true;
 }
 
+std::optional<std::reference_wrapper<Property>> PropertyContext::property(const QString& target, const QString& name) const {
+    if (!contains_property(target, name)) { return std::nullopt; }
+    const auto property_full_name = target + "." + name;
+    auto       self               = const_cast<PropertyContext*>(this);
+    if (!property_value_table_.contains(property_full_name)) {
+        Q_ASSERT(property_default_value_table_.contains(property_full_name));
+        const auto& prop_value = property_default_value_table_.find(property_full_name).value();
+        Property    prop(this, prop_value.type);
+        prop.value() = prop_value.data;
+        self->property_value_table_.insert(property_full_name, prop);
+    }
+    return std::make_optional(std::ref(self->property_value_table_.find(property_full_name).value()));
+}
+
 bool PropertyContext::add_public_type(PropertyType* type) {
     if (!type) { return false; }
     if (contains_type(type->name)) { return false; }
@@ -63,9 +77,10 @@ bool PropertyContext::add_property(
     if (contains_property(target, name)) { return false; }
     if (!verify_value(type, default_value)) { return false; }
     if (!target_property_table_.contains(target)) { target_property_table_.insert(target, QStringList()); }
-    const auto full_property_name = target + "." + name;
+    const auto property_full_name = target + "." + name;
     target_property_table_.find(target)->append(name);
-    property_default_value_table_.insert(full_property_name, default_value);
+    PropertyValue prop_value{.type = type, .data = std::move(default_value)};
+    property_default_value_table_.insert(property_full_name, std::move(prop_value));
     Q_ASSERT(type_refs_.contains(type));
     ++type_refs_[type];
     return true;
@@ -79,7 +94,8 @@ bool PropertyContext::add_property(
     if (!target_property_table_.contains(target)) { target_property_table_.insert(target, QStringList()); }
     const auto full_property_name = target + "." + name;
     target_property_table_.find(target)->append(name);
-    property_default_value_table_.insert(full_property_name, deserialize(type, default_value).value());
+    PropertyValue prop_value{.type = type, .data = std::move(deserialize(type, default_value)->value())};
+    property_default_value_table_.insert(full_property_name, std::move(prop_value));
     Q_ASSERT(type_refs_.contains(type));
     ++type_refs_[type];
     return true;

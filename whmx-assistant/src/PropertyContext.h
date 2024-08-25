@@ -23,6 +23,7 @@
 #include <QtCore/QMap>
 #include <memory>
 #include <any>
+#include <optional>
 
 class PropertyContext : public std::enable_shared_from_this<PropertyContext> {
 protected:
@@ -34,6 +35,8 @@ public:
     }
 
     static bool is_type_valid(PropertyType* type);
+
+    std::optional<std::reference_wrapper<Property>> property(const QString& target, const QString& name) const;
 
     bool contains_type(const QString& type) const {
         return types_.contains(type);
@@ -72,7 +75,12 @@ protected:
     bool verify_value(const QString& type, const json::value& value);
 
 private:
-    QMap<QString, std::any>      property_default_value_table_;
+    struct PropertyValue {
+        QString  type;
+        std::any data;
+    };
+
+    QMap<QString, PropertyValue> property_default_value_table_;
     QMap<QString, Property>      property_value_table_;
     QMap<QString, QStringList>   target_property_table_;
     QMap<QString, PropertyType*> types_;

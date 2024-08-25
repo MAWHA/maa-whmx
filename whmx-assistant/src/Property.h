@@ -36,6 +36,10 @@ public:
     PropertyType*    type() const;
     PropertyMetaType meta_type() const;
 
+    bool valid() const {
+        return context_ != nullptr && type() != nullptr;
+    }
+
     QString type_name() const {
         return type_;
     }
