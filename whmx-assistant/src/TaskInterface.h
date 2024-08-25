@@ -24,12 +24,15 @@
 #include <memory>
 
 struct TaskInterface : public std::enable_shared_from_this<TaskInterface> {
+    QMap<QString, QString>           tasks;
+    std::shared_ptr<PropertyContext> prop_context;
+
     static std::shared_ptr<TaskInterface> load(const char* utf8_path);
     static std::shared_ptr<TaskInterface> load(const QString& path);
     static std::shared_ptr<TaskInterface> load(const json::value& interface);
 
-    QMap<QString, QString>           tasks;
-    std::shared_ptr<PropertyContext> prop_context;
+    json::object dump_props() const;
+    bool         load_props(const json::object& props);
 
     QStringList task_entries() const {
         return tasks.keys();

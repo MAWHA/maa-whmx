@@ -38,6 +38,18 @@ bool PropertyContext::is_type_valid(PropertyType* type) {
     return true;
 }
 
+bool PropertyContext::has_non_default_value(const QString& target, const QString& name) const {
+    if (!contains_property(target, name)) { return false; }
+    const auto property_full_name = target + "." + name;
+    return property_value_table_.contains(property_full_name);
+}
+
+QString PropertyContext::property_type(const QString& target, const QString& name) const {
+    if (!contains_property(target, name)) { return QString(); }
+    const auto property_full_name = target + "." + name;
+    return property_default_value_table_.find(property_full_name)->type;
+}
+
 std::optional<std::reference_wrapper<Property>> PropertyContext::property(const QString& target, const QString& name) const {
     if (!contains_property(target, name)) { return std::nullopt; }
     const auto property_full_name = target + "." + name;

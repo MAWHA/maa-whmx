@@ -36,6 +36,9 @@ public:
 
     static bool is_type_valid(PropertyType* type);
 
+    bool    has_non_default_value(const QString& target, const QString& name) const;
+    QString property_type(const QString& target, const QString& name) const;
+
     std::optional<std::reference_wrapper<Property>> property(const QString& target, const QString& name) const;
 
     bool contains_type(const QString& type) const {
@@ -70,7 +73,6 @@ public:
     std::optional<json::value> serialize(const Property& value) const;
     std::optional<json::value> serialize(const QString& type, const std::any& value) const;
 
-protected:
     bool verify_value(const QString& type, const std::any& value);
     bool verify_value(const QString& type, const json::value& value);
 

@@ -179,3 +179,45 @@ std::shared_ptr<TaskInterface> TaskInterface::load(const json::value& interface)
     resp->prop_context = std::move(context);
     return resp;
 }
+
+json::object TaskInterface::dump_props() const {
+    json::object props;
+    for (const auto& task_name : tasks.keys()) {
+        if (!prop_context->has_properties(task_name)) { continue; }
+        const auto key_task = task_name.toStdString();
+        for (const auto& prop_name : prop_context->properties(task_name)) {
+            if (!prop_context->has_non_default_value(task_name, prop_name)) { continue; }
+            const auto  key_prop      = prop_name.toStdString();
+            const auto& prop          = prop_context->property(task_name, prop_name)->get();
+            props[key_task][key_prop] = prop_context->serialize(prop).value();
+        }
+    }
+    return props;
+}
+
+bool TaskInterface::load_props(const json::object& props) {
+    for (const auto& [task_name, prop_map] : props) {
+        if (!prop_map.is_object()) { return false; }
+        const auto  target     = QString::fromUtf8(task_name);
+        const auto& properties = prop_context->properties(target);
+        if (prop_map.as_object().size() != properties.size()) { return false; }
+        for (const auto& [prop_name, prop] : prop_map.as_object()) {
+            const auto name = QString::fromUtf8(prop_name);
+            if (!properties.contains(name)) { return false; }
+            const auto type = prop_context->property_type(target, name);
+            if (!prop_context->verify_value(type, prop)) { return false; }
+        }
+    }
+
+    for (const auto& [task_name, prop_map] : props) {
+        const auto target = QString::fromUtf8(task_name);
+        for (const auto& [prop_name, prop] : prop_map.as_object()) {
+            const auto name     = QString::fromUtf8(prop_name);
+            const auto type     = prop_context->property_type(target, name);
+            auto&      property = prop_context->property(target, name).value().get();
+            property.value()    = prop_context->deserialize(type, prop)->value();
+        }
+    }
+
+    return true;
+}
