@@ -1,4 +1,6 @@
-add_executable(whmx-assistant WIN32 MACOSX_BUNDLE)
+add_executable(whmx-assistant)
+set_target_properties(whmx-assistant PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
+set_target_properties(whmx-assistant PROPERTIES MACOSX_BUNDLE $<CONFIG:Release>)
 
 configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Version.cpp.in
