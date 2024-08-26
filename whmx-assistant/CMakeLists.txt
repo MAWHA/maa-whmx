@@ -105,6 +105,12 @@ PRIVATE
     Experimental/TaskView.h
     Experimental/TaskViewStyle.cpp
     Experimental/TaskViewStyle.h
+    Experimental/TaskGraph.cpp
+    Experimental/TaskGraph.h
+    Experimental/TaskRouterSchema.cpp
+    Experimental/TaskRouterSchema.h
+    Experimental/TaskRouter.cpp
+    Experimental/TaskRouter.h
     App.cpp
     App.h
     AppEvent.h

@@ -26,15 +26,31 @@
 #include <optional>
 
 class PropertyContext : public std::enable_shared_from_this<PropertyContext> {
-protected:
-    PropertyContext();
-
 public:
     static std::shared_ptr<PropertyContext> create() {
         return std::shared_ptr<PropertyContext>(new PropertyContext);
     }
 
     static bool is_type_valid(PropertyType* type);
+
+    template <PropertyMetaType Meta>
+    Property create_primary_meta_property(const property_meta_type_t<Meta>& value) {
+        static_assert(
+            Meta == PropertyMetaType::Bool || Meta == PropertyMetaType::Int || Meta == PropertyMetaType::Real
+                || Meta == PropertyMetaType::Str,
+            "expect primary meta type: bool, int, real, str");
+
+        if constexpr (false) {
+        } else if constexpr (Meta == PropertyMetaType::Bool) {
+            return Property(this, "bool", value);
+        } else if constexpr (Meta == PropertyMetaType::Int) {
+            return Property(this, "int", value);
+        } else if constexpr (Meta == PropertyMetaType::Real) {
+            return Property(this, "real", value);
+        } else if constexpr (Meta == PropertyMetaType::Str) {
+            return Property(this, "str", value);
+        }
+    }
 
     bool    has_non_default_value(const QString& target, const QString& name) const;
     QString property_type(const QString& target, const QString& name) const;
@@ -75,6 +91,9 @@ public:
 
     bool verify_value(const QString& type, const std::any& value);
     bool verify_value(const QString& type, const json::value& value);
+
+protected:
+    PropertyContext();
 
 private:
     struct PropertyValue {

@@ -219,7 +219,7 @@ bool TaskInterface::load_props(const json::object& props) {
         for (const auto& [prop_name, prop] : prop_map.as_object()) {
             const auto name     = QString::fromUtf8(prop_name);
             const auto type     = prop_context->property_type(target, name);
-            auto&      property = prop_context->property(target, name).value().get();
+            auto&      property = prop_context->property(target, name)->get();
             property.value()    = prop_context->deserialize(type, prop)->value();
         }
     }

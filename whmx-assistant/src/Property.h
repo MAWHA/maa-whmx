@@ -32,12 +32,25 @@ private:
         : context_(context)
         , type_(type) {}
 
+    Property(const PropertyContext* context, const QString& type, std::any&& value)
+        : context_(context)
+        , type_(type)
+        , value_(value) {}
+
 public:
+    static Property nullprop() {
+        return Property();
+    }
+
     PropertyType*    type() const;
     PropertyMetaType meta_type() const;
 
     bool valid() const {
         return context_ != nullptr && type() != nullptr;
+    }
+
+    bool is_null() const {
+        return context_ == nullptr;
     }
 
     QString type_name() const {

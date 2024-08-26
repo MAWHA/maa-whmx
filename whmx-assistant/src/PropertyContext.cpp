@@ -18,13 +18,6 @@
 
 #include <QtCore/QUuid>
 
-PropertyContext::PropertyContext() {
-    add_public_type(PropertyType::make_bool());
-    add_public_type(PropertyType::make_int());
-    add_public_type(PropertyType::make_real());
-    add_public_type(PropertyType::make_str());
-}
-
 bool PropertyContext::is_type_valid(PropertyType* type) {
     //! TODO: ensure non-recursive
     if (false) {
@@ -457,4 +450,11 @@ bool PropertyContext::verify_value(const QString& type, const json::value& value
         } break;
     }
     Q_UNREACHABLE();
+}
+
+PropertyContext::PropertyContext() {
+    add_public_type(PropertyType::make_bool());
+    add_public_type(PropertyType::make_int());
+    add_public_type(PropertyType::make_real());
+    add_public_type(PropertyType::make_str());
 }
