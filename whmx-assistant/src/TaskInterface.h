@@ -25,8 +25,8 @@
 
 struct TaskMetaInfo {
     QString                name;
-    std::optional<QString> category;
-    std::optional<QString> desc;
+    std::optional<QString> opt_category;
+    std::optional<QString> opt_desc;
 };
 
 struct TaskInterface : public std::enable_shared_from_this<TaskInterface> {

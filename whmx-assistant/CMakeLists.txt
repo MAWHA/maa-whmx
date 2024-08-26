@@ -97,6 +97,14 @@ PRIVATE
     UI/PropertyHelper.h
     UI/TitleBar.cpp
     UI/TitleBar.h
+    Experimental/TaskItem.cpp
+    Experimental/TaskItem.h
+    Experimental/TaskModel.cpp
+    Experimental/TaskModel.h
+    Experimental/TaskView.cpp
+    Experimental/TaskView.h
+    Experimental/TaskViewStyle.cpp
+    Experimental/TaskViewStyle.h
     App.cpp
     App.h
     AppEvent.h

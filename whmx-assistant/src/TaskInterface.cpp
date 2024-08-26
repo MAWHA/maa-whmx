@@ -47,8 +47,8 @@ std::shared_ptr<TaskInterface> TaskInterface::load(const json::value& interface)
         const auto   task_name = QString::fromUtf8(task);
         TaskMetaInfo meta;
         meta.name = QString::fromUtf8(config.at("name").as_string());
-        if (config.contains("category")) { meta.category = QString::fromUtf8(config.at("category").as_string()); }
-        if (config.contains("desc")) { meta.desc = QString::fromUtf8(config.at("desc").as_string()); }
+        if (config.contains("category")) { meta.opt_category = QString::fromUtf8(config.at("category").as_string()); }
+        if (config.contains("desc")) { meta.opt_desc = QString::fromUtf8(config.at("desc").as_string()); }
         tasks.insert(task_name, meta);
     }
 

@@ -27,7 +27,10 @@ public:                                                                         
         emit on_##name##_change();                                                                       \
     }                                                                                                    \
                                                                                                          \
-    type name() const {                                                                                  \
+    type name() const& {                                                                                 \
+        return property_##name##_;                                                                       \
+    }                                                                                                    \
+    type& name()& {                                                                                      \
         return property_##name##_;                                                                       \
     }                                                                                                    \
                                                                                                          \
