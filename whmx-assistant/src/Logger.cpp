@@ -25,10 +25,10 @@
 
 namespace fs = std::filesystem;
 
-namespace LogCategory {
+namespace LoggerImpl {
 Q_LOGGING_CATEGORY(AppRuntime, "AppRuntime")
 Q_LOGGING_CATEGORY(Workstation, "Workstation")
-} // namespace LogCategory
+} // namespace LoggerImpl
 
 void global_logger_handler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     static std::mutex LOGGER_LOCK;
@@ -36,28 +36,39 @@ void global_logger_handler(QtMsgType type, const QMessageLogContext &context, co
 
     const auto log_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
 
+    std::optional<QString> opt_patched_info;
+    QString                msg_text;
+    if (const char data_link_escape_ctrl = '\x10'; msg.startsWith(data_link_escape_ctrl)) {
+        const char start_of_text_ctrl = '\x02';
+        Q_ASSERT(msg.count(start_of_text_ctrl) == 1);
+        const int text_start = msg.indexOf(start_of_text_ctrl) + 1;
+        msg_text             = msg.mid(text_start);
+        opt_patched_info     = msg.mid(1, text_start - 2);
+    } else {
+        msg_text = msg;
+    }
+
     if (false) {
     } else if (strcmp(context.category, "AppRuntime") == 0) {
         switch (type) {
             case QtDebugMsg: {
-                spdlog::trace(msg.toUtf8().toStdString());
+                spdlog::trace(msg_text.toUtf8().toStdString());
             } break;
             case QtInfoMsg: {
-                spdlog::info(msg.toUtf8().toStdString());
+                spdlog::info(msg_text.toUtf8().toStdString());
             } break;
             case QtWarningMsg: {
-                spdlog::warn(msg.toUtf8().toStdString());
+                spdlog::warn(msg_text.toUtf8().toStdString());
             } break;
             case QtCriticalMsg:
                 [[fallthrough]];
             case QtFatalMsg: {
-                spdlog::error(msg.toUtf8().toStdString());
+                spdlog::error(msg_text.toUtf8().toStdString());
             } break;
         }
     } else if (strcmp(context.category, "Workstation") == 0) {
-        for (auto logger : UI::LogPanel::global_logger_panels()) {
-            UI::LogPanel::log(logger, QString("%1 %2\n").arg(log_time).arg(msg));
-        }
+        const auto info = QString("%1 %2\n").arg(log_time).arg(msg_text);
+        for (auto logger : UI::LogPanel::global_logger_panels()) { UI::LogPanel::log(logger, info); }
     }
 }
 
