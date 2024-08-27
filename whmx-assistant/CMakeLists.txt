@@ -104,6 +104,8 @@ PRIVATE
     UI/PropertyHelper.h
     UI/TitleBar.cpp
     UI/TitleBar.h
+    UI/NavWidget.cpp
+    UI/NavWidget.h
     Experimental/UmaClient.cpp
     Experimental/UmaClient.h
     Experimental/TaskItem.cpp

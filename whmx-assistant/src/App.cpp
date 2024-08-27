@@ -101,13 +101,18 @@ UniversalMaaActuator::UniversalMaaActuator(
 void UniversalMaaActuator::setup() {
     Ensures(gApp == this);
 
+    ElaApplication::getInstance()->init();
     GlobalLoggerProxy::setup();
     Task::Router::setup();
 
-    ElaApplication::getInstance()->init();
-    setPalette(style()->standardPalette());
-
     setQuitOnLastWindowClosed(false);
+
+    {
+        auto pal = palette();
+        pal.setColor(QPalette::Window, Qt::white);
+        pal.setColor(QPalette::Base, Qt::white);
+        setPalette(pal);
+    }
 
     const auto event = gApp->app_event();
 

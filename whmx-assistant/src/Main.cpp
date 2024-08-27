@@ -17,6 +17,8 @@
 #include "Logger.h"
 
 int main(int argc, char *argv[]) {
+    qputenv("QT_QPA_PLATFORM", "windows:darkmode=0");
+
     auto app_resp = UniversalMaaActuator::create(argc, argv);
     if (!app_resp) {
         LOG_ERROR().noquote() << "failed to start uma:" << app_resp.error();

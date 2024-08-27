@@ -25,28 +25,32 @@
 
 namespace UI {
 
-void NavBar::add_page_node(ElaIconType::IconName icon, const QString &text, QWidget *widget) {
+QString NavBar::add_page_node(ElaIconType::IconName icon, const QString &text, QWidget *widget) {
     auto node = new NavNode(icon, text, this);
     node->set_target(widget);
     add_page_node(node);
+    return node->key();
 }
 
-void NavBar::add_page_node(ElaIconType::IconName icon, QWidget *widget) {
+QString NavBar::add_page_node(ElaIconType::IconName icon, QWidget *widget) {
     auto node = new NavNode(icon, "", this);
     node->set_target(widget);
     add_page_node(node);
+    return node->key();
 }
 
-void NavBar::add_page_node(ElaIconType::IconName icon, const QString &text, QAction *action) {
+QString NavBar::add_page_node(ElaIconType::IconName icon, const QString &text, QAction *action) {
     auto node = new NavNode(icon, text, this);
     node->set_target(action);
     add_page_node(node);
+    return node->key();
 }
 
-void NavBar::add_page_node(ElaIconType::IconName icon, QAction *action) {
+QString NavBar::add_page_node(ElaIconType::IconName icon, QAction *action) {
     auto node = new NavNode(icon, "", this);
     node->set_target(action);
     add_page_node(node);
+    return node->key();
 }
 
 void NavBar::add_page_node(NavNode *node) {
@@ -54,28 +58,32 @@ void NavBar::add_page_node(NavNode *node) {
     if (auto w = node->widget()) { emit on_add_nav_page(node, w); }
 }
 
-void NavBar::add_footer_node(ElaIconType::IconName icon, const QString &text, QWidget *widget) {
+QString NavBar::add_footer_node(ElaIconType::IconName icon, const QString &text, QWidget *widget) {
     auto node = new NavNode(icon, text, this);
     node->set_target(widget);
     add_footer_node(node);
+    return node->key();
 }
 
-void NavBar::add_footer_node(ElaIconType::IconName icon, QWidget *widget) {
+QString NavBar::add_footer_node(ElaIconType::IconName icon, QWidget *widget) {
     auto node = new NavNode(icon, "", this);
     node->set_target(widget);
     add_footer_node(node);
+    return node->key();
 }
 
-void NavBar::add_footer_node(ElaIconType::IconName icon, const QString &text, QAction *action) {
+QString NavBar::add_footer_node(ElaIconType::IconName icon, const QString &text, QAction *action) {
     auto node = new NavNode(icon, text, this);
     node->set_target(action);
     add_footer_node(node);
+    return node->key();
 }
 
-void NavBar::add_footer_node(ElaIconType::IconName icon, QAction *action) {
+QString NavBar::add_footer_node(ElaIconType::IconName icon, QAction *action) {
     auto node = new NavNode(icon, "", this);
     node->set_target(action);
     add_footer_node(node);
+    return node->key();
 }
 
 void NavBar::add_footer_node(NavNode *node) {

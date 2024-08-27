@@ -31,9 +31,9 @@ Card::Card(QWidget* parent)
     set_border_radius(8);
     set_pin_color(QColor(42, 109, 197));
 
-    setFixedSize(320, 120);
-
+    setContextMenuPolicy(Qt::CustomContextMenu);
     setMouseTracking(true);
+    setFixedSize(320, 120);
 }
 
 bool Card::event(QEvent* event) {

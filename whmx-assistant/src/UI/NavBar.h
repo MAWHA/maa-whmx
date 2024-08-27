@@ -30,17 +30,17 @@ signals:
     void on_add_nav_page(NavNode *node, QWidget *widget);
 
 public:
-    void add_page_node(ElaIconType::IconName icon, const QString &text, QWidget *widget);
-    void add_page_node(ElaIconType::IconName icon, QWidget *widget);
-    void add_page_node(ElaIconType::IconName icon, const QString &text, QAction *action);
-    void add_page_node(ElaIconType::IconName icon, QAction *action);
-    void add_page_node(NavNode *node);
+    QString add_page_node(ElaIconType::IconName icon, const QString &text, QWidget *widget);
+    QString add_page_node(ElaIconType::IconName icon, QWidget *widget);
+    QString add_page_node(ElaIconType::IconName icon, const QString &text, QAction *action);
+    QString add_page_node(ElaIconType::IconName icon, QAction *action);
+    void    add_page_node(NavNode *node);
 
-    void add_footer_node(ElaIconType::IconName icon, const QString &text, QWidget *widget);
-    void add_footer_node(ElaIconType::IconName icon, QWidget *widget);
-    void add_footer_node(ElaIconType::IconName icon, const QString &text, QAction *action);
-    void add_footer_node(ElaIconType::IconName icon, QAction *action);
-    void add_footer_node(NavNode *node);
+    QString add_footer_node(ElaIconType::IconName icon, const QString &text, QWidget *widget);
+    QString add_footer_node(ElaIconType::IconName icon, QWidget *widget);
+    QString add_footer_node(ElaIconType::IconName icon, const QString &text, QAction *action);
+    QString add_footer_node(ElaIconType::IconName icon, QAction *action);
+    void    add_footer_node(NavNode *node);
 
 public slots:
     bool navigate(const QString &key);
