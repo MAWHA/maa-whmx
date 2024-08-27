@@ -89,3 +89,5 @@ _✨本项目的流水线资源由 [MWA](https://github.com/MAWHA/MWA) 协同提
 # 讨论
 
 ![qq-group](https://img.shields.io/badge/QQ-985099968-blue)
+
+[![star-history](https://api.star-history.com/svg?repos=MAWHA/maa-whmx&type=Date)](https://star-history.com/#MAWHA/maa-whmx&Date)
