@@ -73,7 +73,7 @@ template class StealDebugStreamImpl<StealDebugStreamTag, decltype(&QDebug::strea
 
 class PatchedDebug : public QDebug {
 public:
-    PatchedDebug(QByteArray patched_info, QDebug &&debug)
+    PatchedDebug(const QString &patched_info, QDebug &&debug)
         : QDebug(debug)
         , patched_info_(std::move(patched_info)) {}
 
@@ -124,12 +124,12 @@ public:
     }
 
 private:
-    QByteArray patched_info_;
+    QString patched_info_;
 };
 
 class PatchedMessageLogger : public QMessageLogger {
 public:
-    PatchedMessageLogger(const char *patched_info, const char *file, int line, const char *function, const char *category)
+    PatchedMessageLogger(const QString &patched_info, const char *file, int line, const char *function, const char *category)
         : QMessageLogger(file, line, function, category)
         , patched_info_(patched_info) {}
 
@@ -150,7 +150,7 @@ public:
     }
 
 private:
-    QByteArray patched_info_;
+    QString patched_info_;
 };
 
 } // namespace LoggerImpl
