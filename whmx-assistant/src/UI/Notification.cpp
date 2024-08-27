@@ -15,30 +15,30 @@
 
 #include "Notification.h"
 
+#include <QtCore/QMetaObject>
 #include <ElaMessageBar.h>
-#include <QMetaObject>
 
 namespace UI {
 
-void Notification::info(QWidget *parent, const QString &title, const QString &msg) {
+void Notification::info(gsl::not_null<const QWidget *> parent, const QString &title, const QString &msg) {
     QMetaObject::invokeMethod(parent->topLevelWidget(), [=] {
         ElaMessageBar::information(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
     });
 }
 
-void Notification::warning(QWidget *parent, const QString &title, const QString &msg) {
+void Notification::warning(gsl::not_null<const QWidget *> parent, const QString &title, const QString &msg) {
     QMetaObject::invokeMethod(parent->topLevelWidget(), [=] {
         ElaMessageBar::warning(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
     });
 }
 
-void Notification::success(QWidget *parent, const QString &title, const QString &msg) {
+void Notification::success(gsl::not_null<const QWidget *> parent, const QString &title, const QString &msg) {
     QMetaObject::invokeMethod(parent->topLevelWidget(), [=] {
         ElaMessageBar::success(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
     });
 }
 
-void Notification::error(QWidget *parent, const QString &title, const QString &msg) {
+void Notification::error(gsl::not_null<const QWidget *> parent, const QString &title, const QString &msg) {
     QMetaObject::invokeMethod(parent->topLevelWidget(), [=] {
         ElaMessageBar::error(ElaMessageBarType::Top, title, msg, 1000, parent->topLevelWidget());
     });

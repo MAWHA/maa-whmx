@@ -12,6 +12,8 @@
     "qttools",
     "qtsvg",
     "qtscxml",
-    "spdlog"
+    "spdlog",
+    "ms-gsl",
+    "tl-expected"
   ]
 }

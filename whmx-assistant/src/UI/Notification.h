@@ -16,15 +16,16 @@
 #pragma once
 
 #include <QtWidgets/QWidget>
+#include <gsl/gsl>
 
 namespace UI {
 
 class Notification {
 public:
-    static void info(QWidget *parent, const QString &title, const QString &msg);
-    static void warning(QWidget *parent, const QString &title, const QString &msg);
-    static void success(QWidget *parent, const QString &title, const QString &msg);
-    static void error(QWidget *parent, const QString &title, const QString &msg);
+    static void info(gsl::not_null<const QWidget *> parent, const QString &title, const QString &msg);
+    static void warning(gsl::not_null<const QWidget *> parent, const QString &title, const QString &msg);
+    static void success(gsl::not_null<const QWidget *> parent, const QString &title, const QString &msg);
+    static void error(gsl::not_null<const QWidget *> parent, const QString &title, const QString &msg);
 };
 
 } // namespace UI

@@ -6,6 +6,7 @@ endif()
 include(cmake/version.cmake)
 desktop_app_parse_version(whmx-assistant/build/VERSION)
 set(desktop_app_homepage_url "https://github.com/MAWHA/maa-whmx")
+set(desktop_app_uuid "{96D62A1E-D713-4DD9-83EB-D8511620B135}")
 
 project(maa-whmx
 LANGUAGES C CXX
@@ -43,6 +44,8 @@ message(STATUS "Vcpkg debug library directory: ${VCPKG_DEBUG_LIBRARY_DIR}")
 set(OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin")
 
 find_package(spdlog CONFIG REQUIRED)
+find_package(Microsoft.GSL CONFIG REQUIRED)
+find_package(tl-expected CONFIG REQUIRED)
 
 set(MAGIC_ENUM_OPT_BUILD_EXAMPLES OFF)
 set(MAGIC_ENUM_OPT_BUILD_TESTS OFF)

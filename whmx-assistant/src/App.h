@@ -17,29 +17,34 @@
 
 #include "AppEvent.h"
 
-#include <MaaPP/MaaPP.hpp>
+#include <QtCore/QSharedMemory>
 #include <QtWidgets/QApplication>
-#include <QWKWidgets/widgetwindowagent.h>
+#include <MaaPP/MaaPP.hpp>
+#include <gsl/gsl>
+#include <tl/expected.hpp>
 
-#define gApp static_cast<WhmxAssistant *>(qApp)
+#define gApp static_cast<UniversalMaaActuator *>(qApp)
 
-class WhmxAssistant : public QApplication {
+class UniversalMaaActuator final : public QApplication {
 public:
-    WhmxAssistant(int &argc, char **argv);
+    static auto create(int &argc, char **argv) -> tl::expected<gsl::not_null<std::shared_ptr<UniversalMaaActuator>>, QString>;
 
-    void create_or_wakeup_client();
+    auto window() const -> gsl::not_null<std::shared_ptr<QWidget>>;
+    auto window_cref() const -> gsl::strict_not_null<const QWidget *>;
+    void wakeup_client();
 
-    AppEvent *app_event() const {
+    gsl::strict_not_null<AppEvent *> app_event() const {
         return app_event_;
     }
 
-    QWidget *window() const {
-        return client_;
-    }
+protected:
+    UniversalMaaActuator(int &argc, char **argv, gsl::not_null<gsl::owner<QSharedMemory *>> singleton_ipc_memory);
+
+    void setup();
 
 private:
-    std::shared_ptr<maa::coro::EventLoop> default_maa_event_loop_;
-    QThread                              *maa_worker_ = nullptr;
-    AppEvent                             *app_event_  = nullptr;
-    QWidget                              *client_     = nullptr;
+    gsl::not_null<std::shared_ptr<maa::coro::EventLoop>> default_maa_event_loop_;
+    gsl::strict_not_null<gsl::owner<QThread *>>          maa_worker_;
+    gsl::strict_not_null<gsl::owner<AppEvent *>>         app_event_;
+    gsl::not_null<std::unique_ptr<QSharedMemory>>        singleton_ipc_memory_;
 };

@@ -18,13 +18,5 @@
 #include <string>
 
 namespace Consts {
-
-static inline const std::string PACKAGE = "com.cipaishe.wuhua.bilibili";
-static inline const std::string ACTIVITY =
-    "com.cipaishe.wuhua.bilibili/com.cipaishe.wuhua.bilibili.activity.ONESDKSplashActivity";
-
-extern std::string VERSION;
-extern std::string HOMEPAGE_URL;
 extern std::string MUA_UUID;
-
 } // namespace Consts

@@ -10,10 +10,15 @@ configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/src/HomepageUrl.cpp.in
 	${CMAKE_CURRENT_BINARY_DIR}/HomepageUrl.cpp
 )
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Uuid.cpp.in
+	${CMAKE_CURRENT_BINARY_DIR}/Uuid.cpp
+)
 nice_target_sources(whmx-assistant ${CMAKE_CURRENT_BINARY_DIR}
 PRIVATE
     Version.cpp
     HomepageUrl.cpp
+    Uuid.cpp
 )
 
 get_filename_component(SOURCE_DIR src REALPATH)
@@ -99,6 +104,8 @@ PRIVATE
     UI/PropertyHelper.h
     UI/TitleBar.cpp
     UI/TitleBar.h
+    Experimental/UmaClient.cpp
+    Experimental/UmaClient.h
     Experimental/TaskItem.cpp
     Experimental/TaskItem.h
     Experimental/TaskModel.cpp
@@ -142,6 +149,8 @@ PRIVATE
     magic_enum::magic_enum
     ElaWidgetTools::ElaWidgetTools
     spdlog::spdlog
+    Microsoft.GSL::GSL
+    tl::expected
     QWindowKit::Widgets
     desktop-app::Qt6
     desktop-app::qt-material-widgets

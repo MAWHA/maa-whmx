@@ -13,20 +13,18 @@
    limitations under the License.
 */
 
-#include "Consts.h"
 #include "App.h"
+#include "Logger.h"
 
 int main(int argc, char *argv[]) {
-    WhmxAssistant app(argc, argv);
+    auto app_resp = UniversalMaaActuator::create(argc, argv);
+    if (!app_resp) {
+        LOG_ERROR().noquote() << "failed to start uma:" << app_resp.error();
+        return -1;
+    }
 
-    QApplication::setOrganizationDomain("github.com/MAWHA");
-    QApplication::setOrganizationName("MAWHA");
-    QApplication::setApplicationName("whmx-assistant");
-    QApplication::setApplicationDisplayName("物华弥新小助手");
-    QApplication::setApplicationVersion(QString::fromUtf8(Consts::VERSION));
-    QApplication::setWindowIcon(QIcon(":/logo.png"));
+    const auto app = app_resp.value();
 
-    app.create_or_wakeup_client();
-
-    return app.exec();
+    app->wakeup_client();
+    return app->exec();
 }

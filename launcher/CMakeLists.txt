@@ -1,9 +1,21 @@
-add_executable(launcher WIN32 MACOSX_BUNDLE)
+add_executable(launcher)
+set_target_properties(launcher PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
+set_target_properties(launcher PROPERTIES MACOSX_BUNDLE $<CONFIG:Release>)
+
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/src/Uuid.cpp.in
+	${CMAKE_CURRENT_BINARY_DIR}/Uuid.cpp
+)
+nice_target_sources(launcher ${CMAKE_CURRENT_BINARY_DIR}
+PRIVATE
+    Uuid.cpp
+)
 
 get_filename_component(SOURCE_DIR src REALPATH)
 nice_target_sources(launcher ${SOURCE_DIR}
 PRIVATE
     Main.cpp
+    VirtualDesktop.h
     Platform.cpp
     Platform.h
 )
@@ -16,6 +28,7 @@ PRIVATE
 
 target_link_libraries(launcher
 PRIVATE
+    Microsoft.GSL::GSL
     desktop-app::Qt6Core
     FileLocksmith::LibInterop
 )

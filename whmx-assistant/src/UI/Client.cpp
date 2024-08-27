@@ -181,7 +181,7 @@ void Client::handle_on_open_log_file(LogFileType type) {
 
     const QDir log_dir(this->log_dir());
     if (!log_dir.exists(log_file)) {
-        Notification::info(gApp->window(), "打开日志", "日志文件暂未建立，请稍后再试");
+        Notification::info(gApp->window_cref(), "打开日志", "日志文件暂未建立，请稍后再试");
         return;
     }
 
@@ -300,7 +300,7 @@ void Client::execute_custom_task(const QString &task_id, const QString &task_nam
 
 void Client::handle_on_request_connect_device(MaaAdbDevice device) {
     if (maa_ctrl_ && maa_instance_ && maa_instance_->inited()) {
-        Notification::warning(gApp->window(), "设备连接", "不支持多设备连接，已取消该次连接请求");
+        Notification::warning(gApp->window_cref(), "设备连接", "不支持多设备连接，已取消该次连接请求");
         emit on_request_connect_device_done(MaaStatus_Failed);
     } else if (maa_ctrl_) {
         LOG_INFO() << "device alreay connected, retry init maa instance";
