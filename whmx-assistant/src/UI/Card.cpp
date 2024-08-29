@@ -34,6 +34,12 @@ Card::Card(QWidget* parent)
     setContextMenuPolicy(Qt::CustomContextMenu);
     setMouseTracking(true);
     setFixedSize(320, 120);
+
+    connect(this, &Card::on_border_radius_change, this, QOverload<>::of(&QWidget::update));
+    connect(this, &Card::on_pin_color_change, this, QOverload<>::of(&QWidget::update));
+    connect(this, &Card::on_card_pixmap_change, this, QOverload<>::of(&QWidget::update));
+    connect(this, &Card::on_title_change, this, QOverload<>::of(&QWidget::update));
+    connect(this, &Card::on_brief_change, this, QOverload<>::of(&QWidget::update));
 }
 
 bool Card::event(QEvent* event) {
