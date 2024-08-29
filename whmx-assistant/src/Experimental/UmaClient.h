@@ -18,8 +18,11 @@
 #include "../UI/TitleBar.h"
 #include "../UI/NavWidget.h"
 #include "../UI/Card.h"
+#include "ActuatorInstance.h"
+#include "Package.h"
 
 #include <QtWidgets/QWidget>
+#include <QtCore/QList>
 #include <gsl/gsl>
 
 namespace Experimental {
@@ -41,6 +44,8 @@ signals:
     void on_remove_uma_instance(const QString &id);
 
 protected slots:
+    void handle_on_request_new_uma_instance();
+
     void show_uma_card_context_menu(const QString &id, const QPoint &pos);
 
 public:
@@ -51,6 +56,7 @@ public:
 
 protected:
     auto make_card_for_uma(const QString &id) -> gsl::strict_not_null<UI::Card *>;
+    void scan_and_reload_packages();
 
 protected:
     UmaClient();
@@ -58,7 +64,8 @@ protected:
     void setup();
 
 private:
-    QMap<QString, QWidget *>                          card_for_uma_instance_;
+    QList<std::shared_ptr<class Package>>             available_packages_;
+    QMap<QString, std::shared_ptr<UmaInstance>>       uma_instances_;
     QMap<PrimaryPage, QString>                        primary_page_nav_keys_;
     gsl::strict_not_null<gsl::owner<UI::TitleBar *>>  ui_title_bar_;
     gsl::strict_not_null<gsl::owner<UI::NavWidget *>> ui_nav_widget_;

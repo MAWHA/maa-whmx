@@ -106,8 +106,12 @@ PRIVATE
     UI/TitleBar.h
     UI/NavWidget.cpp
     UI/NavWidget.h
+    Experimental/ProjectDirs.cpp
+    Experimental/ProjectDirs.h
     Experimental/Package.cpp
     Experimental/Package.h
+    Experimental/ActuatorInstance.h
+    Experimental/MessageProducer.h
     Experimental/UmaClient.cpp
     Experimental/UmaClient.h
     Experimental/StyledPanel.cpp
