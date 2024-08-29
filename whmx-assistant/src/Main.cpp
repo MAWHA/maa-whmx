@@ -18,6 +18,9 @@
 
 int main(int argc, char *argv[]) {
     qputenv("QT_QPA_PLATFORM", "windows:darkmode=0");
+#ifndef NDEBUG
+    qputenv("QT_DEBUG_PLUGINS", "1");
+#endif
 
     auto app_resp = UniversalMaaActuator::create(argc, argv);
     if (!app_resp) {
