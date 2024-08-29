@@ -1,0 +1,43 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string",
+            "pattern": "^v?\\d+(\\.\\d+){1,3}([-_\\.](beta|alpha|rc)(\\.\\d+)?)?$"
+        },
+        "description": {
+            "type": "string"
+        },
+        "author": {
+            "oneOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            ]
+        },
+        "icon": {
+            "type": "string"
+        },
+        "resolutions": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "pattern": "^[1-9]\\d*[x:][1-9]\\d*$"
+            }
+        }
+    },
+    "required": [
+        "name",
+        "version"
+    ]
+}
