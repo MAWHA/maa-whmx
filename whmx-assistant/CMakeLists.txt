@@ -108,6 +108,10 @@ PRIVATE
     UI/NavWidget.h
     Experimental/UmaClient.cpp
     Experimental/UmaClient.h
+    Experimental/StyledPanel.cpp
+    Experimental/StyledPanel.h
+    Experimental/OverlayDialog.cpp
+    Experimental/OverlayDialog.h
     Experimental/TaskItem.cpp
     Experimental/TaskItem.h
     Experimental/TaskModel.cpp
