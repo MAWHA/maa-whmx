@@ -43,6 +43,14 @@ TaskView::TaskView(QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     setStyle(new TaskViewStyle);
+
+    connect(this, &QTreeView::clicked, this, [this](const QModelIndex &index) {
+        auto item = static_cast<TaskItem *>(index.internalPointer());
+        if (item->is_leaf()) {
+            item->set_checked(!item->checked());
+            update();
+        }
+    });
 }
 
 void TaskView::contextMenuEvent(QContextMenuEvent *event) {
