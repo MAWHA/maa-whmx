@@ -71,7 +71,7 @@ bool Card::event(QEvent* event) {
             anim_opacity->start(QAbstractAnimation::DeleteWhenStopped);
         } break;
         case QEvent::MouseButtonRelease: {
-            emit clicked();
+            if (static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton) { emit clicked(); }
         } break;
         default: {
         } break;
