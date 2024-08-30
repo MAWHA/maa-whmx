@@ -16,9 +16,23 @@
 #include "ProjectDirs.h"
 
 #include <QtWidgets/QApplication>
+#include <QtCore/QStandardPaths>
 #include <gsl/gsl>
 
 namespace Experimental {
+
+void copy_folder(const QString &src, const QString &dst) {
+    QDir dir(src);
+    if (!dir.exists()) { return; }
+
+    for (const auto &d : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+        QString dst_path = dst + QDir::separator() + d;
+        dir.mkpath(dst_path);
+        copy_folder(src + QDir::separator() + d, dst_path);
+    }
+
+    for (const auto &f : dir.entryList(QDir::Files)) { QFile::copy(src + QDir::separator() + f, dst + QDir::separator() + f); }
+}
 
 QDir ProjectDirs::home() {
     return QApplication::applicationDirPath();
@@ -33,6 +47,10 @@ QDir ProjectDirs::create_or_get(const QString &dir) {
     const bool ok = d.cd(dir);
     Ensures(ok);
     return d;
+}
+
+QDir ProjectDirs::app_data() {
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 }
 
 } // namespace Experimental

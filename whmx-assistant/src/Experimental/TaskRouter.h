@@ -137,6 +137,10 @@ public:
         return var_cleared_on_restart_;
     }
 
+    QStringList vars() const {
+        return local_vars_.keys();
+    }
+
     std::optional<QString> var(const QString &name) const;
     void                   update_var(const QString &name, const QString &value);
 

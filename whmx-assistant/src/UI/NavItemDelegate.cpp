@@ -68,7 +68,7 @@ void NavItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
         }
     }
 
-    painter->setPen(ElaThemeColor(theme, WindowText));
+    painter->setPen(node->foreground_color());
 
     int flags = Qt::AlignCenter;
 

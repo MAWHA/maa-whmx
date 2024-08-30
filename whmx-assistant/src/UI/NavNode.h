@@ -30,6 +30,7 @@ class NavNode : public QObject {
     Q_OBJECT
 
     Q_DECLARE_PROPERTY(QString, text)
+    Q_DECLARE_PROPERTY(QColor, foreground_color)
     Q_DECLARE_PROPERTY(ElaIconType::IconName, font_icon)
 
 signals:

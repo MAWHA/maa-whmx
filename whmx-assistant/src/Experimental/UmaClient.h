@@ -46,6 +46,7 @@ signals:
 protected slots:
     void handle_on_request_new_uma_instance();
 
+    void activate_uma_instance(const QString &id);
     void show_uma_card_context_menu(const QString &id, const QPoint &pos);
 
 public:
@@ -66,6 +67,7 @@ protected:
 private:
     QList<std::shared_ptr<class Package>>             available_packages_;
     QMap<QString, std::shared_ptr<UmaInstance>>       uma_instances_;
+    QMap<QString, QString>                            uma_instance_nav_keys_;
     QMap<PrimaryPage, QString>                        primary_page_nav_keys_;
     gsl::strict_not_null<gsl::owner<UI::TitleBar *>>  ui_title_bar_;
     gsl::strict_not_null<gsl::owner<UI::NavWidget *>> ui_nav_widget_;

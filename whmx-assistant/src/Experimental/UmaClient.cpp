@@ -14,6 +14,7 @@
 */
 
 #include "UmaClient.h"
+#include "UmaWorkbench.h"
 #include "ProjectDirs.h"
 #include "../App.h"
 #include "../Platform.h"
@@ -130,6 +131,8 @@ void UmaClient::handle_on_request_new_uma_instance() {
 
     if (!d.is_accepted()) { return; }
 
+    navigate(Workstation);
+
     auto package           = package_select->currentData().value<std::shared_ptr<class Package>>();
     auto instance          = UmaInstance::create(package);
     instance->name         = name_input->text();
@@ -137,6 +140,75 @@ void UmaClient::handle_on_request_new_uma_instance() {
     instance->marker_color = QColor(42, 109, 197);
     uma_instances_.insert(instance->instance_id, instance);
     emit on_add_uma_instance(instance->instance_id);
+}
+
+void UmaClient::activate_uma_instance(const QString &id) {
+    Expects(uma_instances_.contains(id));
+    const auto instance = uma_instances_.find(id).value();
+    if (instance->cache_key.isEmpty()) { instance->cache_key = QUuid().createUuid().toString(QUuid::Id128).toLower(); }
+    instance->maa_prop         = std::make_shared<MaaProperty>();
+    instance->message_producer = std::make_shared<MessageProducer>();
+
+    auto root = ProjectDirs::app_data();
+    if (const auto &cache_key = instance->cache_key; !root.exists(cache_key)) {
+        root.mkdir(cache_key);
+        const QDir package_dir(instance->uma_prop->package->location());
+        const QDir cache_dir(root.absoluteFilePath(cache_key));
+        copy_folder(package_dir.absoluteFilePath("image"), cache_dir.absoluteFilePath("image"));
+        copy_folder(package_dir.absoluteFilePath("model"), cache_dir.absoluteFilePath("model"));
+        copy_folder(package_dir.absoluteFilePath("extras"), cache_dir.absoluteFilePath("extras"));
+        QStringList pipeline_files;
+        {
+            QList<QDir> stack;
+            stack.append(package_dir.absoluteFilePath("pipeline"));
+            while (!stack.empty()) {
+                const auto dir = stack.takeLast();
+                for (const auto &entry : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+                    stack.append(QDir(dir.absoluteFilePath(entry)));
+                }
+                for (const auto &entry : dir.entryList(QDir::Files)) { pipeline_files.append(dir.absoluteFilePath(entry)); }
+            }
+        }
+        cache_dir.mkpath("pipeline");
+        const QDir pipeline_dir(cache_dir.absoluteFilePath("pipeline"));
+        const int  nr_width = ceil(log10(std::max<int>(1, pipeline_files.size())));
+        for (int i = 0; i < pipeline_files.size(); ++i) {
+            const auto name = QString::number(i).rightJustified(nr_width, QChar('0')) + ".json";
+            QFile::copy(pipeline_files[i], pipeline_dir.absoluteFilePath(name));
+        }
+    }
+
+    const QDir package_dir(instance->uma_prop->package->location());
+    const QDir dir(root.absoluteFilePath(instance->cache_key));
+    const QDir pipeline_dir(dir.absoluteFilePath("pipeline"));
+
+    auto &uma_prop = instance->uma_prop;
+    auto &maa_prop = instance->maa_prop;
+
+    uma_prop->task_graph = std::make_shared<TaskGraph>();
+    for (const auto &entry : pipeline_dir.entryList(QDir::Files)) {
+        uma_prop->task_graph->merge_pipeline(pipeline_dir.absoluteFilePath(entry));
+    }
+    uma_prop->task_router = TaskRouter::create(uma_prop->task_graph, uma_prop->interface->prop_context);
+    {
+        QFile file(package_dir.absoluteFilePath("router.json"));
+        Expects(file.open(QIODevice::ReadOnly));
+        const auto opt_json = json::parse(file.readAll());
+        Expects(opt_json);
+        const auto &json = opt_json.value();
+        Expects(json.is_object());
+        uma_prop->task_router->reload(json.as_object());
+    }
+
+    auto       workbench  = new UmaWorkbench(instance);
+    const auto short_name = instance->name.left(2);
+    //! candidates: fire-flame, ghost, lemon, pegasus, plantmoon, planttringed, poo, ram, robot, rocket, rocket-launch
+    auto nav_bar  = ui_nav_widget_->nav_bar();
+    auto nav_node = new NavNode(ElaIconType::RocketLaunch, short_name);
+    nav_node->set_target(workbench);
+    nav_node->set_foreground_color(instance->marker_color);
+    nav_bar->add_page_node(nav_node);
+    uma_instance_nav_keys_.insert(instance->instance_id, nav_node->key());
 }
 
 void UmaClient::show_uma_card_context_menu(const QString &id, const QPoint &pos) {
@@ -209,6 +281,12 @@ gsl::strict_not_null<Card *> UmaClient::make_card_for_uma(const QString &id) {
     connect(card, &QWidget::customContextMenuRequested, this, [this, id = id, card](const QPoint &pos) {
         show_uma_card_context_menu(id, card->mapToGlobal(pos));
     });
+    connect(card, &Card::clicked, this, [this, id = id] {
+        if (!uma_instance_nav_keys_.contains(id)) { activate_uma_instance(id); }
+        Ensures(uma_instance_nav_keys_.contains(id));
+        ui_nav_widget_->nav_bar()->navigate(uma_instance_nav_keys_.find(id).value());
+    });
+
     return gsl::make_not_null(card);
 }
 
@@ -257,7 +335,7 @@ void UmaClient::setup() {
             connect(this, &UmaClient::on_add_uma_instance, this, [this, layout = ui_uma_card_layout](const QString &id) {
                 const auto card = make_card_for_uma(id);
                 layout->addWidget(card);
-                connect(this, &UmaClient::on_add_uma_instance, card, [=, this, this_id = id](const QString &id) {
+                connect(this, &UmaClient::on_remove_uma_instance, card, [=, this, this_id = id](const QString &id) {
                     if (this_id != id) { return; }
                     layout->removeWidget(card);
                     card->deleteLater();

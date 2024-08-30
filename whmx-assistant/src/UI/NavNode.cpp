@@ -16,6 +16,7 @@
 #include "NavNode.h"
 
 #include <QtCore/QUuid>
+#include <ElaTheme.h>
 
 namespace UI {
 
@@ -58,6 +59,7 @@ NavNode::NavNode(ElaIconType::IconName font_icon, const QString& text, QObject* 
     , key_(QUuid::createUuid().toString(QUuid::Id128)) {
     set_font_icon(font_icon);
     set_text(text);
+    set_foreground_color(ElaThemeColor(ElaThemeType::Light, WindowText));
 }
 
 } // namespace UI

@@ -19,6 +19,7 @@
 
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QListView>
+#include <gsl/gsl>
 
 namespace UI {
 
@@ -41,6 +42,8 @@ public:
     QString add_footer_node(ElaIconType::IconName icon, const QString &text, QAction *action);
     QString add_footer_node(ElaIconType::IconName icon, QAction *action);
     void    add_footer_node(NavNode *node);
+
+    std::optional<gsl::strict_not_null<NavNode *>> node(const QString &key) const;
 
 public slots:
     bool navigate(const QString &key);

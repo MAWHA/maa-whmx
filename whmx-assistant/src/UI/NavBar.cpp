@@ -93,6 +93,19 @@ void NavBar::add_footer_node(NavNode *node) {
     if (auto w = node->widget()) { emit on_add_nav_page(node, w); }
 }
 
+std::optional<gsl::strict_not_null<NavNode *>> NavBar::node(const QString &key) const {
+    NavNode  *node  = nullptr;
+    NavModel *model = nullptr;
+    do {
+        model = default_model_;
+        node  = model->node(key);
+        if (node) { break; }
+        model = footer_model_;
+        node  = model->node(key);
+    } while (0);
+    return node ? std::optional<gsl::strict_not_null<NavNode *>>(node) : std::nullopt;
+}
+
 bool NavBar::navigate(const QString &key) {
     NavNode  *node  = nullptr;
     NavModel *model = nullptr;

@@ -15,17 +15,22 @@
 
 #pragma once
 
-#include <QtCore/QDir>
+#include "ActuatorInstance.h"
+
+#include <QtWidgets/QWidget>
+#include <gsl/gsl>
 
 namespace Experimental {
 
-void copy_folder(const QString &src, const QString &dst);
-
-class ProjectDirs {
+class UmaWorkbench : public QWidget {
 public:
-    static QDir home();
-    static QDir create_or_get(const QString &dir);
-    static QDir app_data();
+    UmaWorkbench(gsl::not_null<std::shared_ptr<UmaInstance>> instance);
+
+protected:
+    void setup();
+
+private:
+    gsl::not_null<std::shared_ptr<UmaInstance>> instance_;
 };
 
 } // namespace Experimental

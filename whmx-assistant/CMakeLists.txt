@@ -114,6 +114,8 @@ PRIVATE
     Experimental/MessageProducer.h
     Experimental/UmaClient.cpp
     Experimental/UmaClient.h
+    Experimental/UmaWorkbench.cpp
+    Experimental/UmaWorkbench.h
     Experimental/StyledPanel.cpp
     Experimental/StyledPanel.h
     Experimental/OverlayDialog.cpp
