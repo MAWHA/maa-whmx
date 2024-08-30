@@ -22,6 +22,18 @@ Powerful hang-up tool for WuHuaMiXin players
   <img alt="stars" src="https://img.shields.io/github/stars/MAWHA/maa-whmx?style=social">
 </p>
 
+# NOTICE！
+
+The 3rdparty GUI client for MaaFramework, Universal Maa Actuator, i.e. U-MA, is coming soon in v1.0.0!
+
+Plentiful features will be available in U-MA, including enhanced Maa job control, pipeline job resource packaging, custom task properties support and visualization, fully taking over device management and job instance management, etc.
+
+Just start **one** U-MA client, then you can easily complete the automatic operation of **multiple** devices with various job terminals!
+
+Hope to see you in U-MA v1.0.0 release soon!
+
+~STAY TUNED~
+
 # About
 
 whmx-assistant is a highly customizable hang-up tool based on Qt6 and powered by MaaFramework.

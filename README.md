@@ -22,6 +22,16 @@
   <img alt="stars" src="https://img.shields.io/github/stars/MAWHA/maa-whmx?style=social">
 </p>
 
+# 重大预告！
+
+通用 Maa 作业驱动器 PC 端 Universal Maa Actuator (U-MA) 将于 v1.0.0 正式发布！
+
+增强 MaaPiCli 作业流程管理，流水线作业资源包化，支持可视化的自定义任务配置，全面接管设备管理、作业实例管理……
+
+只需启动一个 U-MA 客户端，即可轻松完成多设备、多~~游戏~~作业终端的自动化操作！
+
+U-MA 极速预备中，敬请期待~
+
 # 简介
 
 物华弥新小助手是一款基于 Qt6 开发，由 MaaFramework 强力驱动的高可定制的一键长草工具。
