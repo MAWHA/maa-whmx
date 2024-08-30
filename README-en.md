@@ -22,7 +22,7 @@ Powerful hang-up tool for WuHuaMiXin players
   <img alt="stars" src="https://img.shields.io/github/stars/MAWHA/maa-whmx?style=social">
 </p>
 
-# NOTICE！
+# BREAKING NEWS NOTICE
 
 The 3rdparty GUI client for MaaFramework, Universal Maa Actuator, i.e. U-MA, is coming soon in v1.0.0!
 
@@ -32,7 +32,7 @@ Just start **one** U-MA client, then you can easily complete the automatic opera
 
 Hope to see you in U-MA v1.0.0 release soon!
 
-~STAY TUNED~
+\~STAY TUNED\~
 
 # About
 
