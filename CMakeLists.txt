@@ -60,6 +60,19 @@ set(QWINDOWKIT_BUILD_STATIC ON)
 set(QWINDOWKIT_BUILD_EXAMPLES OFF)
 add_subdirectory(deps/qwindowkit)
 
+set(QMSETUP_APPLOCAL_DEPS_PATHS_DEBUG "${CMAKE_BUILD_DIR}/vcpkg_installed/x64-windows/debug/bin")
+set(QMSETUP_APPLOCAL_DEPS_PATHS_Release "${CMAKE_BUILD_DIR}/vcpkg_installed/x64-windows/release/bin")
+
+set(VCPKG_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/vcpkg/packages")
+file(GLOB VCPKG_INSTALLED_PACKAGES RELATIVE ${VCPKG_PACKAGE_DIR} ${VCPKG_PACKAGE_DIR}/*)
+foreach(package ${VCPKG_INSTALLED_PACKAGES})
+    list(APPEND QMSETUP_APPLOCAL_DEPS_PATHS_DEBUG "${VCPKG_PACKAGE_DIR}/${package}/debug/bin")
+    list(APPEND QMSETUP_APPLOCAL_DEPS_PATHS_RELEASE "${VCPKG_PACKAGE_DIR}/${package}/bin")
+endforeach()
+
+set(QMSETUP_MODULES_DIR "${CMAKE_SOURCE_DIR}/deps/qwindowkit/qmsetup/cmake")
+find_package(qmsetup REQUIRED)
+
 add_subdirectory(deps/FileLocksmithLibInterop)
 add_subdirectory(deps/qt-material-widgets)
 add_subdirectory(whmx-assistant)

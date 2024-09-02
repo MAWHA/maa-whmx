@@ -277,3 +277,11 @@ COMMAND
     --force
     ${WINDEPLOYQT_TYPE_ARGS}
 )
+
+# Deep deploy dll deps
+qm_import(Deploy)
+qm_deploy_directory("$<TARGET_FILE_DIR:whmx-assistant>"
+LIBRARY_DIR .
+PLUGIN_DIR .
+VERBOSE
+)
