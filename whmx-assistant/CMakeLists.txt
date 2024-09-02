@@ -285,3 +285,7 @@ LIBRARY_DIR .
 PLUGIN_DIR .
 VERBOSE
 )
+
+# Install vcruntime
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "${OUTPUT_DIR}")
+include(InstallRequiredSystemLibraries)
