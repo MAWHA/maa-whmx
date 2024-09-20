@@ -57,20 +57,22 @@ Qt::CheckState TaskItem::sub_items_check_state() const {
     return total_checked == 0 ? Qt::Unchecked : Qt::Checked;
 }
 
-void TaskItem::append(TaskItem* item) {
-    if (is_leaf()) { return; }
+bool TaskItem::append(gsl::not_null<TaskItem*> item) {
+    if (is_leaf()) { return false; }
+    if (item->is_leaf() && !item->opt_task_id_.has_value()) { return false; }
     sub_items().append(item);
+    return true;
 }
 
 TaskItem* TaskItem::append_non_leaf(const QString& title, bool expanded) {
-    auto item = new TaskItem(title, false, this);
+    auto item = new TaskItem(title, this);
     item->set_expanded(expanded);
     append(item);
     return item;
 }
 
-TaskItem* TaskItem::append_leaf(const QString& title, bool checked) {
-    auto item = new TaskItem(title, true, this);
+TaskItem* TaskItem::append_leaf(const QString& task_id, const QString& title, bool checked) {
+    auto item = new TaskItem(task_id, title, this);
     item->set_checked(checked);
     append(item);
     return item;
@@ -86,10 +88,33 @@ int TaskItem::row_index() const {
     return parent()->sub_items().indexOf(this);
 }
 
-TaskItem::TaskItem(const QString& title, bool leaf, TaskItem* parent)
+void TaskItem::sort(Qt::SortOrder order) {
+    //! NOTE: ignore order for now, always sort descending
+    std::sort(sub_items().begin(), sub_items().end(), [order](const TaskItem* lhs, const TaskItem* rhs) {
+        if (lhs->is_leaf() != rhs->is_leaf()) { return rhs->is_leaf(); }
+        return QString::localeAwareCompare(lhs->title(), rhs->title()) > 0;
+    });
+    for (auto item : sub_items()) {
+        if (item->is_leaf()) { continue; }
+        item->sort(order);
+    }
+}
+
+TaskItem::TaskItem(const QString& title, TaskItem* parent)
     : QObject(parent)
     , key_(QUuid::createUuid().toString(QUuid::Id128))
-    , leaf_(leaf) {
+    , leaf_(false) {
+    set_checked(false);
+    set_title(title);
+    set_expanded(false);
+    set_parent(parent);
+}
+
+TaskItem::TaskItem(const QString& task_id, const QString& title, TaskItem* parent)
+    : QObject(parent)
+    , key_(QUuid::createUuid().toString(QUuid::Id128))
+    , opt_task_id_(task_id)
+    , leaf_(true) {
     set_checked(false);
     set_title(title);
     set_expanded(false);

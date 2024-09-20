@@ -55,6 +55,8 @@ public:
     TaskItem* row(int index) const;
     int       row_index() const;
 
+    void sort(Qt::SortOrder order = Qt::AscendingOrder);
+
 public:
     TaskItem(const QString& title, TaskItem* parent = nullptr);
     TaskItem(const QString& task_id, const QString& title, TaskItem* parent = nullptr);

@@ -55,8 +55,7 @@ void UmaWorkbench::setup() {
     auto task_view = new TaskView;
     task_view->setFixedWidth(240);
     {
-        auto model = new TaskModel(task_view);
-        task_view->setModel(model);
+        auto                   model = new TaskModel(task_view);
         QMap<QString, QString> keys;
         for (const auto &[task_id, meta] : instance_->uma_prop->interface->tasks.asKeyValueRange()) {
             if (meta.opt_category.has_value()) {
@@ -70,6 +69,8 @@ void UmaWorkbench::setup() {
                 model->append_leaf(task_id, meta.name, false);
             }
         }
+        task_view->setModel(model);
+        task_view->setSortingEnabled(true);
     }
 
     auto task_view_panel = new StyledPanel(task_view);

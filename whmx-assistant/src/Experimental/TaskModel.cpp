@@ -146,4 +146,8 @@ Qt::ItemFlags TaskModel::flags(const QModelIndex& index) const {
     return flags;
 }
 
+void TaskModel::sort(int column, Qt::SortOrder order) {
+    root_->sort(order);
+}
+
 } // namespace Experimental
