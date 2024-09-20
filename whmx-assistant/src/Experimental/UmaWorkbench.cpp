@@ -17,10 +17,34 @@
 #include "TaskView.h"
 #include "TaskModel.h"
 #include "StyledPanel.h"
+#include "TaskItem.h"
 
 #include <QtWidgets/QHBoxLayout>
 
 namespace Experimental {
+
+void UmaWorkbench::open_task_config(const QModelIndex &index) {
+    Expects(index.isValid());
+    const auto item = static_cast<TaskItem *>(index.internalPointer());
+    Expects(item->is_leaf());
+
+    //! TODO: build and open task config
+}
+
+void UmaWorkbench::open_task_property(const QModelIndex &index) {
+    Expects(index.isValid());
+    const auto item = static_cast<TaskItem *>(index.internalPointer());
+
+    if (item->is_leaf()) {
+        //! TODO: list properties, category and basic info of the task
+    } else {
+        for (const auto &sub_item : item->sub_items()) {
+            Expects(sub_item->is_leaf());
+            //! TODO: get tasks under the category
+        }
+        //! TODO: list tasks
+    }
+}
 
 UmaWorkbench::UmaWorkbench(gsl::not_null<std::shared_ptr<UmaInstance>> instance)
     : instance_(instance) {
@@ -41,9 +65,9 @@ void UmaWorkbench::setup() {
                     const auto key = model->append_non_leaf(category, true);
                     keys.insert(category, key);
                 }
-                model->append_leaf(keys.find(category).value(), meta.name, false);
+                model->append_leaf(keys.find(category).value(), task_id, meta.name, false);
             } else {
-                model->append_leaf(meta.name, false);
+                model->append_leaf(task_id, meta.name, false);
             }
         }
     }
@@ -55,6 +79,9 @@ void UmaWorkbench::setup() {
     auto layout = new QHBoxLayout(this);
     layout->addWidget(task_view_panel);
     layout->addStretch();
+
+    connect(task_view, &TaskView::on_open_task_config, this, &UmaWorkbench::open_task_config);
+    connect(task_view, &TaskView::on_open_task_property, this, &UmaWorkbench::open_task_property);
 }
 
 } // namespace Experimental

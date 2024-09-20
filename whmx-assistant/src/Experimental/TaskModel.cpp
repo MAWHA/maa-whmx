@@ -37,8 +37,8 @@ QString TaskModel::append_non_leaf(const QString& title, bool expanded) {
     return append_non_leaf(nullptr, title, expanded);
 }
 
-QString TaskModel::append_leaf(const QString& title, bool checked) {
-    return append_leaf(nullptr, title, checked);
+QString TaskModel::append_leaf(const QString& task_id, const QString& title, bool checked) {
+    return append_leaf(nullptr, task_id, title, checked);
 }
 
 QString TaskModel::append_non_leaf(const QString& parent_key, const QString& title, bool expanded) {
@@ -49,9 +49,9 @@ QString TaskModel::append_non_leaf(const QString& parent_key, const QString& tit
     }
 }
 
-QString TaskModel::append_leaf(const QString& parent_key, const QString& title, bool checked) {
+QString TaskModel::append_leaf(const QString& parent_key, const QString& task_id, const QString& title, bool checked) {
     if (auto parent = item(parent_key)) {
-        return append_leaf(parent, title, checked);
+        return append_leaf(parent, task_id, title, checked);
     } else {
         return QString();
     }
@@ -66,18 +66,18 @@ QString TaskModel::append_non_leaf(TaskItem* parent, const QString& title, bool 
     return item->key();
 }
 
-QString TaskModel::append_leaf(TaskItem* parent, const QString& title, bool checked) {
+QString TaskModel::append_leaf(TaskItem* parent, const QString& task_id, const QString& title, bool checked) {
     if (parent && !items_.contains(parent->key())) { return QString(); }
     if (!parent) { parent = root_.get(); }
     if (parent->is_leaf()) { return QString(); }
-    const auto item = parent->append_leaf(title, checked);
+    const auto item = parent->append_leaf(task_id, title, checked);
     items_.insert(item->key(), item);
     return item->key();
 }
 
 TaskModel::TaskModel(QObject* parent)
     : QAbstractItemModel(parent)
-    , root_(std::make_shared<TaskItem>("$root", false)) {}
+    , root_(std::make_shared<TaskItem>("$root")) {}
 
 QModelIndex TaskModel::parent(const QModelIndex& child) const {
     if (!child.isValid()) { return QModelIndex(); }

@@ -43,11 +43,11 @@ public:
     QString append(TaskItem* parent, TaskItem* item);
 
     QString append_non_leaf(const QString& title, bool expanded);
-    QString append_leaf(const QString& title, bool checked);
+    QString append_leaf(const QString& task_id, const QString& title, bool checked);
     QString append_non_leaf(const QString& parent_key, const QString& title, bool expanded);
-    QString append_leaf(const QString& parent_key, const QString& title, bool checked);
+    QString append_leaf(const QString& parent_key, const QString& task_id, const QString& title, bool checked);
     QString append_non_leaf(TaskItem* parent, const QString& title, bool expanded);
-    QString append_leaf(TaskItem* parent, const QString& title, bool checked);
+    QString append_leaf(TaskItem* parent, const QString& task_id, const QString& title, bool checked);
 
 public:
     TaskModel(QObject* parent = nullptr);

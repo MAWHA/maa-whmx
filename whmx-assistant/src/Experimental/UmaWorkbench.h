@@ -23,6 +23,10 @@
 namespace Experimental {
 
 class UmaWorkbench : public QWidget {
+protected slots:
+    void open_task_config(const QModelIndex &index);
+    void open_task_property(const QModelIndex &index);
+
 public:
     UmaWorkbench(gsl::not_null<std::shared_ptr<UmaInstance>> instance);
 

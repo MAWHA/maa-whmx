@@ -16,6 +16,7 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <gsl/gsl>
 
 #include "../UI/PropertyHelper.h"
 
@@ -34,27 +35,34 @@ public:
         return key_;
     }
 
-    int            total_sub_items() const;
-    void           set_sub_items_checked(bool checked);
-    Qt::CheckState sub_items_check_state() const;
-
-    void      append(TaskItem* item);
-    TaskItem* append_non_leaf(const QString& title, bool expanded = false);
-    TaskItem* append_leaf(const QString& title, bool checked = false);
+    QString task_id() const {
+        Expects(leaf_ && opt_task_id_.has_value());
+        return opt_task_id_.value();
+    }
 
     bool is_leaf() const {
         return leaf_;
     }
 
+    int            total_sub_items() const;
+    void           set_sub_items_checked(bool checked);
+    Qt::CheckState sub_items_check_state() const;
+
+    bool      append(gsl::not_null<TaskItem*> item);
+    TaskItem* append_non_leaf(const QString& title, bool expanded = false);
+    TaskItem* append_leaf(const QString& task_id, const QString& title, bool checked = false);
+
     TaskItem* row(int index) const;
     int       row_index() const;
 
 public:
-    TaskItem(const QString& title, bool leaf, TaskItem* parent = nullptr);
+    TaskItem(const QString& title, TaskItem* parent = nullptr);
+    TaskItem(const QString& task_id, const QString& title, TaskItem* parent = nullptr);
 
 private:
-    QString key_  = QString();
-    bool    leaf_ = true;
+    QString                key_         = QString();
+    std::optional<QString> opt_task_id_ = std::nullopt;
+    bool                   leaf_        = true;
 };
 
 } // namespace Experimental
