@@ -31,6 +31,7 @@ public:
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void mouseDoubleClickEvent(QMouseEvent* event) override;
 };
 
 } // namespace Experimental

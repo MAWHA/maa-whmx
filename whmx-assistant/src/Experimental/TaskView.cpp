@@ -78,4 +78,14 @@ void TaskView::contextMenuEvent(QContextMenuEvent *event) {
     menu->popup(event->globalPos());
 }
 
+void TaskView::mouseDoubleClickEvent(QMouseEvent *event) {
+    const auto index = indexAt(event->pos());
+    if (!index.isValid()) { return; }
+    if (const auto item = static_cast<const TaskItem *>(index.constInternalPointer()); item->is_leaf()) {
+        //! NOTE: filter-out double-click event sent to leaf item to avoid toggle twice together with click event
+        return;
+    }
+    QTreeView::mouseDoubleClickEvent(event);
+}
+
 } // namespace Experimental
